@@ -1,4 +1,4 @@
-package com.capstone.techwasmark02.ui.screen
+package com.capstone.techwasmark02.ui.screen.signUp
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -19,10 +19,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.capstone.techwasmark02.ui.component.DefaultButton
 import com.capstone.techwasmark02.ui.component.DefaultTextField
 import com.capstone.techwasmark02.ui.component.InverseTopBar

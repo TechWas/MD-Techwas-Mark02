@@ -1,7 +1,8 @@
-package com.capstone.techwasmark02.ui.screen
+package com.capstone.techwasmark02.ui.screen.signIn
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -10,19 +11,25 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.capstone.techwasmark02.data.model.UserLoginInfo
+import com.capstone.techwasmark02.data.model.UserSession
+import com.capstone.techwasmark02.data.remote.response.UserLoginResponse
+import com.capstone.techwasmark02.ui.common.UiState
 import com.capstone.techwasmark02.ui.component.DefaultButton
 import com.capstone.techwasmark02.ui.component.DefaultTextField
 import com.capstone.techwasmark02.ui.component.PasswordTextField
@@ -30,20 +37,30 @@ import com.capstone.techwasmark02.ui.component.SignInBanner
 import com.capstone.techwasmark02.ui.theme.TechwasMark02Theme
 
 @Composable
-fun SignInScreen() {
-    SignInContent()
+fun SignInScreen(
+    viewModel: SignInScreenViewModel = hiltViewModel(),
+) {
+    val userToSignInState by viewModel.userToSignInState.collectAsState()
+    val userToSignInInfo by viewModel.userToSignInInfo.collectAsState()
+    val userSessionState by viewModel.userSessionState.collectAsState()
+
+    SignInContent(
+        userToSignInInfo = userToSignInInfo,
+        updateUserLoginInfo = { viewModel.updateUserSignInInfo(it) },
+        userToSignInState = userToSignInState,
+        signInUser = { viewModel.signInUser() },
+        userSessionState = userSessionState
+    )
 }
 
 @Composable
-fun SignInContent() {
-
-    var email by remember {
-        mutableStateOf("")
-    }
-
-    var password by remember {
-        mutableStateOf("")
-    }
+fun SignInContent(
+    userToSignInInfo: UserLoginInfo,
+    updateUserLoginInfo: (UserLoginInfo) -> Unit,
+    userToSignInState: UiState<UserLoginResponse>?,
+    signInUser: () -> Unit,
+    userSessionState: UserSession?
+) {
 
     var showPassword by remember {
         mutableStateOf(false)
@@ -87,21 +104,29 @@ fun SignInContent() {
             Spacer(modifier = Modifier.height(20.dp))
 
             DefaultTextField(
-                value = email,
-                onValueChange = { newValue -> email = newValue},
+                value = userToSignInInfo.email,
                 labelText = "Email",
                 placeHolderText = "user email",
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth() ,
+                onValueChange = { newValue ->
+                    updateUserLoginInfo(userToSignInInfo.copy(
+                        email = newValue
+                    ))
+                }
             )
 
             Spacer(modifier = Modifier.height(16.dp))
 
             PasswordTextField(
-                value = password,
-                onValueChange = { newValue -> password = newValue},
+                value = userToSignInInfo.password,
                 showPassword = showPassword,
                 toggleShowPassword = { showPassword = !showPassword },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                onValueChange = { newValue ->
+                    updateUserLoginInfo(userToSignInInfo.copy(
+                        password = newValue
+                    ))
+                }
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -116,11 +141,47 @@ fun SignInContent() {
                 )
             }
 
-            Spacer(modifier = Modifier.weight(1f))
+            if(userToSignInState != null) {
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    when(userToSignInState) {
+                        is UiState.Loading -> {
+                            CircularProgressIndicator()
+                        }
+                        is UiState.Error -> {
+                            userToSignInState.message?.let {
+                                Text(text = it)
+                            }
+                        }
+                        is UiState.Success -> {
+                            userToSignInState.data?.loginResult?.token?.accessToken?.let {
+                                Text(text = it)
+                            }
+                        }
+                    }
+                }
+            } else {
+                Spacer(modifier = Modifier.weight(1f))
+            }
 
-            DefaultButton(contentText = "Sign In", modifier = Modifier
-                .fillMaxWidth()
-                .height(50.dp))
+            if (userSessionState != null) {
+                Text(
+                    text = userSessionState.userLoginToken.accessToken,
+                    modifier = Modifier.padding(vertical = 10.dp)
+                )
+            }
+
+            DefaultButton(
+                contentText = "Sign In",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp),
+                onClick = signInUser
+            )
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -154,6 +215,12 @@ fun SignInContent() {
 @Composable
 fun SingInContentPreview() {
     TechwasMark02Theme {
-        SignInContent()
+        SignInContent(
+            userToSignInState = null,
+            userToSignInInfo = UserLoginInfo("", ""),
+            updateUserLoginInfo = {},
+            signInUser = {},
+            userSessionState = null
+        )
     }
 }
