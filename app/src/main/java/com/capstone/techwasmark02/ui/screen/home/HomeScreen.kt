@@ -96,7 +96,7 @@ fun HomeContent() {
             }
 
             DetectionsFab(
-                modifier = Modifier.padding(bottom = 17.dp)
+                modifier = Modifier.padding(bottom = 25.dp)
             )
 
             DefaultBottomBar(selectedType = BottomBarItemType.Home)

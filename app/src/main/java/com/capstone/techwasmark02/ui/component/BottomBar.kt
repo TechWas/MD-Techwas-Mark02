@@ -11,14 +11,18 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -34,46 +38,59 @@ fun DefaultBottomBar(
     modifier: Modifier = Modifier,
     selectedType: BottomBarItemType
 ) {
-    NavigationBar(
-        modifier = modifier
-            .graphicsLayer {
-                shape = BottomNavShape()
-                clip = true
-            }
+    Box(
+        modifier = Modifier
             .fillMaxWidth()
-            .height(60.dp),
-        containerColor = MaterialTheme.colorScheme.inverseSurface,
-        contentColor = MaterialTheme.colorScheme.inverseOnSurface,
-
+            .padding(horizontal = 8.dp)
+            .padding(bottom = 8.dp)
     ) {
-        Row(
-            modifier = Modifier
+        NavigationBar(
+            modifier = modifier
+                .shadow(
+                    elevation = 8.dp,
+                    shape = BottomNavShape(),
+                    clip = true
+                )
+                .graphicsLayer {
+                    shape = BottomNavShape()
+                    clip = true
+                }
+                .clip(RoundedCornerShape(10.dp))
                 .fillMaxWidth()
-                .fillMaxHeight(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Spacer(modifier = Modifier.weight(1f))
+                .height(60.dp),
+            containerColor = MaterialTheme.colorScheme.inverseSurface,
+            contentColor = MaterialTheme.colorScheme.inverseOnSurface,
+            tonalElevation = 8.dp
+            ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Spacer(modifier = Modifier.weight(1f))
 
-            BottomBarItem(bottomBarItemType = BottomBarItemType.Home, selectedType = selectedType)
+                BottomBarItem(bottomBarItemType = BottomBarItemType.Home, selectedType = selectedType)
 
-            Spacer(modifier = Modifier.weight(1f))
+                Spacer(modifier = Modifier.weight(1f))
 
-            BottomBarItem(bottomBarItemType = BottomBarItemType.Forum, selectedType = selectedType)
+                BottomBarItem(bottomBarItemType = BottomBarItemType.Forum, selectedType = selectedType)
 
-            Spacer(modifier = Modifier.weight(1f))
+                Spacer(modifier = Modifier.weight(1f))
 
-            Spacer(modifier = Modifier.width(80.dp))
+                Spacer(modifier = Modifier.width(80.dp))
 
-            Spacer(modifier = Modifier.weight(1f))
+                Spacer(modifier = Modifier.weight(1f))
 
-            BottomBarItem(bottomBarItemType = BottomBarItemType.Article, selectedType = selectedType)
+                BottomBarItem(bottomBarItemType = BottomBarItemType.Article, selectedType = selectedType)
 
-            Spacer(modifier = Modifier.weight(1f))
+                Spacer(modifier = Modifier.weight(1f))
 
-            BottomBarItem(bottomBarItemType = BottomBarItemType.Profile, selectedType = selectedType)
+                BottomBarItem(bottomBarItemType = BottomBarItemType.Profile, selectedType = selectedType)
 
-            Spacer(modifier = Modifier.weight(1f))
+                Spacer(modifier = Modifier.weight(1f))
 
+            }
         }
     }
 }
