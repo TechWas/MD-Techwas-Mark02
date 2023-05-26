@@ -1,26 +1,34 @@
 package com.capstone.techwasmark02.ui.screen.signUp
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.capstone.techwasmark02.data.model.UserRegisterInfo
+import com.capstone.techwasmark02.data.remote.response.UserRegisterResponse
+import com.capstone.techwasmark02.ui.common.UiState
 import com.capstone.techwasmark02.ui.component.DefaultButton
 import com.capstone.techwasmark02.ui.component.DefaultTextField
 import com.capstone.techwasmark02.ui.component.InverseTopBar
@@ -29,27 +37,31 @@ import com.capstone.techwasmark02.ui.component.SignUpBanner
 import com.capstone.techwasmark02.ui.theme.TechwasMark02Theme
 
 @Composable
-fun SignUpScreen() {
-    SignUpContent()
+fun SignUpScreen(
+    viewModel: SignUpScreenViewModel = hiltViewModel()
+) {
+    val userToSignUpState by viewModel.userToSignUpState.collectAsState()
+    val userToSignUpInfo by viewModel.userToSignUpInfo.collectAsState()
+
+    SignUpContent(
+        userToSignUpInfo = userToSignUpInfo,
+        updateUserRegisterInfo = { viewModel.updateUserSignUpInfo(it) },
+        userToSignUpState = userToSignUpState,
+        signUpUser = { viewModel.signUpUser() }
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SignUpContent() {
-    var email by remember {
-        mutableStateOf("")
-    }
-
-    var password by remember {
-        mutableStateOf("")
-    }
+fun SignUpContent(
+    userToSignUpInfo: UserRegisterInfo,
+    updateUserRegisterInfo: (UserRegisterInfo) -> Unit,
+    userToSignUpState: UiState<UserRegisterResponse>?,
+    signUpUser: () -> Unit
+) {
 
     var showPassword by remember {
         mutableStateOf(false)
-    }
-
-    var fullName by remember {
-        mutableStateOf("")
     }
 
     Scaffold(
@@ -94,8 +106,12 @@ fun SignUpContent() {
                 Spacer(modifier = Modifier.height(20.dp))
 
                 DefaultTextField(
-                    value = fullName,
-                    onValueChange = { newValue -> fullName = newValue},
+                    value = userToSignUpInfo.fullname,
+                    onValueChange = { newValue ->
+                        updateUserRegisterInfo(userToSignUpInfo.copy(
+                            fullname = newValue
+                        ))
+                    },
                     labelText = "Full Name",
                     placeHolderText = "user full name",
                     modifier = Modifier.fillMaxWidth()
@@ -104,8 +120,12 @@ fun SignUpContent() {
                 Spacer(modifier = Modifier.height(16.dp))
 
                 DefaultTextField(
-                    value = email,
-                    onValueChange = { newValue -> email = newValue},
+                    value = userToSignUpInfo.email,
+                    onValueChange = { newValue ->
+                        updateUserRegisterInfo(userToSignUpInfo.copy(
+                            email = newValue
+                        ))
+                    },
                     labelText = "Email",
                     placeHolderText = "user email",
                     modifier = Modifier.fillMaxWidth()
@@ -114,20 +134,52 @@ fun SignUpContent() {
                 Spacer(modifier = Modifier.height(16.dp))
 
                 PasswordTextField(
-                    value = password,
-                    onValueChange = { newValue -> password = newValue},
+                    value = userToSignUpInfo.password,
+                    onValueChange = { newValue ->
+                        updateUserRegisterInfo(userToSignUpInfo.copy(
+                            password = newValue
+                        ))
+                    },
                     showPassword = showPassword,
                     toggleShowPassword = { showPassword = !showPassword },
                     modifier = Modifier.fillMaxWidth()
                 )
 
 
-                Spacer(modifier = Modifier.weight(1f))
+                if(userToSignUpState != null) {
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxWidth(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        when(userToSignUpState) {
+                            is UiState.Loading -> {
+                                CircularProgressIndicator()
+                            }
+                            is UiState.Error -> {
+                                userToSignUpState.message?.let {
+                                    Text(text = it)
+                                }
+                            }
+                            is UiState.Success -> {
+                                userToSignUpState.data?.message?.let {
+                                    Text(text = it)
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    Spacer(modifier = Modifier.weight(1f))
+                }
 
-                DefaultButton(contentText = "Sign Up", modifier = Modifier
-                    .fillMaxWidth()
-                    .height(50.dp))
-
+                DefaultButton(
+                    contentText = "Sign Up",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(50.dp),
+                    onClick = signUpUser
+                )
             }
         }
     }
@@ -137,6 +189,11 @@ fun SignUpContent() {
 @Composable
 fun SingUpContentPreview() {
     TechwasMark02Theme {
-        SignUpContent()
+        SignUpContent(
+            userToSignUpState = null,
+            userToSignUpInfo = UserRegisterInfo("", "", ""),
+            updateUserRegisterInfo = {},
+            signUpUser = {}
+        )
     }
 }
