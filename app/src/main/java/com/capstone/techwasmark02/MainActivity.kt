@@ -7,9 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import com.capstone.techwasmark02.ui.screen.detectionResult.DetectionResultScreen
-import com.capstone.techwasmark02.ui.screen.imageDetection.ImageDetectionScreen
-import com.capstone.techwasmark02.ui.screen.signIn.SignInScreen
+import com.capstone.techwasmark02.ui.screen.maps.MapsScreen
 import com.capstone.techwasmark02.ui.theme.TechwasMark02Theme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -24,7 +22,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    DetectionResultScreen()
+                    MapsScreen()
                 }
             }
         }
