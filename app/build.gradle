@@ -3,6 +3,7 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'org.jetbrains.kotlin.kapt'
     id 'dagger.hilt.android.plugin'
+    id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'
 }
 
 android {
@@ -98,6 +99,13 @@ dependencies {
     // Moshi
     implementation 'com.squareup.moshi:moshi:1.14.0'
     implementation 'com.squareup.moshi:moshi-kotlin:1.14.0'
+
+    // Pager
+    implementation "com.google.accompanist:accompanist-pager:0.23.1"
+
+    // Maps
+    implementation 'com.google.maps.android:maps-compose:2.10.0'
+    implementation 'com.google.android.gms:play-services-maps:18.1.0'
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
