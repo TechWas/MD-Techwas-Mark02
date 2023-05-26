@@ -7,10 +7,10 @@ import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.rememberCameraPositionState
 
 @Composable
-fun MapScreen() {
-    val bucharest = LatLng(44.43, 26.09)
+fun MapsScreen() {
+    val diy = LatLng(-7.782275587997325, 110.36709993087182)
     val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition.fromLatLngZoom(bucharest, 10f)
+        position = CameraPosition.fromLatLngZoom(diy, 10f)
     }
 
     GoogleMap(
