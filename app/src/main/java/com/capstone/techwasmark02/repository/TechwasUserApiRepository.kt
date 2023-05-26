@@ -4,6 +4,7 @@ import com.capstone.techwasmark02.data.model.UserLoginInfo
 import com.capstone.techwasmark02.data.model.UserRegisterInfo
 import com.capstone.techwasmark02.data.remote.apiService.TechwasUserApi
 import com.capstone.techwasmark02.data.remote.response.UserLoginResponse
+import com.capstone.techwasmark02.data.remote.response.UserRegisterResponse
 import com.capstone.techwasmark02.ui.common.UiState
 import java.lang.Exception
 import javax.inject.Inject
@@ -22,7 +23,7 @@ class TechwasUserApiRepository @Inject constructor(
         return UiState.Success(data = response)
     }
 
-    suspend fun userRegister(userRegisterInfo: UserRegisterInfo) : UiState<String> {
+    suspend fun userRegister(userRegisterInfo: UserRegisterInfo) : UiState<UserRegisterResponse> {
 
         val response = try {
             userApi.register(userRegisterInfo)
