@@ -8,11 +8,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -21,6 +18,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -30,17 +29,16 @@ import com.capstone.techwasmark02.ui.theme.TechwasMark02Theme
 import kotlin.random.Random
 
 @Composable
-fun ForumBox() {
-    ForumBoxContent()
-}
-
-@Composable
-fun ForumBoxContent() {
+fun ForumBox(modifier: Modifier = Modifier) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .height(80.dp)
             .clip(MaterialTheme.shapes.large)
+            .shadow(
+                elevation = 4.dp,
+                clip = true
+            )
             .background(MaterialTheme.colorScheme.tertiary)
             .padding(horizontal = 24.dp),
         contentAlignment = Alignment.Center
@@ -58,6 +56,7 @@ fun ForumBoxContent() {
                     model = "https://picsum.photos/seed/${Random.nextInt()}/320/120",
                     placeholder = painterResource(id = R.drawable.place_holder),
                 ),
+                contentScale = ContentScale.FillHeight,
                 contentDescription = null,
             )
             Column(
