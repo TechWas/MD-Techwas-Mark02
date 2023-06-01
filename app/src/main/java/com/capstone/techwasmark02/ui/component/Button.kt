@@ -17,6 +17,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -73,7 +74,7 @@ fun InverseButton(
 }
 
 @Composable
-fun SmallButton(modifier: Modifier = Modifier, contentText: String, onClick: () -> Unit = {}) {
+fun SmallButton(modifier: Modifier = Modifier, contentText: String, onClick: () -> Unit = {}, colorText: Color) {
     Button(
         onClick = onClick,
         modifier = modifier
@@ -83,9 +84,6 @@ fun SmallButton(modifier: Modifier = Modifier, contentText: String, onClick: () 
             containerColor = MaterialTheme.colorScheme.tertiary
         ),
         shape = MaterialTheme.shapes.large,
-        elevation = ButtonDefaults.buttonElevation(
-            defaultElevation = 6.dp
-        ),
         contentPadding = PaddingValues(horizontal = 12.dp),
     ) {
         Text(
@@ -93,7 +91,7 @@ fun SmallButton(modifier: Modifier = Modifier, contentText: String, onClick: () 
             style = MaterialTheme.typography.bodySmall.copy(
                 fontWeight = FontWeight.Bold
             ),
-            color = MaterialTheme.colorScheme.primary
+            color = colorText
         )
     }
 }
@@ -115,7 +113,10 @@ fun ButtonPreview() {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            SmallButton(contentText = "LOCATE NOW")
+            SmallButton(
+                contentText = "LOCATE NOW",
+                colorText = MaterialTheme.colorScheme.primary
+            )
         }
     }
 }
