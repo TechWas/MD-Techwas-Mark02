@@ -86,6 +86,41 @@ fun DefaultTopBar(pageTitle: String = "", onClickNavigationIcon: () -> Unit, mod
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TransparentTopBar(pageTitle: String = "", onClickNavigationIcon: () -> Unit, modifier: Modifier = Modifier) {
+    TopAppBar(
+        navigationIcon = {
+            IconButton(
+                onClick = onClickNavigationIcon,
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_arrow_back),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onPrimary,
+                    modifier = Modifier.size(32.dp)
+                )
+            }
+        },
+        title = {},
+        actions = {
+            Text(
+                text = pageTitle,
+                color = MaterialTheme.colorScheme.onPrimary,
+                style = MaterialTheme.typography.labelLarge.copy(
+                    fontWeight = FontWeight.Normal
+                ),
+                modifier = Modifier
+                    .padding(end = 20.dp)
+            )
+        },
+        colors = TopAppBarDefaults.smallTopAppBarColors(
+            containerColor = Color.Transparent,
+        ),
+        modifier = modifier
+    )
+}
+
 @Preview (showBackground = true)
 @Composable
 fun InverseTopBarPreview() {
@@ -112,6 +147,24 @@ fun DefaultTopBarPreview() {
         ) {
             DefaultTopBar(
                 pageTitle = "Result",
+                onClickNavigationIcon = {}
+            )
+        }
+    }
+}
+
+@Preview (showBackground = true)
+@Composable
+fun TransparantTopBarPreview() {
+    TechwasMark02Theme {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(MaterialTheme.colorScheme.onBackground)
+                .padding(20.dp)
+        ) {
+            TransparentTopBar(
+                pageTitle = "Detail",
                 onClickNavigationIcon = {}
             )
         }
