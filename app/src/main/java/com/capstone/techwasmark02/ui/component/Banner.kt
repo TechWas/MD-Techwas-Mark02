@@ -189,7 +189,7 @@ fun DropPointBanner(modifier: Modifier = Modifier) {
                     )
                     Spacer(modifier = Modifier.height(10.dp))
                     Row(modifier = Modifier.align(alignment =  Alignment.CenterHorizontally)) {
-                        SmallButton(contentText = "LOCATE NOW")
+                        SmallButton(contentText = "LOCATE NOW", colorText = MaterialTheme.colorScheme.primary)
                     }
                 }
             }
@@ -253,7 +253,7 @@ fun ForumBanner(modifier: Modifier = Modifier) {
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Row(modifier = Modifier.align(alignment =  Alignment.CenterHorizontally)) {
-                        SmallButton(contentText = "LOCATE NOW")
+                        SmallButton(contentText = "LOCATE NOW", colorText = MaterialTheme.colorScheme.primary)
                     }
 
                     Spacer(modifier = Modifier.height(10.dp))
