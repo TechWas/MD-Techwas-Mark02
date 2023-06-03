@@ -71,7 +71,7 @@ fun ImageDetectionScreen(viewModel: ImageDetectionScreenViewModel = hiltViewMode
         imageUri = imageUri,
         predictImageState = predictImageState,
         updateImageUri = { viewModel.updateImageUri(it) },
-        predictImage = { viewModel.predictImage(it) }
+        predictImage = { }
     )
 }
 

@@ -4,9 +4,9 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -26,217 +26,83 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.capstone.techwasmark02.R
+import com.capstone.techwasmark02.ui.componentType.FeatureBoxType
 import com.capstone.techwasmark02.ui.theme.TechwasMark02Theme
 import com.capstone.techwasmark02.ui.theme.gray
-import com.capstone.techwasmark02.ui.theme.purple
-import com.capstone.techwasmark02.ui.theme.sakura
 
 @Composable
-fun DetectBox1(modifier: Modifier = Modifier) {
-    BoxWithConstraints(
-        modifier = Modifier
+fun FeatureBox(
+    modifier: Modifier = Modifier,
+    featureBoxType: FeatureBoxType,
+    onClick: () -> Unit
+) {
+    Box(
+        modifier = modifier
             .width(150.dp)
             .height(160.dp)
-            .border(
-                BorderStroke(
-                    width = 1.dp,
-                    color = Color.Black
-                ),
-                shape = RoundedCornerShape(10.dp)
-            )
             .shadow(
                 elevation = 4.dp,
                 shape = RoundedCornerShape(10.dp)
             )
+            .clickable { onClick() }
     ) {
         Image(
-            painter = painterResource(id = R.drawable.img_bg_green),
+            painter = painterResource(id = featureBoxType.backGround),
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .fillMaxSize()
         )
         Column(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
         ) {
-            Box(
-                modifier = Modifier.fillMaxWidth()
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
             ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 16.dp, end = 16.dp, top = 16.dp)
-                ) {
-                    Text(
-                        text = "Detect\ne-waste",
-                        style = MaterialTheme.typography.titleLarge,
-                        color = Color.White
-                    )
-                }
+                Text(
+                    text = featureBoxType.title,
+                    style = MaterialTheme.typography.titleLarge,
+                    color = Color.White
+                )
             }
 
             Spacer(modifier = Modifier.height(40.dp))
 
-            Box(
-                modifier = Modifier.fillMaxWidth()
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        modifier = Modifier.size(33.dp, 25.dp),
-                        painter = painterResource(id = R.drawable.ic_center_focus),
-                        contentDescription = null,
-                        tint = Color.White
-                    )
-                    Spacer(modifier = Modifier.weight(1f))
-                    SmallButton(
-                        contentText = "Detect",
-                        onClick = {},
-                        colorText = MaterialTheme.colorScheme.primary
-                    )
-                }
+                Icon(
+                    modifier = Modifier.size(33.dp, 25.dp),
+                    painter = painterResource(id = featureBoxType.icon),
+                    contentDescription = null,
+                    tint = Color.White
+                )
+                Spacer(modifier = Modifier.weight(1f))
+                SmallButton(
+                    contentText = featureBoxType.buttonTitle,
+                    onClick = onClick,
+                    colorText = featureBoxType.buttonColor
+                )
             }
         }
     }
 }
 
 @Composable
-fun DetectBox2(modifier: Modifier = Modifier) {
-    BoxWithConstraints(
-        modifier = Modifier
-            .width(150.dp)
-            .height(160.dp)
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.img_bg_purple),
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier.fillMaxSize()
-        )
-        Column(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            Box(
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 16.dp, end = 16.dp, top = 16.dp)
-                ) {
-                    Text(
-                        text = "E-waste\ncatalog",
-                        style = MaterialTheme.typography.titleLarge,
-                        color = Color.White
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.height(40.dp))
-
-            Box(
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        modifier = Modifier.size(33.dp, 25.dp),
-                        painter = painterResource(id = R.drawable.ic_menu_book),
-                        contentDescription = null,
-                        tint = Color.White
-                    )
-                    Spacer(modifier = Modifier.weight(1f))
-                    SmallButton(
-                        contentText = "Detect",
-                        onClick = {},
-                        colorText = purple
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun DetectBox3(modifier: Modifier = Modifier) {
-    BoxWithConstraints(
-        modifier = Modifier
-            .width(150.dp)
-            .height(160.dp)
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.img_bg_sakura),
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier.fillMaxSize()
-        )
-        Column(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            Box(
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 16.dp, end = 16.dp, top = 16.dp)
-                ) {
-                    Text(
-                        text = "Nearby\ndrop point",
-                        style = MaterialTheme.typography.titleLarge,
-                        color = Color.White
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.height(40.dp))
-
-            Box(
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        modifier = Modifier.size(33.dp, 25.dp),
-                        painter = painterResource(id = R.drawable.ic_location_on),
-                        contentDescription = null,
-                        tint = Color.White
-                    )
-                    Spacer(modifier = Modifier.weight(1f))
-                    SmallButton(
-                        contentText = "Locate",
-                        onClick = {},
-                        colorText = sakura
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun DetectBox4(modifier: Modifier = Modifier) {
+fun AboutUsBox(modifier: Modifier = Modifier) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .width(150.dp)
             .height(160.dp)
             .clip(
@@ -261,18 +127,13 @@ fun DetectBox4(modifier: Modifier = Modifier) {
                             color = Color.Black
                         ),
                         shape = CircleShape
-                    )
+                    ),
+                contentAlignment = Alignment.Center
             ) {
-                Row(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_question_mark),
-                        contentDescription = null
-                    )
-                }
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_question_mark),
+                    contentDescription = null
+                )
             }
             Text(
                 text = "About Us",
@@ -288,19 +149,22 @@ fun DetectBoxPreview() {
     TechwasMark02Theme {
         Box(modifier = Modifier.padding(20.dp)) {
            Column(modifier = Modifier.fillMaxWidth()) {
-               DetectBox1()
+               FeatureBox(
+                   featureBoxType = FeatureBoxType.Detection,
+                   onClick = {}
+               )
 
                Spacer(modifier = Modifier.height(20.dp))
 
-               DetectBox2()
+               FeatureBox(featureBoxType = FeatureBoxType.Catalog, onClick = {})
 
                Spacer(modifier = Modifier.height(20.dp))
 
-               DetectBox3()
+               FeatureBox(featureBoxType = FeatureBoxType.DropPoint, onClick = {})
 
                Spacer(modifier = Modifier.height(20.dp))
 
-               DetectBox4()
+               AboutUsBox()
            }
         }
     }

@@ -1,6 +1,7 @@
 package com.capstone.techwasmark02.repository
 
 import com.capstone.techwasmark02.data.remote.apiService.TechwasPredictionApi
+import com.capstone.techwasmark02.data.remote.response.DetectionResultResponse
 import com.capstone.techwasmark02.ui.common.UiState
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -12,7 +13,7 @@ class TechwasPredictionApiRepository @Inject constructor(
     private val predictionApi: TechwasPredictionApi
 ) {
 
-    suspend fun predictWaste(file: File): UiState<String> {
+    suspend fun predictWaste(file: File): UiState<DetectionResultResponse> {
         val imageFile = file.asRequestBody("image/jpeg".toMediaTypeOrNull())
         val imageMultiPart: MultipartBody.Part = MultipartBody.Part.createFormData(
             name = "file",
