@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.lerp
 import com.capstone.techwasmark02.R
+import com.capstone.techwasmark02.data.remote.response.Prediction
 import com.capstone.techwasmark02.ui.theme.TechwasMark02Theme
 import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
@@ -40,7 +41,8 @@ import kotlin.math.absoluteValue
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun DetectionsResultBox(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    predictionList: List<Prediction>
 ) {
     val pagerState = rememberPagerState()
     val coroutineScope = rememberCoroutineScope()
@@ -68,14 +70,14 @@ fun DetectionsResultBox(
         }
 
         VerticalPager(
-            pageCount = dummyDetectionResultList.size,
+            pageCount = predictionList.size,
             modifier = Modifier
                 .height(84.dp),
             pageSpacing = (-50).dp,
             state = pagerState,
         ) { page ->
             ResultListItem(
-                detectionResult = dummyDetectionResultList[page],
+                detectionResult = predictionList[page],
                 pagerState = pagerState,
                 page = page,
                 modifier = Modifier
@@ -103,7 +105,7 @@ fun DetectionsResultBox(
                 coroutineScope.launch { pagerState.animateScrollToPage(prevPageIndex) }
             },
                 enabled = prevButtonVisible,
-                ) {
+            ) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_arrow_up),
                     contentDescription = null,
@@ -134,7 +136,7 @@ fun DetectionsResultBox(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ResultListItem(
-    detectionResult: DummyDetectionResult,
+    detectionResult: Prediction,
     pagerState: PagerState,
     page: Int,
     modifier: Modifier = Modifier
@@ -144,7 +146,7 @@ fun ResultListItem(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = detectionResult.componentType,
+            text = detectionResult.componentName,
             style = MaterialTheme.typography.headlineSmall,
             modifier = Modifier
                 .graphicsLayer {
@@ -180,7 +182,7 @@ fun ResultListItem(
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = "${detectionResult.detectionPercentage}%",
+                text = "${detectionResult.componentValue.toInt()}%",
                 style = MaterialTheme.typography.headlineSmall.copy(
                     fontSize = 28.sp
                 ),
@@ -224,7 +226,9 @@ fun DetectionsResultBoxPreview() {
                 .fillMaxWidth()
                 .padding(20.dp)
         ) {
-            DetectionsResultBox()
+            DetectionsResultBox(
+                predictionList = dummyDetectionResultList
+            )
         }
     }
 }
@@ -241,9 +245,10 @@ fun ResultListItemPreview() {
                 .padding(20.dp)
         ) {
             ResultListItem(
-                detectionResult = DummyDetectionResult(
-                    componentType = "Laptop",
-                    detectionPercentage = 70
+                detectionResult =    Prediction(
+                    componentId = 1,
+                    componentName = "PCB",
+                    componentValue = 80.988
                 ),
                 pagerState = PagerState(
                     initialPage = 0,
@@ -260,17 +265,20 @@ data class DummyDetectionResult(
     val detectionPercentage: Int
 )
 
-private val dummyDetectionResultList: List<DummyDetectionResult> = listOf(
-    DummyDetectionResult(
-        componentType = "Laptop",
-        detectionPercentage = 70
+private val dummyDetectionResultList: List<Prediction> = listOf(
+    Prediction(
+        componentId = 1,
+        componentName = "PCB",
+        componentValue = 80.00
     ),
-    DummyDetectionResult(
-        componentType = "Mesin Cuci",
-        detectionPercentage = 20
+    Prediction(
+        componentId = 2,
+        componentName = "Monitor",
+        componentValue = 15.00
     ),
-    DummyDetectionResult(
-        componentType = "Rice Cooker",
-        detectionPercentage = 10
+    Prediction(
+        componentId = 3,
+        componentName = "Mouse",
+        componentValue = 5.00
     )
 )

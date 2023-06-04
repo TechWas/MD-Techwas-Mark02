@@ -5,7 +5,7 @@ import android.net.Uri
 import android.webkit.MimeTypeMap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.capstone.techwasmark02.data.remote.response.DetectionResultResponse
+import com.capstone.techwasmark02.data.remote.response.DetectionsResultResponse
 import com.capstone.techwasmark02.repository.TechwasPredictionApiRepository
 import com.capstone.techwasmark02.ui.common.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -24,7 +24,7 @@ class CameraScreenViewModel @Inject constructor(
     private val _photoUri: MutableStateFlow<Uri?> = MutableStateFlow(null)
     val photoUri = _photoUri.asStateFlow()
 
-    private val _predictImageState: MutableStateFlow<UiState<DetectionResultResponse>?> = MutableStateFlow(null)
+    private val _predictImageState: MutableStateFlow<UiState<DetectionsResultResponse>?> = MutableStateFlow(null)
     val predictImageState = _predictImageState.asStateFlow()
 
     fun updatePhotoUri(newUri: Uri) {

@@ -11,10 +11,14 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.capstone.techwasmark02.ui.navigation.Screen.*
+import com.capstone.techwasmark02.ui.screen.article.ArticleScreen
 import com.capstone.techwasmark02.ui.screen.camera.CameraScreen
+import com.capstone.techwasmark02.ui.screen.catalog.CatalogScreen
+import com.capstone.techwasmark02.ui.screen.catalogSingleComponent.CatalogSingleComponentScreen
 import com.capstone.techwasmark02.ui.screen.detectionResult.DetectionResultScreen
 import com.capstone.techwasmark02.ui.screen.home.HomeScreen
 import com.capstone.techwasmark02.ui.screen.maps.MapsScreen
+import com.capstone.techwasmark02.ui.screen.profileUser.ProfileUserScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -30,6 +34,38 @@ fun TechwasApp() {
         ) {
             composable(Home.route) {
                 HomeScreen(navController = navController)
+            }
+
+            composable(Article.route) {
+                ArticleScreen(navController = navController)
+            }
+
+            composable(Forum.route) {
+
+            }
+
+            composable(Profile.route) {
+                ProfileUserScreen(navController = navController)
+            }
+
+            composable(Catalog.route) {
+                CatalogScreen(navController = navController)
+            }
+
+            composable(
+                route = SingleCatalog.route + "/{componentJson}",
+                arguments = listOf(
+                    navArgument("componentJson") {
+                        type = NavType.StringType
+                        defaultValue = "U fucked up"
+                    }
+                )
+            ) { navBackStackEntry ->
+                val componentJson = navBackStackEntry.arguments?.getString("componentJson")
+
+                if (componentJson != null) {
+                    CatalogSingleComponentScreen(componentJson = componentJson)
+                }
             }
 
             composable(Camera.route) {

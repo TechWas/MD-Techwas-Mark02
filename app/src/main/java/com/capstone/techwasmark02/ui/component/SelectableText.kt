@@ -3,10 +3,12 @@ package com.capstone.techwasmark02.ui.component
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
@@ -58,10 +60,17 @@ fun SelectableText(
 @Composable
 fun SelectableTextPreview() {
     TechwasMark02Theme {
-        Box(modifier = Modifier.padding(20.dp)){
+        Row(modifier = Modifier.padding(20.dp), verticalAlignment = Alignment.CenterVertically){
             SelectableText(
                 filterType = ArticleFilterType.General,
                 selected = true
+            )
+
+            Spacer(modifier = Modifier.width(20.dp))
+
+            SelectableText(
+                filterType = ArticleFilterType.General,
+                selected = false
             )
         }
     }

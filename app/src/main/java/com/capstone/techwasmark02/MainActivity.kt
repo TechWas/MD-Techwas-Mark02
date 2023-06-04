@@ -8,6 +8,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import com.capstone.techwasmark02.ui.screen.article.ArticleScreen
+import com.capstone.techwasmark02.ui.screen.catalog.CatalogScreen
 import com.capstone.techwasmark02.ui.screen.home.HomeScreen
 import com.capstone.techwasmark02.ui.screen.maps.MapsScreen
 import com.capstone.techwasmark02.ui.theme.TechwasMark02Theme
@@ -25,6 +26,8 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     TechwasApp()
+//                    CatalogScreen()
+
                 }
             }
         }

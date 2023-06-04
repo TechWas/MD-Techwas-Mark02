@@ -48,7 +48,7 @@ import com.capstone.techwasmark02.ui.component.DefaultBottomBar
 import com.capstone.techwasmark02.ui.component.FeatureBox
 import com.capstone.techwasmark02.ui.componentType.BottomBarItemType
 import com.capstone.techwasmark02.ui.componentType.FeatureBoxType
-import com.capstone.techwasmark02.ui.navigation.Screen
+import com.capstone.techwasmark02.ui.navigation.Screen.*
 import com.capstone.techwasmark02.ui.theme.TechwasMark02Theme
 import com.capstone.techwasmark02.ui.theme.yellow
 import kotlin.math.absoluteValue
@@ -58,8 +58,13 @@ fun HomeScreen(
     navController: NavHostController
 ) {
     HomeContent(
-        navigateToCamera = { navController.navigate(Screen.Camera.route) },
-        navigateToMaps = { navController.navigate(Screen.Maps.route) }
+        navigateToCamera = { navController.navigate(Camera.route) },
+        navigateToHome = { navController.navigate(Home.route) },
+        navigateToArticle = { navController.navigate(Article.route) },
+        navigateToForum = { navController.navigate(Forum.route) },
+        navigateToProfile = { navController.navigate(Profile.route) },
+        navigateToCatalog = { navController.navigate(Catalog.route) },
+        navigateToMaps = { navController.navigate(Maps.route) }
     )
 }
 
@@ -67,11 +72,19 @@ fun HomeScreen(
 @Composable
 fun HomeContent(
     navigateToCamera: () -> Unit,
-    navigateToMaps: () -> Unit,
+    navigateToHome: () -> Unit,
+    navigateToForum: () -> Unit,
+    navigateToArticle: () -> Unit,
+    navigateToProfile: () -> Unit,
+    navigateToCatalog: () -> Unit,
+    navigateToMaps: () -> Unit
 ) {
     Scaffold(
     ) { innerPadding ->
         val scrollState = rememberScrollState()
+
+        val titlePaddingBottom = 10.dp
+        val titlePaddingTop = 24.dp
 
         Box(
             modifier = Modifier
@@ -135,8 +148,11 @@ fun HomeContent(
                             )
                         )
                         .background(Color.White)
-                        .padding(bottom = 72.dp)
+                        .padding(bottom = 90.dp)
                 ) {
+
+                    Spacer(modifier = Modifier.height(18.dp))
+
                     Column(
                         Modifier
                             .fillMaxWidth()
@@ -145,14 +161,14 @@ fun HomeContent(
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(vertical = 18.dp)
                         ) {
                             Text(
                                 text = "Features",
-                                style = MaterialTheme.typography.titleLarge,
-                                fontWeight = FontWeight.Bold
+                                style = MaterialTheme.typography.titleMedium,
                             )
                         }
+
+                        Spacer(modifier = Modifier.height(titlePaddingBottom))
 
                         Row(
                             modifier = Modifier
@@ -161,7 +177,7 @@ fun HomeContent(
                             Spacer(modifier = Modifier.weight(1f))
                             FeatureBox(featureBoxType = FeatureBoxType.Detection, onClick = navigateToCamera)
                             Spacer(modifier = Modifier.weight(3f))
-                            FeatureBox(featureBoxType = FeatureBoxType.Catalog, onClick = {})
+                            FeatureBox(featureBoxType = FeatureBoxType.Catalog, onClick = navigateToCatalog)
                             Spacer(modifier = Modifier.weight(1f))
 //                        DetectBox1()
 //                        DetectBox2()
@@ -181,7 +197,7 @@ fun HomeContent(
                             Spacer(modifier = Modifier.weight(1f))
                         }
 
-                        Spacer(modifier = Modifier.height(24.dp))
+                        Spacer(modifier = Modifier.height(titlePaddingTop))
 
                         Row(
                             modifier = Modifier
@@ -190,8 +206,7 @@ fun HomeContent(
                         ) {
                             Text(
                                 text = "Articles",
-                                style = MaterialTheme.typography.titleLarge,
-                                fontWeight = FontWeight.Bold
+                                style = MaterialTheme.typography.titleMedium,
                             )
 
                             Spacer(modifier = Modifier.weight(1f))
@@ -205,23 +220,20 @@ fun HomeContent(
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(10.dp))
+                    Spacer(modifier = Modifier.height(titlePaddingBottom))
 
                     val pagerState = rememberPagerState()
                     HorizontalPager(
                         pageCount = 10,
                         state = pagerState,
-                        contentPadding = PaddingValues(horizontal = 70.dp),
+                        contentPadding = PaddingValues(horizontal = 56.dp),
                         modifier = Modifier.fillMaxWidth()
                     ) { page ->
                         ArticleCardBig(
                             modifier = Modifier
-                                .width(272.dp)
-                                .height(139.dp)
+                                .width(280.dp)
+                                .height(180.dp)
                                 .graphicsLayer {
-                                    // Calculate the absolute offset for the current page from the
-                                    // scroll position. We use the absolute value which allows us to mirror
-                                    // any effects for both directions
                                     val pageOffset = (
                                             (pagerState.currentPage - page) + pagerState
                                                 .currentPageOffsetFraction
@@ -244,7 +256,7 @@ fun HomeContent(
                         )
                     }
 
-                    Spacer(modifier = Modifier.height(24.dp))
+                    Spacer(modifier = Modifier.height(titlePaddingTop))
 
                     Column(
                         modifier = Modifier
@@ -253,14 +265,12 @@ fun HomeContent(
                     ) {
                         Row(
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(bottom = 10.dp),
+                                .fillMaxWidth(),
                             horizontalArrangement = Arrangement.Center
                         ) {
                             Text(
                                 text = "Forums",
-                                style = MaterialTheme.typography.titleLarge,
-                                fontWeight = FontWeight.Bold
+                                style = MaterialTheme.typography.titleMedium,
                             )
 
                             Spacer(modifier = Modifier.weight(1f))
@@ -273,6 +283,8 @@ fun HomeContent(
                             )
                         }
 
+                        Spacer(modifier = Modifier.height(titlePaddingBottom))
+
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth(),
@@ -281,7 +293,7 @@ fun HomeContent(
                             ArticleCardBig(
                                 modifier = Modifier
                                     .width(320.dp)
-                                    .height(161.dp)
+                                    .height(186.dp)
                             )
                         }
                     }
@@ -293,7 +305,13 @@ fun HomeContent(
                     .fillMaxSize()
             ) {
                 Spacer(modifier = Modifier.weight(1f))
-                DefaultBottomBar(selectedType = BottomBarItemType.Home)
+                DefaultBottomBar(
+                    selectedType = BottomBarItemType.Home,
+                    navigateToProfile = navigateToProfile,
+                    navigateToForum = navigateToForum,
+                    navigateToArticle = navigateToArticle,
+                    navigateToHome = navigateToHome
+                )
             }
         }
     }
@@ -305,7 +323,12 @@ fun HomeContentPreview() {
     TechwasMark02Theme {
         HomeContent(
             navigateToCamera = {},
-            navigateToMaps = {},
+            navigateToHome = {},
+            navigateToArticle = {},
+            navigateToForum = {},
+            navigateToProfile = {},
+            navigateToCatalog = {},
+            navigateToMaps = {}
         )
     }
 }

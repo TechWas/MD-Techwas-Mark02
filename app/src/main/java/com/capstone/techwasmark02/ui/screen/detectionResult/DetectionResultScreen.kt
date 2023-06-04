@@ -42,6 +42,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.capstone.techwasmark02.data.remote.response.DetectionsResultResponse
 import com.capstone.techwasmark02.ui.component.ArticleCardBig
 import com.capstone.techwasmark02.ui.component.DefaultButton
 import com.capstone.techwasmark02.ui.component.DefaultTopBar
@@ -51,6 +52,8 @@ import com.capstone.techwasmark02.ui.component.InverseButton
 import com.capstone.techwasmark02.ui.component.UsableComponentBottomSheet
 import com.capstone.techwasmark02.ui.component.UsableComponentItem
 import com.capstone.techwasmark02.ui.theme.TechwasMark02Theme
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import kotlinx.coroutines.launch
 
 
@@ -84,6 +87,13 @@ fun DetectionResultContent(
     }
 
     val photoUri = Uri.parse(stringUri)
+
+    val moshi = Moshi.Builder()
+        .add(KotlinJsonAdapterFactory())
+        .build()
+    val adapter = moshi.adapter(DetectionsResultResponse::class.java)
+
+    val detectionsResultObj = adapter.fromJson(detectionResult)
 
 //    BackHandler(modalSheetState.isVisible) {
 //        coroutineScope.launch { modalSheetState.hide() }
@@ -167,12 +177,13 @@ fun DetectionResultContent(
                             color = MaterialTheme.colorScheme.onPrimary
                         )
 
-                        Text(text = detectionResult, color = Color.White)
-
-                        DetectionsResultBox(
-                            modifier = Modifier
-                                .padding(horizontal = 20.dp)
-                        )
+                        if (detectionsResultObj != null) {
+                            DetectionsResultBox(
+                                modifier = Modifier
+                                    .padding(horizontal = 20.dp),
+                                predictionList = detectionsResultObj.predictions
+                            )
+                        }
 
                     }
                 }
@@ -270,4 +281,3 @@ fun DetectionResultContentPreview() {
         )
     }
 }
-

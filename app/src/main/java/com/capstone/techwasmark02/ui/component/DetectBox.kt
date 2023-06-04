@@ -29,6 +29,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.capstone.techwasmark02.R
@@ -75,7 +76,7 @@ fun FeatureBox(
                 )
             }
 
-            Spacer(modifier = Modifier.height(40.dp))
+            Spacer(modifier = Modifier.weight(1f))
 
             Row(
                 modifier = Modifier
@@ -83,7 +84,7 @@ fun FeatureBox(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
-                    modifier = Modifier.size(33.dp, 25.dp),
+                    modifier = Modifier.size(34.dp),
                     painter = painterResource(id = featureBoxType.icon),
                     contentDescription = null,
                     tint = Color.White
@@ -123,7 +124,7 @@ fun AboutUsBox(modifier: Modifier = Modifier) {
                     .clip(CircleShape)
                     .border(
                         BorderStroke(
-                            width = 2.2.dp,
+                            width = 2.dp,
                             color = Color.Black
                         ),
                         shape = CircleShape
@@ -137,7 +138,9 @@ fun AboutUsBox(modifier: Modifier = Modifier) {
             }
             Text(
                 text = "About Us",
-                style = MaterialTheme.typography.titleMedium
+                style = MaterialTheme.typography.titleMedium.copy(
+                    fontWeight = FontWeight.Medium
+                )
             )
         }
     }
@@ -148,24 +151,24 @@ fun AboutUsBox(modifier: Modifier = Modifier) {
 fun DetectBoxPreview() {
     TechwasMark02Theme {
         Box(modifier = Modifier.padding(20.dp)) {
-           Column(modifier = Modifier.fillMaxWidth()) {
-               FeatureBox(
-                   featureBoxType = FeatureBoxType.Detection,
-                   onClick = {}
-               )
+            Column(modifier = Modifier.fillMaxWidth()) {
+                FeatureBox(
+                    featureBoxType = FeatureBoxType.Detection,
+                    onClick = {}
+                )
 
-               Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(20.dp))
 
-               FeatureBox(featureBoxType = FeatureBoxType.Catalog, onClick = {})
+                FeatureBox(featureBoxType = FeatureBoxType.Catalog, onClick = {})
 
-               Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(20.dp))
 
-               FeatureBox(featureBoxType = FeatureBoxType.DropPoint, onClick = {})
+                FeatureBox(featureBoxType = FeatureBoxType.DropPoint, onClick = {})
 
-               Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(20.dp))
 
-               AboutUsBox()
-           }
+                AboutUsBox()
+            }
         }
     }
 }

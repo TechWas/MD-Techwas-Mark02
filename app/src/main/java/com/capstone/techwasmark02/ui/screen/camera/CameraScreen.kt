@@ -4,7 +4,6 @@ import android.content.Context
 import android.net.Uri
 import android.util.Log
 import android.widget.Toast
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
@@ -17,22 +16,20 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.capstone.techwasmark02.data.remote.response.DetectionResultResponse
+import com.capstone.techwasmark02.R
+import com.capstone.techwasmark02.data.remote.response.DetectionsResultResponse
 import com.capstone.techwasmark02.ui.common.UiState
 import com.capstone.techwasmark02.ui.component.CameraView
-import com.capstone.techwasmark02.R
-import com.capstone.techwasmark02.data.remote.response.Predictions
-import com.capstone.techwasmark02.data.remote.response.ResultComponentType
 import com.capstone.techwasmark02.ui.theme.TechwasMark02Theme
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import java.io.File
 import java.util.concurrent.Executors
-import kotlin.reflect.full.memberProperties
 
 @Composable
 fun CameraScreen(
@@ -57,7 +54,7 @@ fun CameraScreen(
 @Composable
 fun CameraContent(
     photoUri: Uri?,
-    predictImageState: UiState<DetectionResultResponse>?,
+    predictImageState: UiState<DetectionsResultResponse>?,
     updatePhotoUri: (Uri) -> Unit,
     predictImage: (Context) -> Unit,
     navigateToResult: (uri: String, result: String) -> Unit,
@@ -72,6 +69,11 @@ fun CameraContent(
         mutableStateOf(false)
     }
 
+    val moshi = Moshi.Builder()
+        .add(KotlinJsonAdapterFactory())
+        .build()
+    val adapter = moshi.adapter(DetectionsResultResponse::class.java)
+
     LaunchedEffect(key1 = imageIsTaken) {
         if (imageIsTaken) {
             predictImage(context)
@@ -82,19 +84,20 @@ fun CameraContent(
         if (predictImageState != null) {
             when (predictImageState) {
                 is UiState.Success -> {
-//                    val predictResult = predictImageState.data?.predictions?.laptop.toString()
+                    val predictResult = Uri.encode(adapter.toJson(predictImageState.data))
 //                    Toast.makeText(context,"Result: $predictResult", Toast.LENGTH_SHORT).show()
-                    val predictResult = predictImageState.data?.predictions?.let {
-                        getAndSortResult(
-                            it
-                        )
-                    }
+//                    val predictResult = predictImageState.data?.predictions?.let {
+//                        getAndSortResult(
+//                            it
+//                        )
+//                    }
 
                     val stringUri = Uri.encode(photoUri.toString())
                     onSuccessPredictImage()
                     if (predictResult != null) {
                         navigateToResult(stringUri, predictResult)
                     }
+//                    navigateToResult(stringUri, "alo")
                 }
                 is UiState.Error -> {
                     val predictResult = predictImageState.message
@@ -132,12 +135,6 @@ fun CameraContent(
                             .fillMaxSize(),
                         contentAlignment = Alignment.Center
                     ) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .alpha(0.3f)
-                                .background(Color.Black),
-                        ) {}
 
                         CircularProgressIndicator(
                             color = Color.White
@@ -158,30 +155,30 @@ private fun getOutputDirectory(context: Context): File {
     return if (cacheDir != null && cacheDir.exists()) cacheDir else context.filesDir
 }
 
-private fun getAndSortResult(detectionResult: Predictions): String {
-    val resultComponentList = emptyList<ResultComponentType>().toMutableList()
-    for (property in Predictions::class.memberProperties) {
-        if (property.get(detectionResult) != null) {
-            val resultComponentItem = ResultComponentType(
-                name = property.name,
-                percentage = property.get(detectionResult).toString().toDouble()
-            )
-            resultComponentList.add(resultComponentItem)
-        }
-    }
-
-    val sortedResultComponentList = resultComponentList.sortedWith(compareBy({it.percentage})).reversed()
-
-    val stringResultList = emptyList<String>().toMutableList()
-
-    sortedResultComponentList.forEach { componentItem ->
-        val stringResultItem = "${componentItem.name}: ${componentItem.percentage}"
-        stringResultList.add(stringResultItem)
-    }
-
-    return stringResultList.joinToString(separator = ",")
-
-}
+//private fun getAndSortResult(detectionResult: Predictions): String {
+//    val resultComponentList = emptyList<ResultComponentType>().toMutableList()
+//    for (property in Predictions::class.memberProperties) {
+//        if (property.get(detectionResult) != null) {
+//            val resultComponentItem = ResultComponentType(
+//                name = property.name,
+//                percentage = property.get(detectionResult).toString().toDouble()
+//            )
+//            resultComponentList.add(resultComponentItem)
+//        }
+//    }
+//
+//    val sortedResultComponentList = resultComponentList.sortedWith(compareBy({it.percentage})).reversed()
+//
+//    val stringResultList = emptyList<String>().toMutableList()
+//
+//    sortedResultComponentList.forEach { componentItem ->
+//        val stringResultItem = "${componentItem.name}: ${componentItem.percentage}"
+//        stringResultList.add(stringResultItem)
+//    }
+//
+//    return stringResultList.joinToString(separator = ",")
+//
+//}
 
 @Preview(showBackground = true)
 @Composable

@@ -2,6 +2,7 @@ package com.capstone.techwasmark02.ui.screen.article
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -26,11 +27,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import com.capstone.techwasmark02.data.remote.response.ArticleResultResponse
 import com.capstone.techwasmark02.ui.common.UiState
 import com.capstone.techwasmark02.ui.component.ArticleCardSmall
@@ -39,22 +42,32 @@ import com.capstone.techwasmark02.ui.component.SearchBox
 import com.capstone.techwasmark02.ui.component.SelectableText
 import com.capstone.techwasmark02.ui.componentType.ArticleFilterType
 import com.capstone.techwasmark02.ui.componentType.BottomBarItemType
+import com.capstone.techwasmark02.ui.navigation.Screen
 import com.capstone.techwasmark02.ui.theme.TechwasMark02Theme
 
 @Composable
 fun ArticleScreen(
-    viewModel: ArticleScreenViewModel = hiltViewModel()
+    viewModel: ArticleScreenViewModel = hiltViewModel(),
+    navController: NavHostController
 ) {
     val articleList by viewModel.articleList.collectAsState()
 
     ArticleContent(
         articleList = articleList,
+        navigateToHome = { navController.navigate(Screen.Home.route) },
+        navigateToArticle = { navController.navigate(Screen.Article.route) },
+        navigateToForum = { navController.navigate(Screen.Forum.route) },
+        navigateToProfile = { navController.navigate(Screen.Profile.route) }
     )
 }
 
 @Composable
 fun ArticleContent(
-    articleList: UiState<ArticleResultResponse>?
+    articleList: UiState<ArticleResultResponse>?,
+    navigateToHome: () -> Unit,
+    navigateToForum: () -> Unit,
+    navigateToArticle: () -> Unit,
+    navigateToProfile: () -> Unit
 ) {
 
     var inputValue by remember {
@@ -72,94 +85,90 @@ fun ArticleContent(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .verticalScroll(scrollState)
+//            .verticalScroll(scrollState)
             .background(MaterialTheme.colorScheme.background)
     ) {
-        Row(
+
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
+                .fillMaxSize()
                 .padding(horizontal = 16.dp)
                 .padding(top = 20.dp)
         ) {
-            Column(
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(
-                   text = "Articles",
-                    style = MaterialTheme.typography.headlineLarge,
-                    fontWeight = FontWeight.Bold
-                )
+            Text(
+                text = "Articles",
+                style = MaterialTheme.typography.headlineLarge,
+                fontWeight = FontWeight.Bold
+            )
 
-                Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
-                Text(
-                    text = "Lorem ipsum dolor sit amet, consectetur",
-                    style = MaterialTheme.typography.bodyLarge
-                )
+            Text(
+                text = "Lorem ipsum dolor sit amet, consectetur",
+                style = MaterialTheme.typography.bodyLarge
+            )
 
-                Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
-                SearchBox(
-                    value = inputValue,
-                    onValueChange = { newValue ->
-                        inputValue = newValue
-                    }
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                LazyRow(
-                    horizontalArrangement = Arrangement.spacedBy(16.dp),
-                ) {
-                    items(
-                        items = filterTypeList,
-                    ) { item ->
-                        SelectableText(
-                            filterType = item,
-                            selected = true
-                        )
-                    }
+            SearchBox(
+                value = inputValue,
+                onValueChange = { newValue ->
+                    inputValue = newValue
                 }
+            )
 
-                Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
-                if (articleList != null) {
-                    when (articleList) {
-                        is UiState.Loading -> {
+            LazyRow(
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+            ) {
+                items(
+                    items = filterTypeList,
+                ) { item ->
+                    SelectableText(
+                        filterType = item,
+                        selected = true
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            if (articleList != null) {
+                when (articleList) {
+                    is UiState.Loading -> {
+                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                             CircularProgressIndicator()
                         }
-                        is UiState.Error -> {
-                            articleList.message?.let {
-                                Text(text = it)
-                            }
-                        }
-                        is UiState.Success -> {
-                            val componentListArticle = articleList.data?.componentList
-                            if(componentListArticle != null) {
-                                LazyVerticalGrid(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .height(600.dp),
-                                    columns = GridCells.Fixed(2),
-                                    contentPadding = PaddingValues(vertical = 8.dp),
-                                    verticalArrangement = Arrangement.spacedBy(16.dp),
-                                    horizontalArrangement = Arrangement.spacedBy(16.dp),
-                                ) {
-                                    items(componentListArticle) { item ->
-                                        ArticleCardSmall(
-                                            imgUrl = item?.articleImageURL,
-                                            title = item?.name,
-                                            description = item?.desc
-                                        )
-                                    }
-                                }
-                            }
-
+                    }
+                    is UiState.Error -> {
+                        articleList.message?.let {
+                            Text(text = it)
                         }
                     }
+                    is UiState.Success -> {
+                        val componentListArticle = articleList.data?.componentList
+                        if(componentListArticle != null) {
+                            LazyVerticalGrid(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(600.dp),
+                                columns = GridCells.Fixed(2),
+                                contentPadding = PaddingValues(vertical = 8.dp),
+                                verticalArrangement = Arrangement.spacedBy(16.dp),
+                                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                            ) {
+                                items(componentListArticle) { item ->
+                                    ArticleCardSmall(
+                                        imgUrl = item?.articleImageURL,
+                                        title = item?.name,
+                                        description = item?.desc
+                                    )
+                                }
+                            }
+                        }
 
-                } else {
-                   // jika null
+                    }
                 }
             }
         }
@@ -170,7 +179,13 @@ fun ArticleContent(
             .fillMaxSize()
     ) {
         Spacer(modifier = Modifier.weight(1f))
-        DefaultBottomBar(selectedType = BottomBarItemType.Article)
+        DefaultBottomBar(
+            selectedType = BottomBarItemType.Article,
+            navigateToProfile = navigateToProfile,
+            navigateToForum = navigateToForum,
+            navigateToArticle = navigateToArticle,
+            navigateToHome = navigateToHome
+        )
     }
 }
 
@@ -178,6 +193,12 @@ fun ArticleContent(
 @Composable
 fun ArticleScreenPreview() {
     TechwasMark02Theme {
-        ArticleScreen()
+        ArticleContent(
+            articleList = UiState.Loading(),
+            navigateToHome = {},
+            navigateToArticle = {},
+            navigateToForum = {},
+            navigateToProfile = {}
+        )
     }
 }

@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -50,44 +51,43 @@ fun SearchBox(
                 shape = RoundedCornerShape(20.dp)
             )
             .background(Color.White)
-            .clip(RoundedCornerShape(20.dp))
+            .clip(RoundedCornerShape(20.dp)),
+        contentAlignment = Alignment.Center
     ) {
-        Row(
+        TextField(
             modifier = Modifier
-                .fillMaxWidth()
-        ) {
-           TextField(
-               modifier = Modifier
-                   .fillMaxHeight(),
-               value = value,
-               onValueChange = onValueChange,
-               placeholder = {
-                   Text(
-                       text = "Search",
-                       style = MaterialTheme.typography.bodyMedium,
-                       color = Color.Gray
-                   )
-               },
-               singleLine = true,
-               colors = TextFieldDefaults.textFieldColors(
-                   containerColor = Color.White,
-                   textColor = Color.Gray,
-                   cursorColor = MaterialTheme.colorScheme.primary,
-                   focusedIndicatorColor = Color.Transparent,
-                   disabledIndicatorColor = Color.Transparent,
-                   unfocusedIndicatorColor = Color.Transparent
-               )
-           )
-            Spacer(modifier = Modifier.weight(1f))
-            Icon(
-                painter = painterResource(id = R.drawable.ic_search),
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier
-                    .padding(end = 12.dp)
-                    .align(Alignment.CenterVertically)
-            )
-        }
+                .fillMaxHeight()
+                .fillMaxWidth(),
+            value = value,
+            onValueChange = onValueChange,
+            placeholder = {
+                Text(
+                    text = "Search",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Color.Gray
+                )
+            },
+            singleLine = true,
+            colors = TextFieldDefaults.textFieldColors(
+                containerColor = Color.White,
+                textColor = Color.Gray,
+                cursorColor = MaterialTheme.colorScheme.primary,
+                focusedIndicatorColor = Color.Transparent,
+                disabledIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent
+            ),
+            trailingIcon = {
+                IconButton(onClick = { /*TODO*/ }) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_search),
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier
+                            .padding(end = 12.dp)
+                    )
+                }
+            }
+        )
     }
 }
 

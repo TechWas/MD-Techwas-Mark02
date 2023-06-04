@@ -32,6 +32,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import com.capstone.techwasmark02.R
 import com.capstone.techwasmark02.ui.component.ArticleCardBig
@@ -40,17 +41,30 @@ import com.capstone.techwasmark02.ui.component.DefaultTopBar
 import com.capstone.techwasmark02.ui.component.ForumBox
 import com.capstone.techwasmark02.ui.component.ProfileBox
 import com.capstone.techwasmark02.ui.componentType.BottomBarItemType
+import com.capstone.techwasmark02.ui.navigation.Screen
 import com.capstone.techwasmark02.ui.theme.TechwasMark02Theme
 import kotlin.random.Random
 
 @Composable
-fun ProfileUserScreen() {
-    ProfileUserContent()
+fun ProfileUserScreen(
+    navController: NavHostController
+) {
+    ProfileUserContent(
+        navigateToHome = { navController.navigate(Screen.Home.route) },
+        navigateToArticle = { navController.navigate(Screen.Article.route) },
+        navigateToForum = { navController.navigate(Screen.Forum.route) },
+        navigateToProfile = { navController.navigate(Screen.Profile.route) }
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileUserContent() {
+fun ProfileUserContent(
+    navigateToHome: () -> Unit,
+    navigateToForum: () -> Unit,
+    navigateToArticle: () -> Unit,
+    navigateToProfile: () -> Unit
+) {
 
     Scaffold(
         topBar = {
@@ -61,7 +75,11 @@ fun ProfileUserContent() {
         },
         bottomBar = {
             DefaultBottomBar(
-                selectedType = BottomBarItemType.Profile
+                selectedType = BottomBarItemType.Profile,
+                navigateToProfile = navigateToProfile,
+                navigateToForum = navigateToForum,
+                navigateToArticle = navigateToArticle,
+                navigateToHome = navigateToHome
             )
         }
     ) { innerPadding ->
@@ -194,6 +212,11 @@ fun ProfileUserContent() {
 @Composable
 fun ProfileUserScreenPreview() {
     TechwasMark02Theme {
-        ProfileUserScreen()
+        ProfileUserContent(
+            navigateToHome = {},
+            navigateToArticle = {},
+            navigateToForum = {},
+            navigateToProfile = {}
+        )
     }
 }

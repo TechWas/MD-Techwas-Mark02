@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -31,46 +33,54 @@ fun ArticleCardBig(
     modifier: Modifier = Modifier
 ) {
     ElevatedCard(
-        modifier = modifier,
+        modifier = modifier
+            .height(175.dp),
         shape = MaterialTheme.shapes.large,
         elevation = CardDefaults.cardElevation(
             defaultElevation = 6.dp
         )
     ) {
-        Box(
-            modifier = Modifier
-                .height(107.dp)
-        ) {
-            Image(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(107.dp),
-                painter = rememberAsyncImagePainter(
-                    model = "https://picsum.photos/seed/${Random.nextInt()}/320/120",
-                    placeholder = painterResource(id = R.drawable.place_holder),
-                ),
-                contentScale = ContentScale.Crop,
-                contentDescription = null
-            )
-        }
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(68.dp)
+                .fillMaxHeight()
                 .background(MaterialTheme.colorScheme.tertiary)
-                .padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.Center
         ) {
-            Text(
-                text = "Do not throw electronic waste carelessly",
-                style = MaterialTheme.typography.titleSmall,
-                maxLines = 1
-            )
-            Text(
-                text = "Lorem ipsum dolor sit amet, consectetur...",
-                style = MaterialTheme.typography.bodySmall,
-                maxLines = 1
-            )
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+            ) {
+                Image(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    painter = rememberAsyncImagePainter(
+                        model = "https://picsum.photos/seed/${Random.nextInt()}/320/120",
+                        placeholder = painterResource(id = R.drawable.place_holder),
+                    ),
+                    contentScale = ContentScale.Crop,
+                    contentDescription = null
+                )
+            }
+
+            Column(
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .height(64.dp),
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = "Do not throw electronic waste carelessly",
+                    style = MaterialTheme.typography.titleSmall,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Text(
+                    text = "Lorem ipsum dolor sit amet, consectetur...",
+                    style = MaterialTheme.typography.bodySmall,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
         }
     }
 }

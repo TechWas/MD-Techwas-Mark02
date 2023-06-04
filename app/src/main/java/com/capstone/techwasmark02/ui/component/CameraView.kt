@@ -28,6 +28,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -114,11 +115,19 @@ fun CameraView(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.primary)
+                    .padding(top = 16.dp)
             ) {
+                Box(modifier = Modifier
+                    .fillMaxSize()
+                    .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
+                    .background(Color.White)
+                )
+
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(horizontal = 8.dp, vertical = 16.dp)
+                        .padding(horizontal = 8.dp, vertical = 8.dp)
                         .clip(RoundedCornerShape(20.dp))
                         .background(Color.LightGray),
                     contentAlignment = Alignment.BottomCenter,
@@ -249,7 +258,15 @@ fun CameraViewPreview() {
         Box(
             modifier = Modifier
                 .fillMaxSize()
+                .background(MaterialTheme.colorScheme.primary)
         ) {
+
+            Box(modifier = Modifier
+                .fillMaxSize()
+                .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
+                .background(Color.White)
+            )
+
             Box(
                 modifier = Modifier
                     .fillMaxSize()
