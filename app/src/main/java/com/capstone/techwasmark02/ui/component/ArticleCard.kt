@@ -1,11 +1,11 @@
 package com.capstone.techwasmark02.ui.component
 
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -16,11 +16,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clipToBounds
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
@@ -77,6 +75,65 @@ fun ArticleCardBig(
     }
 }
 
+@Composable
+fun ArticleCardSmall(
+    modifier: Modifier = Modifier,
+    imgUrl: String?,
+    title: String?,
+    description: String?,
+) {
+    ElevatedCard(
+        modifier = modifier,
+        shape = MaterialTheme.shapes.large,
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 6.dp
+        )
+    ) {
+        Box(
+            modifier = Modifier
+                .height(107.dp)
+        ) {
+            Image(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(107.dp),
+                painter = rememberAsyncImagePainter(
+//                    model = "https://picsum.photos/seed/${Random.nextInt()}/320/120",
+                    model = imgUrl,
+                    placeholder = painterResource(id = R.drawable.place_holder),
+                ),
+                contentScale = ContentScale.Crop,
+                contentDescription = null
+            )
+        }
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(68.dp)
+                .background(MaterialTheme.colorScheme.tertiary)
+                .padding(horizontal = 16.dp),
+            verticalArrangement = Arrangement.Center
+        ) {
+            if (title != null) {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.titleSmall,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+            if (description != null) {
+                Text(
+                    text = description,
+                    style = MaterialTheme.typography.bodySmall,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+        }
+    }
+}
+
 @Preview(showBackground = true)
 @Composable
 fun ArticleCardPreview() {
@@ -87,7 +144,16 @@ fun ArticleCardPreview() {
                 .background(MaterialTheme.colorScheme.background)
                 .padding(20.dp)
         ) {
-            ArticleCardBig(modifier = Modifier.width(240.dp))
+            Column {
+                ArticleCardBig(modifier = Modifier.width(240.dp))
+                Spacer(modifier = Modifier.height(20.dp))
+                ArticleCardSmall(
+                    modifier = Modifier.width(150.dp),
+                    imgUrl = "",
+                    title = "judul satu",
+                    description = "deskripsi ajah"
+                )
+            }
         }
     }
 }

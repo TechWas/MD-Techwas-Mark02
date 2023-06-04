@@ -2,41 +2,55 @@ package com.capstone.techwasmark02.ui.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.capstone.techwasmark02.ui.componentType.ArticleFilterType
 import com.capstone.techwasmark02.ui.theme.Black20
 import com.capstone.techwasmark02.ui.theme.TechwasMark02Theme
 
 @Composable
 fun SelectableText(
-    text: String,
-    selected: Boolean,
     modifier: Modifier = Modifier,
-    activeColor: Color = MaterialTheme.colorScheme.primary,
-    inactiveColor: Color = Color.Transparent
+    filterType: ArticleFilterType,
+    selected: Boolean
 ) {
-    Box(
-        modifier = modifier
-            .background(
-                color = if (selected) activeColor else inactiveColor,
-                shape = RoundedCornerShape(15.dp)
-            )
-            .padding(8.dp),
-        contentAlignment = Alignment.Center
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
-            text = text,
-            style = MaterialTheme.typography.bodyMedium,
-            color = if (selected) Color.White else Black20
-        )
+       if(selected) {
+           Text(
+               text = filterType.type,
+               color = Color.White,
+               style = MaterialTheme.typography.bodySmall,
+               modifier = Modifier
+                   .clip(RoundedCornerShape(15.dp))
+                   .background(MaterialTheme.colorScheme.primary)
+                   .padding(horizontal = 11.dp, vertical = 6.dp)
+           )
+       } else {
+           Text(
+               text = filterType.type,
+               color = MaterialTheme.colorScheme.onBackground,
+               style = MaterialTheme.typography.bodySmall
+           )
+       }
     }
 }
 
@@ -46,7 +60,7 @@ fun SelectableTextPreview() {
     TechwasMark02Theme {
         Box(modifier = Modifier.padding(20.dp)){
             SelectableText(
-                text = "Click me",
+                filterType = ArticleFilterType.General,
                 selected = true
             )
         }

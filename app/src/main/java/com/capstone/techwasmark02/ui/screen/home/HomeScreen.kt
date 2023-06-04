@@ -58,14 +58,16 @@ fun HomeScreen(
     navController: NavHostController
 ) {
     HomeContent(
-        navigateToCamera = { navController.navigate(Screen.Camera.route) }
+        navigateToCamera = { navController.navigate(Screen.Camera.route) },
+        navigateToMaps = { navController.navigate(Screen.Maps.route) }
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun HomeContent(
-    navigateToCamera: () -> Unit
+    navigateToCamera: () -> Unit,
+    navigateToMaps: () -> Unit,
 ) {
     Scaffold(
     ) { innerPadding ->
@@ -173,7 +175,7 @@ fun HomeContent(
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Spacer(modifier = Modifier.weight(1f))
-                            FeatureBox(featureBoxType = FeatureBoxType.DropPoint, onClick = {})
+                            FeatureBox(featureBoxType = FeatureBoxType.DropPoint, onClick = navigateToMaps)
                             Spacer(modifier = Modifier.weight(3f))
                             AboutUsBox()
                             Spacer(modifier = Modifier.weight(1f))
@@ -302,7 +304,8 @@ fun HomeContent(
 fun HomeContentPreview() {
     TechwasMark02Theme {
         HomeContent(
-            navigateToCamera = {}
+            navigateToCamera = {},
+            navigateToMaps = {},
         )
     }
 }

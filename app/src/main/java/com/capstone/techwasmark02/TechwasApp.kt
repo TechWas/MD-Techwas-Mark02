@@ -14,6 +14,7 @@ import com.capstone.techwasmark02.ui.navigation.Screen.*
 import com.capstone.techwasmark02.ui.screen.camera.CameraScreen
 import com.capstone.techwasmark02.ui.screen.detectionResult.DetectionResultScreen
 import com.capstone.techwasmark02.ui.screen.home.HomeScreen
+import com.capstone.techwasmark02.ui.screen.maps.MapsScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -55,6 +56,10 @@ fun TechwasApp() {
                     DetectionResultScreen(stringUri = uri, detectionResult = result)
                 }
 
+            }
+
+            composable(Maps.route) {
+                MapsScreen(navController = navController)
             }
         }
     }
