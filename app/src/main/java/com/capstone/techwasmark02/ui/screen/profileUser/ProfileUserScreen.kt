@@ -175,6 +175,7 @@ fun ProfileUserContent(
                         count = 10,
                     ) { item ->
                         ArticleCardSmall(
+                            modifier = Modifier.width(150.dp),
                             imgUrl = "https://picsum.photos/seed/${Random.nextInt()}/320/120",
                             title = "Title Article $item",
                             description = "description article $item"
