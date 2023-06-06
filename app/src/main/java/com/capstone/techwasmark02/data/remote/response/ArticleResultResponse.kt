@@ -3,7 +3,7 @@ package com.capstone.techwasmark02.data.remote.response
 import com.google.gson.annotations.SerializedName
 
 data class ArticleResultResponse(
-	val componentList: List<ArticleList?>,
+	val articleList: List<ArticleList?>,
 	val error: String?,
 	val message: String?,
 )
