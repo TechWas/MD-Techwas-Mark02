@@ -19,6 +19,7 @@ import com.capstone.techwasmark02.ui.screen.detectionResult.DetectionResultScree
 import com.capstone.techwasmark02.ui.screen.home.HomeScreen
 import com.capstone.techwasmark02.ui.screen.maps.MapsScreen
 import com.capstone.techwasmark02.ui.screen.profileUser.ProfileUserScreen
+import com.capstone.techwasmark02.ui.screen.singleArticle.SingleArticleScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -38,6 +39,22 @@ fun TechwasApp() {
 
             composable(Article.route) {
                 ArticleScreen(navController = navController)
+            }
+
+            composable(
+                route = SingleArticle.route + "/{idArticle}",
+                arguments = listOf(
+                    navArgument("idArticle") {
+                        type = NavType.IntType
+                        defaultValue = 1
+                    }
+                )
+            ) { navBackStackEntry ->
+                val idArticle = navBackStackEntry.arguments?.getInt("idArticle")
+
+                if(idArticle != null) {
+                    SingleArticleScreen(idArticle = idArticle)
+                }
             }
 
             composable(Forum.route) {
