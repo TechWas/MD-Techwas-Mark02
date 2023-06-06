@@ -36,6 +36,7 @@ import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import com.capstone.techwasmark02.R
 import com.capstone.techwasmark02.ui.component.ArticleCardBig
+import com.capstone.techwasmark02.ui.component.ArticleCardSmall
 import com.capstone.techwasmark02.ui.component.DefaultBottomBar
 import com.capstone.techwasmark02.ui.component.DefaultTopBar
 import com.capstone.techwasmark02.ui.component.ForumBox
@@ -173,9 +174,10 @@ fun ProfileUserContent(
                     items(
                         count = 10,
                     ) { item ->
-                        ArticleCardBig(
-                            modifier = Modifier
-                                .width(150.dp)
+                        ArticleCardSmall(
+                            imgUrl = "https://picsum.photos/seed/${Random.nextInt()}/320/120",
+                            title = "Title Article $item",
+                            description = "description article $item"
                         )
                     }
                 }
@@ -194,13 +196,12 @@ fun ProfileUserContent(
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .fillMaxHeight(),
-                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                        .padding(horizontal = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(10.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     items(count = 5) {
-                        ForumBox(modifier = Modifier
-                            .padding(horizontal = 16.dp)
-                        )
+                        ForumBox(modifier = Modifier.fillMaxWidth())
                     }
                 }
             }

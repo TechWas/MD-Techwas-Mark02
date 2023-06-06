@@ -102,6 +102,7 @@ fun ArticleCardSmall(
         Box(
             modifier = Modifier
                 .height(107.dp)
+                .fillMaxWidth()
         ) {
             Image(
                 modifier = Modifier
