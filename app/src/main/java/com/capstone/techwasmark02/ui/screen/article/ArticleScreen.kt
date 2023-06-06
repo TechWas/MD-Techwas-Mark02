@@ -1,16 +1,19 @@
 package com.capstone.techwasmark02.ui.screen.article
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -53,7 +56,9 @@ fun ArticleScreen(
     val articleList by viewModel.articleList.collectAsState()
 
     ArticleContent(
+        viewModel = viewModel,
         articleList = articleList,
+        navigateToSingleArticle = { navController.navigate("${Screen.SingleArticle.route}/$it") },
         navigateToHome = { navController.navigate(Screen.Home.route) },
         navigateToArticle = { navController.navigate(Screen.Article.route) },
         navigateToForum = { navController.navigate(Screen.Forum.route) },
@@ -63,7 +68,9 @@ fun ArticleScreen(
 
 @Composable
 fun ArticleContent(
+    viewModel: ArticleScreenViewModel,
     articleList: UiState<ArticleResultResponse>?,
+    navigateToSingleArticle: (idArticle: Int) -> Unit,
     navigateToHome: () -> Unit,
     navigateToForum: () -> Unit,
     navigateToArticle: () -> Unit,
@@ -80,12 +87,13 @@ fun ArticleContent(
         ArticleFilterType.Laptop
     )
 
-    val scrollState = rememberScrollState()
+    var selectedFilter by remember {
+        mutableStateOf(filterTypeList.firstOrNull())
+    }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-//            .verticalScroll(scrollState)
             .background(MaterialTheme.colorScheme.background)
     ) {
 
@@ -114,20 +122,30 @@ fun ArticleContent(
                 value = inputValue,
                 onValueChange = { newValue ->
                     inputValue = newValue
-                }
+                    if(inputValue.isEmpty()) {
+                        viewModel.getAllFilterArticle(selectedFilter?.id ?: 0)
+                    } else {
+                        viewModel.getArticleByName(inputValue, selectedFilter ?: ArticleFilterType.General)
+                    }
+                },
             )
 
             Spacer(modifier = Modifier.height(16.dp))
 
             LazyRow(
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 items(
                     items = filterTypeList,
                 ) { item ->
                     SelectableText(
                         filterType = item,
-                        selected = true
+                        selected = item == selectedFilter,
+                        modifier = Modifier.clickable(enabled = item != selectedFilter) {
+                            selectedFilter = item
+                            viewModel.getAllFilterArticle(item.id)
+                        }
                     )
                 }
             }
@@ -152,7 +170,8 @@ fun ArticleContent(
                             LazyVerticalGrid(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .height(600.dp),
+                                    .fillMaxHeight()
+                                    .padding(bottom = 20.dp),
                                 columns = GridCells.Fixed(2),
                                 contentPadding = PaddingValues(vertical = 8.dp),
                                 verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -160,9 +179,14 @@ fun ArticleContent(
                             ) {
                                 items(componentListArticle) { item ->
                                     ArticleCardSmall(
+                                        modifier = Modifier
+                                            .width(150.dp)
+                                            .clickable {
+                                                item?.id?.let { navigateToSingleArticle(it) }
+                                            },
                                         imgUrl = item?.articleImageURL,
                                         title = item?.name,
-                                        description = item?.desc
+                                        description = item?.desc,
                                     )
                                 }
                             }
@@ -193,12 +217,12 @@ fun ArticleContent(
 @Composable
 fun ArticleScreenPreview() {
     TechwasMark02Theme {
-        ArticleContent(
-            articleList = UiState.Loading(),
-            navigateToHome = {},
-            navigateToArticle = {},
-            navigateToForum = {},
-            navigateToProfile = {}
-        )
+//        ArticleContent(
+//            articleList = UiState.Loading(),
+//            navigateToHome = {},
+//            navigateToArticle = {},
+//            navigateToForum = {},
+//            navigateToProfile = {}
+//        )
     }
 }
