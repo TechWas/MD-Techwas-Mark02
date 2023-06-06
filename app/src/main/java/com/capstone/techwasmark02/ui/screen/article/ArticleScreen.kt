@@ -84,7 +84,20 @@ fun ArticleContent(
     val filterTypeList = listOf(
         ArticleFilterType.General,
         ArticleFilterType.Battery,
-        ArticleFilterType.Laptop
+        ArticleFilterType.Cable,
+        ArticleFilterType.CrtTv,
+        ArticleFilterType.EKettle,
+        ArticleFilterType.Refrigerator,
+        ArticleFilterType.Keyboard,
+        ArticleFilterType.Laptop,
+        ArticleFilterType.LightBulb,
+        ArticleFilterType.Monitor,
+        ArticleFilterType.Mouse,
+        ArticleFilterType.PCB,
+        ArticleFilterType.Printer,
+        ArticleFilterType.RiceCooker,
+        ArticleFilterType.WashingMachine,
+        ArticleFilterType.Phone
     )
 
     var selectedFilter by remember {
@@ -165,8 +178,8 @@ fun ArticleContent(
                         }
                     }
                     is UiState.Success -> {
-                        val componentListArticle = articleList.data?.componentList
-                        if(componentListArticle != null) {
+                        val componentListArticle = articleList.data?.articleList
+                        if(!componentListArticle.isNullOrEmpty()) {
                             LazyVerticalGrid(
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -189,6 +202,16 @@ fun ArticleContent(
                                         description = item?.desc,
                                     )
                                 }
+                            }
+                        } else {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .align(Alignment.CenterHorizontally)
+                            ) {
+                                Text(
+                                    text = "Cari apa tuh kira-kira"
+                                )
                             }
                         }
 
