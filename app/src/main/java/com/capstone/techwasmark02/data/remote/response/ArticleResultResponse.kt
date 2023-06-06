@@ -3,12 +3,12 @@ package com.capstone.techwasmark02.data.remote.response
 import com.google.gson.annotations.SerializedName
 
 data class ArticleResultResponse(
-	val componentList: List<ComponentListItem?>,
+	val componentList: List<ArticleList?>,
 	val error: String?,
 	val message: String?,
 )
 
-data class ComponentListItem(
+data class ArticleList(
 	@SerializedName("componentId")
 	val componentId: Int?,
 	@SerializedName("articleImageURL")
