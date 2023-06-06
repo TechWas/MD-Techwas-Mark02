@@ -35,4 +35,13 @@ class TechwasArticleRepository @Inject constructor(
         }
         return UiState.Success(data = response, message = "Success to fetch article")
     }
+
+    suspend fun getArticleByComponentId(userToken: String, id: Int): UiState<ArticleResultResponse> {
+        val response = try {
+            articleApi.getArticleByComponentId(token = userToken, compid = id)
+        } catch (e: Exception) {
+            return UiState.Error(message = "fail to fetch article, ${e.message}")
+        }
+        return UiState.Success(data = response, message = "Success to fetch article")
+    }
 }
