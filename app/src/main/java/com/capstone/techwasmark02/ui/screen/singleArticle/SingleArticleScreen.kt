@@ -24,6 +24,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -35,22 +38,48 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.capstone.techwasmark02.R
+import com.capstone.techwasmark02.data.remote.response.ArticleResultResponse
+import com.capstone.techwasmark02.data.remote.response.SingleArticleResponse
+import com.capstone.techwasmark02.ui.common.UiState
 import com.capstone.techwasmark02.ui.component.DefaultButton
 import com.capstone.techwasmark02.ui.component.TransparentTopBar
 import com.capstone.techwasmark02.ui.theme.Mist97
 import com.capstone.techwasmark02.ui.theme.TechwasMark02Theme
+import kotlinx.coroutines.launch
 import kotlin.random.Random
 
 @Composable
-fun SingleArticleScreen() {
-    SingleArticleContent()
+fun SingleArticleScreen(
+    idArticle: Int,
+    viewModel: SingleArticleScreenViewModel = hiltViewModel(),
+) {
+
+    LaunchedEffect(Unit) {
+        viewModel.viewModelScope.launch {
+            viewModel.getArticleById(idArticle)
+        }
+    }
+
+    val articleResult by viewModel.articleResult.collectAsState()
+
+    SingleArticleContent(
+        articleResult = articleResult,
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SingleArticleContent() {
+fun SingleArticleContent(
+    articleResult: UiState<SingleArticleResponse>?,
+) {
+
+    val result = articleResult?.data?.article
+
     Scaffold { innerPadding ->
         val scrollState = rememberScrollState()
 
@@ -91,7 +120,7 @@ fun SingleArticleContent() {
                             Image(
                                 modifier = Modifier.matchParentSize(),
                                 painter = rememberAsyncImagePainter(
-                                    model = "https://picsum.photos/seed/${Random.nextInt()}/320/300",
+                                    model = result?.get(0)?.articleImageURL,
                                     placeholder = painterResource(id = R.drawable.place_holder),
                                 ),
                                 contentScale = ContentScale.Crop,
@@ -103,17 +132,21 @@ fun SingleArticleContent() {
                             .padding(bottom = 10.dp, top = 10.dp)
                             .padding(horizontal = 16.dp)
                         ) {
+                            result?.get(0)?.componentName?.let {
+                                Text(
+                                    text = it,
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
+                            }
+                            result?.get(0)?.name?.let {
+                                Text(
+                                    text = it,
+                                    style = MaterialTheme.typography.titleLarge,
+                                    fontWeight = FontWeight.Bold,
+                                )
+                            }
                             Text(
-                                text = "Battery",
-                                style = MaterialTheme.typography.bodyMedium
-                            )
-                            Text(
-                                text = "What you can do with used batteries.",
-                                style = MaterialTheme.typography.titleLarge,
-                                fontWeight = FontWeight.Bold,
-                            )
-                            Text(
-                                text = "Sumber: detik.com",
+                                text = result?.get(0)?.id.toString(),
                                 style = MaterialTheme.typography.bodyMedium
                             )
                         }
@@ -151,19 +184,11 @@ fun SingleArticleContent() {
                         .padding(bottom = 20.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text(
-                        text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. " +
-                                "Vivamus nec feugiat quam, eu accumsan sapien. Integer " +
-                                "auctor mauris sit amet fringilla commodo. Proin lorem " +
-                                "lorem, sollicitudin sed volutpat a, pellentesque et odio. " +
-                                "Suspendisse vitae libero et sem luctus hendrerit. Maecenas ut " +
-                                "magna a odio laoreet tincidunt." + "Lorem ipsum dolor sit amet, consectetur adipiscing elit. " +
-                                "Vivamus nec feugiat quam, eu accumsan sapien. Integer " +
-                                "auctor mauris sit amet fringilla commodo. Proin lorem " +
-                                "lorem, sollicitudin sed volutpat a, pellentesque et odio. " +
-                                "Suspendisse vitae libero et sem luctus hendrerit. Maecenas ut " +
-                                "magna a odio laoreet tincidunt.",
-                    )
+                    result?.get(0)?.description?.let {
+                        Text(
+                            text = it,
+                        )
+                    }
 
                     Spacer(modifier = Modifier.height(36.dp))
 
@@ -199,6 +224,8 @@ fun SingleArticleContent() {
 @Composable
 fun SingleArticleScreenPreview() {
     TechwasMark02Theme {
-        SingleArticleScreen()
+        SingleArticleContent(
+            articleResult = UiState.Loading(),
+        )
     }
 }
