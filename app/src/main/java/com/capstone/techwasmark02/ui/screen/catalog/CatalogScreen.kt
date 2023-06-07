@@ -19,6 +19,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -41,17 +44,22 @@ fun CatalogScreen(
     navController: NavHostController
 ) {
     val componentsState by viewModel.componentState.collectAsState()
+    val searchBoxValue by viewModel.searchBoxValue.collectAsState()
 
     CatalogContent(
         componentsState = componentsState,
-        navigateToSingleComponent = { navController.navigate("${Screen.SingleCatalog.route}/$it") }
+        navigateToSingleComponent = { navController.navigate("${Screen.SingleCatalog.route}/$it") },
+        searchBoxValue = searchBoxValue,
+        onSearchBoxValueChange = { viewModel.updateSearchBoxValue(it) }
     )
 }
 
 @Composable
 fun CatalogContent(
     componentsState: UiState<ComponentsResponse>?,
-    navigateToSingleComponent: (component: String) -> Unit
+    navigateToSingleComponent: (component: String) -> Unit,
+    searchBoxValue: String,
+    onSearchBoxValueChange: (String) -> Unit
 ) {
     val moshi = Moshi.Builder()
         .add(KotlinJsonAdapterFactory())
@@ -76,7 +84,7 @@ fun CatalogContent(
 
         Spacer(modifier = Modifier.height(10.dp))
 
-        SearchBox(onValueChange = {}, value = "")
+        SearchBox(onValueChange = onSearchBoxValueChange, value = searchBoxValue)
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -85,24 +93,37 @@ fun CatalogContent(
                 is UiState.Success -> {
                     val components = componentsState.data?.components
 
+                    var filteredComponents by remember {
+                        mutableStateOf(components)
+                    }
+
+                    LaunchedEffect(key1 = searchBoxValue) {
+                        if (components != null) {
+                            filteredComponents = searchComponent(
+                                componentList = components,
+                                searchBoxValue = searchBoxValue
+                            )
+                        }
+                    }
+
                     LazyColumn(
                         modifier = Modifier
                             .fillMaxSize(),
                         contentPadding = PaddingValues(bottom = 20.dp),
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        components?.size?.let {
+                        filteredComponents?.size?.let {
                             items(
                                 count = it,
                             ) {index ->
                                 CatalogCard(
-                                    component = components[index],
+                                    component = filteredComponents!![index],
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .clickable {
-                                            val componentJson = Uri.encode(adapter.toJson(components[index]))
-
-                                                   navigateToSingleComponent(componentJson)
+                                            val componentJson =
+                                                Uri.encode(adapter.toJson(filteredComponents!![index]))
+                                            navigateToSingleComponent(componentJson)
                                         },
                                 )
                             }
@@ -126,57 +147,24 @@ fun CatalogContent(
     }
 }
 
+private fun searchComponent(componentList: List<Component>, searchBoxValue: String) : List<Component> {
+    if (searchBoxValue == "") {
+        return componentList
+    }
+    return componentList.filter { component ->
+        component.name.contains(searchBoxValue, ignoreCase = true)
+    }
+}
+
 @Preview (showBackground = true)
 @Composable
 fun CatalogScreenPreview() {
     TechwasMark02Theme {
         CatalogContent(
             componentsState = UiState.Loading(),
-            navigateToSingleComponent = {}
-//            components = listOf(
-//                Component(
-//                    desc = "A small portable personal computer that not very reliable and not very versatile.",
-//                    id = 1,
-//                    name = "Laptop",
-//                    imageExample = "https://picsum.photos/seed/${Random.nextInt()}/320/120"
-//                ),
-//                Component(
-//                    desc = "A small portable personal computer that not very reliable and not very versatile.",
-//                    id = 1,
-//                    name = "Laptop",
-//                    imageExample = "https://picsum.photos/seed/${Random.nextInt()}/320/120"
-//                ),
-//                Component(
-//                    desc = "A small portable personal computer that not very reliable and not very versatile.",
-//                    id = 1,
-//                    name = "Laptop",
-//                    imageExample = "https://picsum.photos/seed/${Random.nextInt()}/320/120"
-//                ),
-//                Component(
-//                    desc = "A small portable personal computer that not very reliable and not very versatile.",
-//                    id = 1,
-//                    name = "Laptop",
-//                    imageExample = "https://picsum.photos/seed/${Random.nextInt()}/320/120"
-//                ),
-//                Component(
-//                    desc = "A small portable personal computer that not very reliable and not very versatile.",
-//                    id = 1,
-//                    name = "Laptop",
-//                    imageExample = "https://picsum.photos/seed/${Random.nextInt()}/320/120"
-//                ),
-//                Component(
-//                    desc = "A small portable personal computer that not very reliable and not very versatile.",
-//                    id = 1,
-//                    name = "Laptop",
-//                    imageExample = "https://picsum.photos/seed/${Random.nextInt()}/320/120"
-//                ),
-//                Component(
-//                    desc = "A small portable personal computer that not very reliable and not very versatile.",
-//                    id = 1,
-//                    name = "Laptop",
-//                    imageExample = "https://picsum.photos/seed/${Random.nextInt()}/320/120"
-//                )
-//            )
+            navigateToSingleComponent = {},
+            searchBoxValue = "",
+            onSearchBoxValueChange = {}
         )
     }
 }

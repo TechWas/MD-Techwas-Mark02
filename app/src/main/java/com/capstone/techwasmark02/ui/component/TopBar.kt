@@ -34,7 +34,7 @@ fun InverseTopBar(onClickNavigationIcon: () -> Unit, modifier: Modifier = Modifi
                     painter = painterResource(id = R.drawable.ic_arrow_back),
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(32.dp)
+                    modifier = Modifier.size(24.dp)
                 )
             }
         },
@@ -59,21 +59,21 @@ fun DefaultTopBar(pageTitle: String = "", onClickNavigationIcon: () -> Unit, mod
                     painter = painterResource(id = R.drawable.ic_arrow_back),
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.onPrimary,
-                    modifier = Modifier.size(32.dp)
+                    modifier = Modifier.size(24.dp)
                 )
             }
         },
         title = {},
         actions = {
-                  Text(
-                      text = pageTitle,
-                      color = MaterialTheme.colorScheme.onPrimary,
-                      style = MaterialTheme.typography.labelLarge.copy(
-                          fontWeight = FontWeight.Normal
-                      ),
-                      modifier = Modifier
-                          .padding(end = 20.dp)
-                  )
+            Text(
+                text = pageTitle,
+                color = MaterialTheme.colorScheme.onPrimary,
+                style = MaterialTheme.typography.labelLarge.copy(
+                    fontWeight = FontWeight.Normal
+                ),
+                modifier = Modifier
+                    .padding(end = 20.dp)
+            )
         },
         colors = TopAppBarDefaults.smallTopAppBarColors(
             containerColor = MaterialTheme.colorScheme.primary,
@@ -94,7 +94,7 @@ fun TransparentTopBar(pageTitle: String = "", onClickNavigationIcon: () -> Unit,
                     painter = painterResource(id = R.drawable.ic_arrow_back),
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.onPrimary,
-                    modifier = Modifier.size(32.dp)
+                    modifier = Modifier.size(24.dp)
                 )
             }
         },

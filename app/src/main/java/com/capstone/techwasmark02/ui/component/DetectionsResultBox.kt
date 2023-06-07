@@ -24,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
@@ -42,16 +43,26 @@ import kotlin.math.absoluteValue
 @Composable
 fun DetectionsResultBox(
     modifier: Modifier = Modifier,
-    predictionList: List<Prediction>
+    predictionList: List<Prediction>,
+    updateSelectedPrediction: (Int) -> Unit
 ) {
     val pagerState = rememberPagerState()
     val coroutineScope = rememberCoroutineScope()
+
+    LaunchedEffect(pagerState) {
+        snapshotFlow { pagerState.currentPage }.collect { page ->
+            updateSelectedPrediction(page)
+        }
+    }
 
     Box(
         modifier = modifier
             .fillMaxWidth()
             .height(120.dp)
-            .clip(MaterialTheme.shapes.large)
+            .shadow(
+                elevation = 6.dp,
+                shape = MaterialTheme.shapes.large
+            )
             .background(MaterialTheme.colorScheme.tertiary)
             .padding(horizontal = 24.dp),
         contentAlignment = Alignment.Center
@@ -227,7 +238,8 @@ fun DetectionsResultBoxPreview() {
                 .padding(20.dp)
         ) {
             DetectionsResultBox(
-                predictionList = dummyDetectionResultList
+                predictionList = dummyDetectionResultList,
+                updateSelectedPrediction = {}
             )
         }
     }

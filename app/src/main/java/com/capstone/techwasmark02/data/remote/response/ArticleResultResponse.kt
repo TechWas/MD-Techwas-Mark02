@@ -8,6 +8,12 @@ data class ArticleResultResponse(
 	val message: String?,
 )
 
+data class AllArticleResultResponse(
+	val componentList: List<ArticleList?>,
+	val error: String?,
+	val message: String?,
+)
+
 data class ArticleList(
 	@SerializedName("componentId")
 	val componentId: Int?,

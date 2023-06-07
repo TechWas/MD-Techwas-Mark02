@@ -12,3 +12,17 @@ data class ComponentList(
     val id: Int,
     val name: String
 )
+
+data class UsableComponentsResponse(
+    val error: String,
+    val message: String,
+    val smallParts: List<SmallPart>
+)
+
+data class SmallPart(
+    val compID: Int,
+    val description: String,
+    val id: Int,
+    val imageURL: String,
+    val name: String
+)

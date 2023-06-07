@@ -7,12 +7,15 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.Text
@@ -91,33 +94,37 @@ fun BottomBarItem(
     selectedType: BottomBarItemType,
     onClick: () -> Unit
 ) {
-    Column(
+    IconButton(
+        onClick = onClick,
         modifier = modifier
-            .width(44.dp)
-            .height(44.dp)
-            .clickable { onClick() },
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.SpaceBetween
+            .size(44.dp)
     ) {
-        Icon(
-            painter = painterResource(id = bottomBarItemType.icon),
-            contentDescription = null,
-            tint = if (selectedType == bottomBarItemType) {
-                MaterialTheme.colorScheme.primary
-            } else {
-                MaterialTheme.colorScheme.inverseOnSurface
-            }
+        Column(
+            modifier = Modifier
+                .fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
+            Icon(
+                painter = painterResource(id = bottomBarItemType.icon),
+                contentDescription = null,
+                tint = if (selectedType == bottomBarItemType) {
+                    MaterialTheme.colorScheme.primary
+                } else {
+                    MaterialTheme.colorScheme.inverseOnSurface
+                }
 
-        )
-        Text(
-            text = bottomBarItemType.title,
-            style = MaterialTheme.typography.labelSmall,
-            color = if (selectedType == bottomBarItemType) {
-                MaterialTheme.colorScheme.primary
-            } else {
-                MaterialTheme.colorScheme.inverseOnSurface
-            }
-        )
+            )
+            Text(
+                text = bottomBarItemType.title,
+                style = MaterialTheme.typography.labelSmall,
+                color = if (selectedType == bottomBarItemType) {
+                    MaterialTheme.colorScheme.primary
+                } else {
+                    MaterialTheme.colorScheme.inverseOnSurface
+                }
+            )
+        }
     }
 }
 

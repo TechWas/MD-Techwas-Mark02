@@ -17,13 +17,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import com.capstone.techwasmark02.R
+import com.capstone.techwasmark02.data.remote.response.SmallPart
 import com.capstone.techwasmark02.ui.theme.TechwasMark02Theme
 import java.io.File
 import kotlin.random.Random
@@ -31,26 +35,24 @@ import kotlin.random.Random
 @Composable
 fun UsableComponentItem(
     modifier: Modifier = Modifier,
-    file: File? = null,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    usableComponent: SmallPart
 ) {
     Row(
         modifier = modifier
-            .width(155.dp)
+            .width(152.dp)
             .height(60.dp)
-            .clip(MaterialTheme.shapes.large)
+            .shadow(
+                elevation = 6.dp,
+                shape = MaterialTheme.shapes.large
+            )
             .background(MaterialTheme.colorScheme.tertiary)
             .clickable { onClick() }
     ) {
-//        if (file != null) {
-//
-//        }
-        Image(
-            painter = rememberAsyncImagePainter(
-                model = "https://picsum.photos/seed/${Random.nextInt()}/320/120",
-                placeholder = painterResource(id = R.drawable.place_holder)
-            ),
+        AsyncImage(
+            model = usableComponent.imageURL,
             contentDescription = null,
+            placeholder = painterResource(id = R.drawable.place_holder),
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .width(55.dp)
@@ -59,14 +61,17 @@ fun UsableComponentItem(
 
         Box(
             modifier = Modifier
-                .fillMaxSize(),
+                .fillMaxSize()
+                .padding(8.dp),
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = "RAM",
-                style = MaterialTheme.typography.labelMedium.copy(
+                text = usableComponent.name,
+                style = MaterialTheme.typography.labelLarge.copy(
                     fontWeight = FontWeight.SemiBold
                 ),
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 1
             )
         }
     }
@@ -84,7 +89,14 @@ fun UsableCompoenentItemPreview() {
             contentAlignment = Alignment.Center
         ) {
             UsableComponentItem(
-                onClick = {}
+                onClick = {},
+                usableComponent = SmallPart(
+                    compID = 3,
+                    description = "",
+                    id = 2,
+                    imageURL = "",
+                    name = "RAM"
+                )
             )
         }
     }

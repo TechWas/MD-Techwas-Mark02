@@ -1,9 +1,17 @@
 package com.capstone.techwasmark02.ui.screen.home
 
+import android.Manifest
+import android.content.Context
+import android.content.pm.PackageManager
+import android.util.Log
 import android.widget.Space
+import androidx.activity.compose.ManagedActivityResultLauncher
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,6 +31,7 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -30,18 +39,26 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
+import androidx.core.content.ContextCompat
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.capstone.techwasmark02.R
+import com.capstone.techwasmark02.data.remote.response.ArticleList
+import com.capstone.techwasmark02.data.remote.response.ArticleResultResponse
+import com.capstone.techwasmark02.ui.common.UiState
 import com.capstone.techwasmark02.ui.component.AboutUsBox
 import com.capstone.techwasmark02.ui.component.ArticleCardBig
 import com.capstone.techwasmark02.ui.component.DefaultBottomBar
@@ -55,8 +72,12 @@ import kotlin.math.absoluteValue
 
 @Composable
 fun HomeScreen(
+    viewModel: HomeScreenViewModel = hiltViewModel(),
     navController: NavHostController
 ) {
+
+    val latestArticleState by viewModel.latestArticleState.collectAsState()
+
     HomeContent(
         navigateToCamera = { navController.navigate(Camera.route) },
         navigateToHome = { navController.navigate(Home.route) },
@@ -64,7 +85,8 @@ fun HomeScreen(
         navigateToForum = { navController.navigate(Forum.route) },
         navigateToProfile = { navController.navigate(Profile.route) },
         navigateToCatalog = { navController.navigate(Catalog.route) },
-        navigateToMaps = { navController.navigate(Maps.route) }
+        navigateToMaps = { navController.navigate(Maps.route) },
+        latestArticleState = latestArticleState
     )
 }
 
@@ -77,8 +99,22 @@ fun HomeContent(
     navigateToArticle: () -> Unit,
     navigateToProfile: () -> Unit,
     navigateToCatalog: () -> Unit,
-    navigateToMaps: () -> Unit
+    navigateToMaps: () -> Unit,
+    latestArticleState: UiState<ArticleResultResponse>?
 ) {
+
+    val context = LocalContext.current
+
+    val cameraPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+        onResult = { granted ->
+            if(granted) {
+                navigateToCamera()
+            }
+        }
+    )
+
+
     Scaffold(
     ) { innerPadding ->
         val scrollState = rememberScrollState()
@@ -175,7 +211,16 @@ fun HomeContent(
                                 .fillMaxWidth(),
                         ) {
                             Spacer(modifier = Modifier.weight(1f))
-                            FeatureBox(featureBoxType = FeatureBoxType.Detection, onClick = navigateToCamera)
+                            FeatureBox(
+                                featureBoxType = FeatureBoxType.Detection,
+                                onClick = {
+                                    checkAndRequestCameraPermission(
+                                        context = context,
+                                        cameraPermissionLauncher = cameraPermissionLauncher,
+                                        onAlreadyGranted = navigateToCamera
+                                    )
+                                }
+                            )
                             Spacer(modifier = Modifier.weight(3f))
                             FeatureBox(featureBoxType = FeatureBoxType.Catalog, onClick = navigateToCatalog)
                             Spacer(modifier = Modifier.weight(1f))
@@ -215,7 +260,11 @@ fun HomeContent(
                                 text = "See all",
                                 style = MaterialTheme.typography.labelMedium,
                                 fontWeight = FontWeight.Bold,
-                                color = yellow
+                                color = yellow,
+                                modifier = Modifier
+                                    .clickable {
+                                        navigateToArticle()
+                                    }
                             )
                         }
                     }
@@ -223,37 +272,71 @@ fun HomeContent(
                     Spacer(modifier = Modifier.height(titlePaddingBottom))
 
                     val pagerState = rememberPagerState()
-                    HorizontalPager(
-                        pageCount = 10,
-                        state = pagerState,
-                        contentPadding = PaddingValues(horizontal = 56.dp),
-                        modifier = Modifier.fillMaxWidth()
-                    ) { page ->
-                        ArticleCardBig(
-                            modifier = Modifier
-                                .width(280.dp)
-                                .height(180.dp)
-                                .graphicsLayer {
-                                    val pageOffset = (
-                                            (pagerState.currentPage - page) + pagerState
-                                                .currentPageOffsetFraction
-                                            ).absoluteValue
 
-                                    lerp(
-                                        start = 0.85f,
-                                        stop = 1f,
-                                        fraction = 1f - pageOffset.coerceIn(0f, 1f)
-                                    ).also { scale ->
-                                        scaleX = scale
-                                        scaleY = scale
-                                    }
-                                    alpha = lerp(
-                                        start = 0.5f,
-                                        stop = 1f,
-                                        fraction = 1f - pageOffset.coerceIn(0f, 1f)
-                                    )
+                    if (latestArticleState != null) {
+                        when(latestArticleState) {
+                            is UiState.Loading -> {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(100.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    CircularProgressIndicator()
                                 }
-                        )
+                            }
+                            is UiState.Error -> {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(100.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(text = "No article to view")
+                                }
+                            }
+                            is UiState.Success -> {
+                                latestArticleState.data?.articleList?.size?.let {
+                                    HorizontalPager(
+                                        pageCount = it,
+                                        state = pagerState,
+                                        contentPadding = PaddingValues(horizontal = 56.dp),
+                                        modifier = Modifier.fillMaxWidth().height(180.dp)
+                                    ) { page ->
+                                        val articleList = latestArticleState.data.articleList
+
+                                        articleList[page]?.let { it1 ->
+                                            ArticleCardBig(
+                                                modifier = Modifier
+                                                    .width(280.dp)
+                                                    .height(180.dp)
+                                                    .graphicsLayer {
+                                                        val pageOffset = (
+                                                                (pagerState.currentPage - page) + pagerState
+                                                                    .currentPageOffsetFraction
+                                                                ).absoluteValue
+
+                                                        lerp(
+                                                            start = 0.85f,
+                                                            stop = 1f,
+                                                            fraction = 1f - pageOffset.coerceIn(0f, 1f)
+                                                        ).also { scale ->
+                                                            scaleX = scale
+                                                            scaleY = scale
+                                                        }
+                                                        alpha = lerp(
+                                                            start = 0.5f,
+                                                            stop = 1f,
+                                                            fraction = 1f - pageOffset.coerceIn(0f, 1f)
+                                                        )
+                                                    },
+                                                article = it1
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
 
                     Spacer(modifier = Modifier.height(titlePaddingTop))
@@ -293,7 +376,14 @@ fun HomeContent(
                             ArticleCardBig(
                                 modifier = Modifier
                                     .width(320.dp)
-                                    .height(186.dp)
+                                    .height(186.dp),
+                                article = ArticleList(
+                                    componentId = 2,
+                                    articleImageURL = null,
+                                    name = "Forum title",
+                                    id = 2,
+                                    desc = "Forum description"
+                                )
                             )
                         }
                     }
@@ -317,6 +407,21 @@ fun HomeContent(
     }
 }
 
+private fun checkAndRequestCameraPermission(context: Context, cameraPermissionLauncher: ManagedActivityResultLauncher<String, Boolean>, onAlreadyGranted: () -> Unit) {
+    when (PackageManager.PERMISSION_GRANTED) {
+        ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.CAMERA
+        ) -> {
+            Log.d("Zhahrany", "Permission has already granted")
+            onAlreadyGranted()
+        }
+        else -> {
+            cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
+        }
+    }
+}
+
 @Preview
 @Composable
 fun HomeContentPreview() {
@@ -328,7 +433,8 @@ fun HomeContentPreview() {
             navigateToForum = {},
             navigateToProfile = {},
             navigateToCatalog = {},
-            navigateToMaps = {}
+            navigateToMaps = {},
+            latestArticleState = UiState.Loading()
         )
     }
 }

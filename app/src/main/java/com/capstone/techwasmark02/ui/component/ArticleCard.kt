@@ -19,19 +19,23 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import com.capstone.techwasmark02.R
+import com.capstone.techwasmark02.data.remote.response.ArticleList
 import com.capstone.techwasmark02.ui.theme.TechwasMark02Theme
 import kotlin.random.Random
 
 @Composable
 fun ArticleCardBig(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    article: ArticleList
 ) {
     ElevatedCard(
         modifier = modifier
@@ -50,16 +54,14 @@ fun ArticleCardBig(
             Box(
                 modifier = Modifier
                     .weight(1f)
+                    .background(Color.LightGray)
             ) {
-                Image(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    painter = rememberAsyncImagePainter(
-                        model = "https://picsum.photos/seed/${Random.nextInt()}/320/120",
-                        placeholder = painterResource(id = R.drawable.place_holder),
-                    ),
+                AsyncImage(
+                    model = article.articleImageURL,
+                    contentDescription = null,
                     contentScale = ContentScale.Crop,
-                    contentDescription = null
+                    modifier = Modifier
+                        .fillMaxSize()
                 )
             }
 
@@ -69,18 +71,22 @@ fun ArticleCardBig(
                     .height(64.dp),
                 verticalArrangement = Arrangement.Center
             ) {
-                Text(
-                    text = "Do not throw electronic waste carelessly",
-                    style = MaterialTheme.typography.titleSmall,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-                Text(
-                    text = "Lorem ipsum dolor sit amet, consectetur...",
-                    style = MaterialTheme.typography.bodySmall,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
+                article.name?.let {
+                    Text(
+                        text = it,
+                        style = MaterialTheme.typography.titleSmall,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+                article.desc?.let {
+                    Text(
+                        text = it,
+                        style = MaterialTheme.typography.bodySmall,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
             }
         }
     }
@@ -157,7 +163,14 @@ fun ArticleCardPreview() {
                 .padding(20.dp)
         ) {
             Column {
-                ArticleCardBig(modifier = Modifier.width(240.dp))
+                ArticleCardBig(modifier = Modifier.width(240.dp), article = ArticleList(
+                    componentId = 2,
+                    articleImageURL = null,
+                    name = "Do not throw electronic was bg",
+                    id = 2,
+                    desc = "Lorem ipsum and the sum of the sum si sum for the sum"
+                )
+                )
                 Spacer(modifier = Modifier.height(20.dp))
                 ArticleCardSmall(
                     modifier = Modifier.width(150.dp),

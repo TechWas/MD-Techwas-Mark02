@@ -22,7 +22,16 @@ class CatalogScreenViewModel @Inject constructor(
     private val _componentsState: MutableStateFlow<UiState<ComponentsResponse>?> = MutableStateFlow(null)
     val componentState = _componentsState.asStateFlow()
 
+    private val _searchBoxValue: MutableStateFlow<String> = MutableStateFlow("")
+    val searchBoxValue = _searchBoxValue.asStateFlow()
+
+    fun updateSearchBoxValue(newValue: String) {
+        _searchBoxValue.value = newValue
+    }
+
     init {
+        _componentsState.value = UiState.Loading()
+
         viewModelScope.launch {
             _componentsState.value = componentApiRepository.fetchComponents()
         }

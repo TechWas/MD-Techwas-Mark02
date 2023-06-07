@@ -1,5 +1,6 @@
 package com.capstone.techwasmark02.data.remote.apiService
 
+import com.capstone.techwasmark02.data.remote.response.AllArticleResultResponse
 import com.capstone.techwasmark02.data.remote.response.ArticleResultResponse
 import com.capstone.techwasmark02.data.remote.response.SingleArticleResponse
 import retrofit2.http.GET
@@ -10,7 +11,7 @@ import retrofit2.http.Query
 interface TechwasArticleApi {
 
     @GET("/allArticle")
-    suspend fun getAllArticle(): ArticleResultResponse
+    suspend fun getAllArticle(): AllArticleResultResponse
 
     @GET("/article/{id}")
     suspend fun getArticleByComponentId(
