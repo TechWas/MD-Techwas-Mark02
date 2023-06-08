@@ -2,8 +2,13 @@ package com.capstone.techwasmark02.ui.screen.maps
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.location.Location
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -11,10 +16,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavHostController
-import com.capstone.techwasmark02.R
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
@@ -116,21 +119,69 @@ fun MapsScreen(navController: NavHostController) {
         // posisi camera
         cameraPositionState = cameraPositionState,
         ) {
+            // cari marker dengan jarak terdekat
+            var closestMarker: MapMarkerInfo? = null
+            var closestDistance = Float.MAX_VALUE
+            userLatLng?.let { userLocation ->
+                for (marker in markerList) {
+                    val distanceResults = FloatArray(1)
+                    Location.distanceBetween(userLocation.latitude, userLocation.longitude, marker.position.latitude, marker.position.longitude, distanceResults)
+                    val distance = distanceResults[0]
+                    if (distance < closestDistance) {
+                        closestDistance = distance
+                        closestMarker = marker
+                    }
+                }
+            }
+
+        // kasih cat marker nya bg
         markerList.forEach { marker ->
+            val markerIcon = if (marker == closestMarker) {
+                BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)
+            } else {
+                BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)
+            }
+
             Marker(
                 state = MarkerState(
-                    position = marker.position
+                    position = marker.position,
                 ),
+                icon = markerIcon,
                 title = marker.title,
                 snippet = marker.snippet
             )
         }
 
         userLatLng?.let { latLng ->
+            val maxDistance = 5000f // jarak maksimum user ke lokasi terdekat (meter)
+            if (closestDistance > maxDistance) {
+                AlertDialog(
+                    onDismissRequest = { },
+                    title = {
+                        Text(
+                            text = "oh no, your location is too far",
+                            style = MaterialTheme.typography.labelLarge
+                        ) },
+                    text = {
+                        Text(
+                            text = "you are too far from the drop point",
+                            style = MaterialTheme.typography.bodyMedium
+                        ) },
+                    confirmButton = {
+                        Button(
+                            onClick = {
+                                navController.popBackStack()
+                            }
+                        ) {
+                            Text("Back")
+                        }
+                    },
+                )
+            }
+
             Marker(
                 state = MarkerState(position = latLng),
-                title = "Lokasi User",
-                snippet = "Ini adalah lokasi anda saat ini"
+                title = "Your Location",
             )
         }
     }
