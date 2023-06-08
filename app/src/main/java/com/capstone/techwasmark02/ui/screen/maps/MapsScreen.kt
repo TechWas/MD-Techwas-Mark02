@@ -46,38 +46,38 @@ fun MapsScreen(navController: NavHostController) {
     val markerList = listOf(
         MapMarkerInfo(
             LatLng(-7.782589124314163, 110.38006889168956),
-            "Marker 1",
-            "Ini adalah marker 1"
+            "Drop Point SKE 1",
+            "throw your e-waste here"
         ),
         MapMarkerInfo(
             LatLng(-7.8041473764088085, 110.39441386554735),
-            "Marker 2",
-            "Ini adalah marker 2"
+            "Drop Point SKE 2",
+            "throw your e-waste here"
         ),
         MapMarkerInfo(
             LatLng(-7.790733483350418, 110.35766494375434),
-            "Marker 3",
-            "Ini adalah marker 3"
+            "Drop Point SKE 3",
+            "throw your e-waste here"
         ),
         MapMarkerInfo(
             LatLng(-7.767737238844195, 110.35476371308648),
-            "Marker 4",
-            "Ini adalah marker 4"
+            "Drop Point SKE 4",
+            "throw your e-waste here"
         ),
         MapMarkerInfo(
             LatLng(-7.774923700677788, 110.41182124955456),
-            "Marker 5",
-            "Ini adalah marker 5"
+            "Drop Point SKE 5",
+            "throw your e-waste here"
         ),
         MapMarkerInfo(
             LatLng(-7.7798743027989685, 110.33864576493167),
-            "Marker 6",
-            "Ini adalah marker 6"
+            "Drop Point SKE 6",
+            "throw your e-waste here"
         ),
         MapMarkerInfo(
             LatLng(-7.783068208639076, 110.3805524301342),
-            "Marker 7",
-            "Ini adalah marker 7"
+            "Drop Point SKE 7",
+            "throw your e-waste here"
         )
     )
 
