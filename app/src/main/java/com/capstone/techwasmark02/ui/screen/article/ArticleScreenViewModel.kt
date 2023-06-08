@@ -30,7 +30,11 @@ class ArticleScreenViewModel @Inject constructor(
     fun getAllFilterArticle(id: Int) {
         _articleList.value = UiState.Loading()
         viewModelScope.launch {
-            val result = articleRepository.getArticleByComponentId(userToken = "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySUQiOiJ1c2VyQGV4YW1wbGUuY29tIiwiZXhwaXJ5IjoxNjg2MDQ5NDcwLjc1NjgyMTR9.eJfMxHb3UsQu-kyzyzN_3PdV8OvvwTmD8vOyoTRENyQ'", id = id)
+           val result = if(id == 0) {
+                articleRepository.getAllArticle()
+            } else {
+                articleRepository.getArticleByComponentId(userToken = "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySUQiOiJ1c2VyQGV4YW1wbGUuY29tIiwiZXhwaXJ5IjoxNjg2MDQ5NDcwLjc1NjgyMTR9.eJfMxHb3UsQu-kyzyzN_3PdV8OvvwTmD8vOyoTRENyQ'", id = id)
+            }
             when(result) {
                 is UiState.Success -> {
                     _articleList.value = result
@@ -51,7 +55,11 @@ class ArticleScreenViewModel @Inject constructor(
             if (name.isEmpty()) { // input kosong fetch article by filter
                 getAllFilterArticle(filterType.id)
             } else {
-                val result = articleRepository.getArticleByComponentId(userToken = "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySUQiOiJ1c2VyQGV4YW1wbGUuY29tIiwiZXhwaXJ5IjoxNjg2MDQ5NDcwLjc1NjgyMTR9.eJfMxHb3UsQu-kyzyzN_3PdV8OvvwTmD8vOyoTRENyQ'", id = filterType.id)
+                val result = if(filterType.id == 0) {
+                    articleRepository.getAllArticle()
+                } else {
+                    articleRepository.getArticleByComponentId(userToken = "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySUQiOiJ1c2VyQGV4YW1wbGUuY29tIiwiZXhwaXJ5IjoxNjg2MDQ5NDcwLjc1NjgyMTR9.eJfMxHb3UsQu-kyzyzN_3PdV8OvvwTmD8vOyoTRENyQ'", id = filterType.id)
+                }
                 when(result) {
                     is UiState.Success -> {
                         val filteredArticles = if (filterType.id == 0) { // general
