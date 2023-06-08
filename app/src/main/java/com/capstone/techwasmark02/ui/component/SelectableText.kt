@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.capstone.techwasmark02.ui.componentType.ArticleFilterType
@@ -38,19 +39,23 @@ fun SelectableText(
     ) {
        if(selected) {
            Text(
+               maxLines = 1,
                text = filterType.type,
                color = Color.White,
                style = MaterialTheme.typography.bodySmall,
                modifier = Modifier
                    .clip(RoundedCornerShape(15.dp))
                    .background(MaterialTheme.colorScheme.primary)
-                   .padding(horizontal = 11.dp, vertical = 6.dp)
+                   .padding(8.dp),
+               overflow = TextOverflow.Ellipsis
            )
        } else {
            Text(
+               maxLines = 1,
                text = filterType.type,
                color = MaterialTheme.colorScheme.onBackground,
-               style = MaterialTheme.typography.bodySmall
+               style = MaterialTheme.typography.bodySmall,
+               overflow = TextOverflow.Ellipsis
            )
        }
     }
