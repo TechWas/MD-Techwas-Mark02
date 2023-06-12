@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -40,24 +41,27 @@ fun ForumBox(
         modifier = modifier
             .height(80.dp)
             .width(328.dp)
-            .clip(RoundedCornerShape(20.dp))
             .shadow(
                 elevation = 8.dp,
                 shape = RoundedCornerShape(20.dp)
             )
             .background(Color.White)
+            .clip(RoundedCornerShape(20.dp))
     ) {
         Row(
             modifier
                 .fillMaxSize()
-                .padding(start = 7.17.dp, end = 27.5.dp),
+                .padding(end = 27.5.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Image(
                 modifier = Modifier
                     .width(100.dp)
-                    .height(60.dp)
-                    .clip(RoundedCornerShape(20.dp)),
+                    .fillMaxHeight()
+                    .clip(RoundedCornerShape(
+                        topStart= 20.dp,
+                        bottomStart= 20.dp
+                    )),
                 painter = rememberAsyncImagePainter(
                         model = "https://picsum.photos/seed/${Random.nextInt()}/320/120",
                         placeholder = painterResource(id = R.drawable.place_holder),

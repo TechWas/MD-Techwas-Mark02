@@ -19,6 +19,7 @@ import com.capstone.techwasmark02.ui.screen.detectionResult.DetectionResultScree
 import com.capstone.techwasmark02.ui.screen.home.HomeScreen
 import com.capstone.techwasmark02.ui.screen.maps.MapsScreen
 import com.capstone.techwasmark02.ui.screen.profileUser.ProfileUserScreen
+import com.capstone.techwasmark02.ui.screen.setting.SettingScreen
 import com.capstone.techwasmark02.ui.screen.singleArticle.SingleArticleScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -113,6 +114,10 @@ fun TechwasApp() {
 
             composable(Maps.route) {
                 MapsScreen(navController = navController)
+            }
+
+            composable(Setting.route) {
+                SettingScreen(navController = navController)
             }
         }
     }

@@ -1,6 +1,7 @@
 package com.capstone.techwasmark02.ui.component
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,7 +29,10 @@ import com.capstone.techwasmark02.R
 import com.capstone.techwasmark02.ui.theme.TechwasMark02Theme
 
 @Composable
-fun ProfileBox(modifier: Modifier = Modifier) {
+fun ProfileBox(
+    modifier: Modifier = Modifier,
+    navigateToSetting: () -> Unit
+) {
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -58,21 +62,23 @@ fun ProfileBox(modifier: Modifier = Modifier) {
             }
             Spacer(modifier = Modifier.height(8.dp))
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { navigateToSetting() },
                 horizontalArrangement = Arrangement.Start,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
                     modifier = Modifier.size(24.dp),
-                    painter = painterResource(id = R.drawable.ic_logout),
-                    contentDescription = "Logout",
-                    tint = Color.Red
+                    painter = painterResource(id = R.drawable.ic_settings),
+                    contentDescription = "Settings",
+                    tint = MaterialTheme.colorScheme.onTertiary
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = "Logout",
+                    text = "Settings",
                     style = MaterialTheme.typography.labelMedium,
-                    color = Color.Red
+                    color = MaterialTheme.colorScheme.onTertiary
                 )
             }
         }
@@ -84,7 +90,9 @@ fun ProfileBox(modifier: Modifier = Modifier) {
 fun ProfileBoxPreview() {
     TechwasMark02Theme {
         Box(modifier = Modifier.padding(20.dp)) {
-            ProfileBox()
+            ProfileBox(
+                navigateToSetting = {}
+            )
         }
     }
 }

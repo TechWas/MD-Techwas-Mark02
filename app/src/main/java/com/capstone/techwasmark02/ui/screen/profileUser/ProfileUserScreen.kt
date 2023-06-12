@@ -20,9 +20,13 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -54,7 +58,8 @@ fun ProfileUserScreen(
         navigateToHome = { navController.navigate(Screen.Home.route) },
         navigateToArticle = { navController.navigate(Screen.Article.route) },
         navigateToForum = { navController.navigate(Screen.Forum.route) },
-        navigateToProfile = { navController.navigate(Screen.Profile.route) }
+        navigateToProfile = { navController.navigate(Screen.Profile.route) },
+        navigateToSetting = { navController.navigate(Screen.Setting.route) },
     )
 }
 
@@ -64,14 +69,26 @@ fun ProfileUserContent(
     navigateToHome: () -> Unit,
     navigateToForum: () -> Unit,
     navigateToArticle: () -> Unit,
-    navigateToProfile: () -> Unit
+    navigateToProfile: () -> Unit,
+    navigateToSetting: () -> Unit,
 ) {
 
     Scaffold(
         topBar = {
-            DefaultTopBar(
-                pageTitle = "Profile",
-                onClickNavigationIcon = {}
+            TopAppBar(
+                colors = TopAppBarDefaults.smallTopAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                ),
+                title = {},
+                actions = {
+                    IconButton(onClick = { navigateToSetting() }) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_settings),
+                            contentDescription = null,
+                            tint = Color.White
+                        )
+                    }
+                }
             )
         },
         bottomBar = {
@@ -138,17 +155,18 @@ fun ProfileUserContent(
                     }
                 }
 
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 200.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    ProfileBox(
-                        modifier = Modifier
-                            .padding(horizontal = 20.dp)
-                    )
-                }
+//                Column(
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .padding(top = 200.dp),
+//                    horizontalAlignment = Alignment.CenterHorizontally
+//                ) {
+//                    ProfileBox(
+//                        modifier = Modifier
+//                            .padding(horizontal = 20.dp),
+//                        navigateToSetting = navigateToSetting
+//                    )
+//                }
             }
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -156,7 +174,7 @@ fun ProfileUserContent(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(600.dp)
+                    .height(700.dp)
             ) {
                 Text(
                     text = "Bookmarks",
@@ -201,7 +219,7 @@ fun ProfileUserContent(
                     verticalArrangement = Arrangement.spacedBy(10.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    items(count = 5) {
+                    items(count = 10) {
                         ForumBox(modifier = Modifier.fillMaxWidth())
                     }
                 }
@@ -218,7 +236,8 @@ fun ProfileUserScreenPreview() {
             navigateToHome = {},
             navigateToArticle = {},
             navigateToForum = {},
-            navigateToProfile = {}
+            navigateToProfile = {},
+            navigateToSetting = {},
         )
     }
 }

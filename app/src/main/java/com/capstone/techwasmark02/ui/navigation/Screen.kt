@@ -8,12 +8,9 @@ sealed class Screen(val route: String) {
     object Catalog: Screen(route = "catalog")
     object SingleCatalog: Screen(route = "singleCatalog")
     object DetectionResult: Screen(route = "detectionResult")
-
     object Article: Screen(route = "article")
-
     object SingleArticle: Screen(route = "singleArticle")
-
     object Splash: Screen(route = "splash")
-
     object Maps: Screen(route = "maps")
+    object Setting: Screen(route = "setting")
 }
