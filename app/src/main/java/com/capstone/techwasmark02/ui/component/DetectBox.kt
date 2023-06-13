@@ -32,6 +32,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.capstone.techwasmark02.R
 import com.capstone.techwasmark02.ui.componentType.FeatureBoxType
 import com.capstone.techwasmark02.ui.theme.TechwasMark02Theme
@@ -101,6 +102,72 @@ fun FeatureBox(
 }
 
 @Composable
+fun FeatureBoxLarge(
+    modifier: Modifier = Modifier,
+    featureBoxType: FeatureBoxType,
+    onClick: () -> Unit
+) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(160.dp)
+            .shadow(
+                elevation = 4.dp,
+                shape = RoundedCornerShape(10.dp)
+            )
+            .clickable { onClick() }
+    ) {
+        Image(
+            painter = painterResource(id = featureBoxType.backGround),
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .fillMaxSize()
+        )
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+                Text(
+                    text = featureBoxType.title,
+                    style = MaterialTheme.typography.titleLarge.copy(
+                        fontSize = 28.sp,
+                        fontWeight = FontWeight.SemiBold
+                    ),
+                    color = Color.White,
+                )
+            }
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    modifier = Modifier.size(44.dp),
+                    painter = painterResource(id = featureBoxType.icon),
+                    contentDescription = null,
+                    tint = Color.White
+                )
+                Spacer(modifier = Modifier.weight(1f))
+                SmallButton(
+                    contentText = featureBoxType.buttonTitle,
+                    onClick = onClick,
+                    colorText = featureBoxType.buttonColor
+                )
+            }
+        }
+    }
+}
+
+@Composable
 fun AboutUsBox(modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
@@ -152,6 +219,11 @@ fun DetectBoxPreview() {
     TechwasMark02Theme {
         Box(modifier = Modifier.padding(20.dp)) {
             Column(modifier = Modifier.fillMaxWidth()) {
+
+                FeatureBoxLarge(featureBoxType = FeatureBoxType.Detection, onClick = {})
+
+                Spacer(modifier = Modifier.height(20.dp))
+
                 FeatureBox(
                     featureBoxType = FeatureBoxType.Detection,
                     onClick = {}

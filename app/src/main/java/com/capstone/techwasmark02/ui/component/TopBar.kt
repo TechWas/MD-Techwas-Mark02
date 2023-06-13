@@ -1,5 +1,6 @@
 package com.capstone.techwasmark02.ui.component
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -25,6 +26,10 @@ import com.capstone.techwasmark02.ui.theme.TechwasMark02Theme
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InverseTopBar(onClickNavigationIcon: () -> Unit, modifier: Modifier = Modifier) {
+    BackHandler(true) {
+        onClickNavigationIcon()
+    }
+
     TopAppBar(
         navigationIcon = {
             IconButton(

@@ -16,7 +16,6 @@ import javax.inject.Inject
 @HiltViewModel
 class SignUpScreenViewModel @Inject constructor(
     private val userApiRepository: TechwasUserApiRepository,
-    private val preferencesRepository: PreferencesRepository
 ): ViewModel() {
 
     private val _userToSignUpState: MutableStateFlow<UiState<UserRegisterResponse>?> =
@@ -36,20 +35,7 @@ class SignUpScreenViewModel @Inject constructor(
     fun signUpUser() {
         _userToSignUpState.value = UiState.Loading()
         viewModelScope.launch {
-            val result = userApiRepository.userRegister(_userToSignUpInfo.value)
-            when (result) {
-                is UiState.Success -> {
-                    _userToSignUpState.value = result
-                }
-
-                is UiState.Error -> {
-                    _userToSignUpState.value = result
-                }
-
-                else -> {
-                    // do nothing
-                }
-            }
+            _userToSignUpState.value = userApiRepository.userRegister(_userToSignUpInfo.value)
         }
     }
 

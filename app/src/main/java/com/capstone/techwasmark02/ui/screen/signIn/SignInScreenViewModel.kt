@@ -32,39 +32,18 @@ class SignInScreenViewModel @Inject constructor(
         ))
     val userToSignInInfo = _userToSignInInfo.asStateFlow()
 
-    private val _userSessionState: MutableStateFlow<UserSession?> = MutableStateFlow(null)
-    val userSessionState = _userSessionState.asStateFlow()
-
-    init {
-        viewModelScope.launch {
-            val result = preferencesRepository.getActiveSession()
-            when(result) {
-                is Resource.Error -> {
-                    _userSessionState.value = null
-                }
-                is Resource.Success -> {
-                    _userSessionState.value = result.data
-                }
-            }
-        }
-    }
-
     fun signInUser() {
         _userToSignInState.value = UiState.Loading()
         viewModelScope.launch {
-            val result = userApiRepository.userLogin(_userToSignInInfo.value)
-            when(result) {
-                is UiState.Success -> {
-                    _userToSignInState.value = result
-                    result.data?.loginResult?.toUserSession()
-                        ?.let { preferencesRepository.saveSession(it) }
-                }
-                is UiState.Error -> {
-                    _userToSignInState.value = result
-                }
-                else -> {
-                // do nothing
-                }
+            _userToSignInState.value = userApiRepository.userLogin(_userToSignInInfo.value)
+        }
+    }
+
+    fun saveUserSession() {
+        viewModelScope.launch {
+            val userSession = _userToSignInState.value?.data?.loginResult?.toUserSession()
+            if (userSession != null) {
+                preferencesRepository.saveSession(userSession)
             }
         }
     }

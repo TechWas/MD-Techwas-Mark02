@@ -272,11 +272,6 @@ fun ResultListItemPreview() {
     }
 }
 
-data class DummyDetectionResult(
-    val componentType: String,
-    val detectionPercentage: Int
-)
-
 private val dummyDetectionResultList: List<Prediction> = listOf(
     Prediction(
         componentId = 1,

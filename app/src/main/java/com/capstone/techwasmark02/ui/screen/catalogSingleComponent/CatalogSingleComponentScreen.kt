@@ -1,7 +1,9 @@
 package com.capstone.techwasmark02.ui.screen.catalogSingleComponent
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,6 +12,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
@@ -42,14 +45,15 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.capstone.techwasmark02.data.remote.response.ArticleResultResponse
 import com.capstone.techwasmark02.data.remote.response.Component
-import com.capstone.techwasmark02.data.remote.response.ComponentResponse
-import com.capstone.techwasmark02.data.remote.response.DetectionsResultResponse
 import com.capstone.techwasmark02.data.remote.response.SmallPart
 import com.capstone.techwasmark02.data.remote.response.UsableComponentsResponse
 import com.capstone.techwasmark02.ui.common.UiState
@@ -59,16 +63,17 @@ import com.capstone.techwasmark02.ui.component.DefaultTopBar
 import com.capstone.techwasmark02.ui.component.InverseButton
 import com.capstone.techwasmark02.ui.component.UsableComponentBottomSheet
 import com.capstone.techwasmark02.ui.component.UsableComponentItem
+import com.capstone.techwasmark02.ui.navigation.Screen
 import com.capstone.techwasmark02.ui.theme.TechwasMark02Theme
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import kotlinx.coroutines.launch
-import kotlin.random.Random
 
 @Composable
 fun CatalogSingleComponentScreen(
     viewModel: CatalogSingleComponentScreenViewModel = hiltViewModel(),
-    componentJson: String
+    componentJson: String,
+    navController: NavHostController
 ) {
 
     val moshi = Moshi.Builder()
@@ -89,7 +94,8 @@ fun CatalogSingleComponentScreen(
             usableComponentList = usableComponentList,
             updateUsableComponentsList = { viewModel.updateUsableComponentList(it) },
             relatedArticleListState = relatedArticleListState,
-            updateRelatedArticleListState = { viewModel.updateRelatedArticleListState(it) }
+            updateRelatedArticleListState = { viewModel.updateRelatedArticleListState(it) },
+            navigateToSingleArticle = { navController.navigate("${Screen.SingleArticle.route}/$it") }
         )
     }
 }
@@ -103,8 +109,10 @@ fun CatalogSingleComponentContent(
     usableComponentList: List<SmallPart>,
     updateUsableComponentsList: (List<SmallPart>) -> Unit,
     relatedArticleListState: UiState<ArticleResultResponse>?,
-    updateRelatedArticleListState: (Int) -> Unit
-) {
+    updateRelatedArticleListState: (Int) -> Unit,
+    navigateToSingleArticle: (idArticle: Int) -> Unit,
+
+    ) {
 
     val modalSheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
@@ -118,9 +126,22 @@ fun CatalogSingleComponentContent(
         mutableStateOf(0)
     }
 
+    var isBottomSheetOpen by remember {
+        mutableStateOf(false)
+    }
+
     LaunchedEffect(Unit) {
         updateUsableComponentsState(component.id)
         updateRelatedArticleListState(component.id)
+    }
+
+    BackHandler(isBottomSheetOpen) {
+        if (isBottomSheetOpen) {
+            coroutineScope.launch {
+                modalSheetState.hide()
+                isBottomSheetOpen = false
+            }
+        }
     }
 
     ModalBottomSheetLayout(
@@ -150,6 +171,13 @@ fun CatalogSingleComponentContent(
                     .padding(innerPadding)
                     .padding(bottom = 20.dp)
             ) {
+
+                var componentWidth by remember {
+                    mutableStateOf(0.dp)
+                }
+                val density = LocalDensity.current
+
+
                 Box(
                     modifier = Modifier
                 ) {
@@ -163,17 +191,25 @@ fun CatalogSingleComponentContent(
                                     bottomEnd = 20.dp
                                 )
                             )
-                            .background(MaterialTheme.colorScheme.primary),
+                            .background(Color(0xff656565))
+                            .onGloballyPositioned {
+                                componentWidth = with(density) {
+                                    it.size.width.toDp()
+                                }
+                            }
+                            .offset(
+                                x = -(componentWidth * 15 / 88)
+                            ),
                     ) {
-                        AsyncImage(
-                            model = component.imageExample,
-                            contentDescription = null,
-                            contentScale = ContentScale.Crop,
-                            alpha = 0.8f,
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .blur(16.dp)
-                        )
+//                        AsyncImage(
+//                            model = component.imageExample,
+//                            contentDescription = null,
+//                            contentScale = ContentScale.Crop,
+//                            alpha = 0.8f,
+//                            modifier = Modifier
+//                                .fillMaxSize()
+//                                .blur(16.dp)
+//                        )
                         AsyncImage(
                             model = component.imageExample,
                             contentDescription = null,
@@ -243,22 +279,23 @@ fun CatalogSingleComponentContent(
                     if (usableComponentsState != null) {
                         when(usableComponentsState) {
                             is UiState.Success -> {
-                                LazyVerticalGrid(
-                                    columns = GridCells.Fixed(
-                                        2
-                                    ),
-                                    horizontalArrangement = Arrangement.spacedBy(16.dp),
-                                    verticalArrangement = Arrangement.spacedBy(12.dp),
-                                    modifier = Modifier
-                                        .height(144.dp),
-                                ) {
-                                    usableComponentsState.data?.smallParts?.size?.let {
-                                        items(it) { index ->
+                                usableComponentsState.data?.smallParts?.size?.let {
+                                    LazyVerticalGrid(
+                                        columns = GridCells.Fixed(
+                                            2
+                                        ),
+                                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                                        verticalArrangement = Arrangement.spacedBy(12.dp),
+                                        modifier = Modifier
+                                            .height((it * 72).dp),
+                                    ) {
+                                        items(usableComponentsState.data.smallParts.size) { index ->
                                             currentlyClickedUsableComponent = index
                                             updateUsableComponentsList(usableComponentsState.data.smallParts)
 
                                             UsableComponentItem(
                                                 onClick =  {
+                                                    isBottomSheetOpen = true
                                                     coroutineScope.launch {
                                                         modalSheetState.show()
                                                     }
@@ -266,8 +303,8 @@ fun CatalogSingleComponentContent(
                                                 usableComponent = usableComponentsState.data.smallParts[index]
                                             )
                                         }
-                                    }
 
+                                    }
                                 }
                             }
                             is UiState.Error -> {
@@ -309,82 +346,89 @@ fun CatalogSingleComponentContent(
                 }
 
 
-                    if (relatedArticleListState != null) {
-                        when(relatedArticleListState) {
-                            is UiState.Loading -> {
-                                Box(
-                                    modifier = Modifier
-                                        .height(100.dp)
-                                        .fillMaxWidth(),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    CircularProgressIndicator()
-                                }
+                if (relatedArticleListState != null) {
+                    when(relatedArticleListState) {
+                        is UiState.Loading -> {
+                            Box(
+                                modifier = Modifier
+                                    .height(100.dp)
+                                    .fillMaxWidth(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                CircularProgressIndicator()
                             }
-                            is UiState.Error -> {
-                                Box(
-                                    modifier = Modifier
-                                        .height(100.dp)
-                                        .fillMaxWidth(),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Text(
-                                        text = "Fail to fetch article",
-                                        style = MaterialTheme.typography.labelSmall,
-                                        color = Color.Red
-                                    )
-                                }
+                        }
+                        is UiState.Error -> {
+                            Box(
+                                modifier = Modifier
+                                    .height(100.dp)
+                                    .fillMaxWidth(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = "Fail to fetch article",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = Color.Red
+                                )
                             }
-                            is UiState.Success -> {
-                                val articleList = relatedArticleListState.data?.articleList
+                        }
+                        is UiState.Success -> {
+                            val articleList = relatedArticleListState.data?.articleList
 
-                                if (articleList?.isNotEmpty() == true) {
-                                    LazyRow(
-                                        contentPadding = PaddingValues(horizontal = 16.dp),
-                                        horizontalArrangement = Arrangement.spacedBy(16.dp),
-                                        modifier = Modifier.fillMaxWidth()
-                                    ) {
-                                        relatedArticleListState.data.articleList.let {
-                                            if (it.isNotEmpty()) {
-                                                items(
-                                                    count = it.size,
-                                                ) { index ->
-                                                    articleList.get(index)?.let { it1 ->
-                                                        ArticleCardBig(
-                                                            modifier = Modifier
-                                                                .width(150.dp),
-                                                            article = it1
-                                                        )
-                                                    }
+                            if (articleList?.isNotEmpty() == true) {
+                                LazyRow(
+                                    contentPadding = PaddingValues(horizontal = 16.dp),
+                                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    relatedArticleListState.data.articleList.let {
+                                        if (it.isNotEmpty()) {
+                                            items(
+                                                count = it.size,
+                                            ) { index ->
+                                                articleList.get(index)?.let { it1 ->
+                                                    ArticleCardBig(
+                                                        modifier = Modifier
+                                                            .width(150.dp)
+                                                            .clickable {
+                                                                it1.id?.let { it2 ->
+                                                                    navigateToSingleArticle(
+                                                                        it2
+                                                                    )
+                                                                }
+                                                            },
+                                                        article = it1
+                                                    )
                                                 }
                                             }
                                         }
                                     }
-                                } else {
+                                }
+                            } else {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(100.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
                                     Box(
                                         modifier = Modifier
-                                            .fillMaxWidth()
-                                            .height(100.dp),
-                                        contentAlignment = Alignment.Center
-                                    ) {
-                                        Box(
-                                            modifier = Modifier
-                                                .border(
-                                                    width = 1.dp,
-                                                    color = Color.Red,
-                                                    shape = RoundedCornerShape(20.dp)
-                                                )
-                                                .padding(8.dp)
-
-                                        ) {
-                                            Text(
-                                                text = "There's no related article",
-                                                style = MaterialTheme.typography.labelSmall,
-                                                color = Color.Red
+                                            .border(
+                                                width = 1.dp,
+                                                color = Color.Red,
+                                                shape = RoundedCornerShape(20.dp)
                                             )
-                                        }
+                                            .padding(8.dp)
+
+                                    ) {
+                                        Text(
+                                            text = "There's no related article",
+                                            style = MaterialTheme.typography.labelSmall,
+                                            color = Color.Red
+                                        )
                                     }
                                 }
+                            }
                         }
                     }
                 }
@@ -424,7 +468,8 @@ fun CatalogSingleComponentScreenPreview() {
             usableComponentList = emptyList(),
             updateUsableComponentsList = {},
             relatedArticleListState = UiState.Loading(),
-            updateRelatedArticleListState = {}
+            updateRelatedArticleListState = {},
+            navigateToSingleArticle = {}
         )
     }
 }

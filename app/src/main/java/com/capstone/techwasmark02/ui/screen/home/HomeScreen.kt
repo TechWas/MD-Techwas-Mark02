@@ -4,7 +4,6 @@ import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
 import android.util.Log
-import android.widget.Space
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -59,13 +58,18 @@ import com.capstone.techwasmark02.R
 import com.capstone.techwasmark02.data.remote.response.ArticleList
 import com.capstone.techwasmark02.data.remote.response.ArticleResultResponse
 import com.capstone.techwasmark02.ui.common.UiState
-import com.capstone.techwasmark02.ui.component.AboutUsBox
 import com.capstone.techwasmark02.ui.component.ArticleCardBig
-import com.capstone.techwasmark02.ui.component.DefaultBottomBar
 import com.capstone.techwasmark02.ui.component.FeatureBox
-import com.capstone.techwasmark02.ui.componentType.BottomBarItemType
+import com.capstone.techwasmark02.ui.component.FeatureBoxLarge
 import com.capstone.techwasmark02.ui.componentType.FeatureBoxType
-import com.capstone.techwasmark02.ui.navigation.Screen.*
+import com.capstone.techwasmark02.ui.navigation.Screen
+import com.capstone.techwasmark02.ui.navigation.Screen.Article
+import com.capstone.techwasmark02.ui.navigation.Screen.Camera
+import com.capstone.techwasmark02.ui.navigation.Screen.Catalog
+import com.capstone.techwasmark02.ui.navigation.Screen.Forum
+import com.capstone.techwasmark02.ui.navigation.Screen.Home
+import com.capstone.techwasmark02.ui.navigation.Screen.Maps
+import com.capstone.techwasmark02.ui.navigation.Screen.Profile
 import com.capstone.techwasmark02.ui.theme.TechwasMark02Theme
 import com.capstone.techwasmark02.ui.theme.yellow
 import kotlin.math.absoluteValue
@@ -86,6 +90,7 @@ fun HomeScreen(
         navigateToProfile = { navController.navigate(Profile.route) },
         navigateToCatalog = { navController.navigate(Catalog.route) },
         navigateToMaps = { navController.navigate(Maps.route) },
+        navigateToSingleArticle = { navController.navigate("${Screen.SingleArticle.route}/$it") },
         latestArticleState = latestArticleState
     )
 }
@@ -100,6 +105,7 @@ fun HomeContent(
     navigateToProfile: () -> Unit,
     navigateToCatalog: () -> Unit,
     navigateToMaps: () -> Unit,
+    navigateToSingleArticle: (idArticle: Int) -> Unit,
     latestArticleState: UiState<ArticleResultResponse>?
 ) {
 
@@ -141,19 +147,24 @@ fun HomeContent(
                 ) {
                     Row(
                         modifier = Modifier,
-                        verticalAlignment = Alignment.Bottom
                     ) {
-                        Image(
-                            modifier = Modifier.size(24.dp, 27.dp),
-                            painter = painterResource(id = R.drawable.logo_techwaste),
-                            contentDescription = null
-                        )
+                        Column(
+                            modifier = Modifier
+                                .fillMaxHeight(),
+
+                            ) {
+                            Image(
+                                modifier = Modifier.size(24.dp, 27.dp),
+                                painter = painterResource(id = R.drawable.logo_techwaste),
+                                contentDescription = null
+                            )
+                        }
                         Text(
                             text = "Techwas",
                             modifier = Modifier
                                 .padding(start = 4.dp)
                                 .offset(y = 5.dp),
-                            style = MaterialTheme.typography.labelLarge,
+                            style = MaterialTheme.typography.titleMedium,
                             color = Color.White
                         )
                     }
@@ -208,10 +219,11 @@ fun HomeContent(
 
                         Row(
                             modifier = Modifier
-                                .fillMaxWidth(),
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp),
                         ) {
                             Spacer(modifier = Modifier.weight(1f))
-                            FeatureBox(
+                            FeatureBoxLarge(
                                 featureBoxType = FeatureBoxType.Detection,
                                 onClick = {
                                     checkAndRequestCameraPermission(
@@ -221,8 +233,6 @@ fun HomeContent(
                                     )
                                 }
                             )
-                            Spacer(modifier = Modifier.weight(3f))
-                            FeatureBox(featureBoxType = FeatureBoxType.Catalog, onClick = navigateToCatalog)
                             Spacer(modifier = Modifier.weight(1f))
 //                        DetectBox1()
 //                        DetectBox2()
@@ -232,14 +242,13 @@ fun HomeContent(
 
                         Row(
                             modifier = Modifier
-                                .fillMaxWidth(),
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Spacer(modifier = Modifier.weight(1f))
                             FeatureBox(featureBoxType = FeatureBoxType.DropPoint, onClick = navigateToMaps)
-                            Spacer(modifier = Modifier.weight(3f))
-                            AboutUsBox()
                             Spacer(modifier = Modifier.weight(1f))
+                            FeatureBox(featureBoxType = FeatureBoxType.Catalog, onClick = navigateToCatalog)
                         }
 
                         Spacer(modifier = Modifier.height(titlePaddingTop))
@@ -271,9 +280,8 @@ fun HomeContent(
 
                     Spacer(modifier = Modifier.height(titlePaddingBottom))
 
-                    val pagerState = rememberPagerState()
-
                     if (latestArticleState != null) {
+
                         when(latestArticleState) {
                             is UiState.Loading -> {
                                 Box(
@@ -297,11 +305,19 @@ fun HomeContent(
                             }
                             is UiState.Success -> {
                                 latestArticleState.data?.articleList?.size?.let {
+
+                                    val pagerState = rememberPagerState(
+                                        initialPage = 0,
+                                        initialPageOffsetFraction = 0f,
+                                    )
+
                                     HorizontalPager(
                                         pageCount = it,
                                         state = pagerState,
                                         contentPadding = PaddingValues(horizontal = 56.dp),
-                                        modifier = Modifier.fillMaxWidth().height(180.dp)
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .height(180.dp)
                                     ) { page ->
                                         val articleList = latestArticleState.data.articleList
 
@@ -319,7 +335,10 @@ fun HomeContent(
                                                         lerp(
                                                             start = 0.85f,
                                                             stop = 1f,
-                                                            fraction = 1f - pageOffset.coerceIn(0f, 1f)
+                                                            fraction = 1f - pageOffset.coerceIn(
+                                                                0f,
+                                                                1f
+                                                            )
                                                         ).also { scale ->
                                                             scaleX = scale
                                                             scaleY = scale
@@ -327,8 +346,18 @@ fun HomeContent(
                                                         alpha = lerp(
                                                             start = 0.5f,
                                                             stop = 1f,
-                                                            fraction = 1f - pageOffset.coerceIn(0f, 1f)
+                                                            fraction = 1f - pageOffset.coerceIn(
+                                                                0f,
+                                                                1f
+                                                            )
                                                         )
+                                                    }
+                                                    .clickable {
+                                                        it1.id?.let { it2 ->
+                                                            navigateToSingleArticle(
+                                                                it2
+                                                            )
+                                                        }
                                                     },
                                                 article = it1
                                             )
@@ -390,19 +419,19 @@ fun HomeContent(
                 }
             }
 
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-            ) {
-                Spacer(modifier = Modifier.weight(1f))
-                DefaultBottomBar(
-                    selectedType = BottomBarItemType.Home,
-                    navigateToProfile = navigateToProfile,
-                    navigateToForum = navigateToForum,
-                    navigateToArticle = navigateToArticle,
-                    navigateToHome = navigateToHome
-                )
-            }
+//            Column(
+//                modifier = Modifier
+//                    .fillMaxSize()
+//            ) {
+//                Spacer(modifier = Modifier.weight(1f))
+//                DefaultBottomBar(
+//                    selectedType = BottomBarItemType.Home,
+//                    navigateToProfile = navigateToProfile,
+//                    navigateToForum = navigateToForum,
+//                    navigateToArticle = navigateToArticle,
+//                    navigateToHome = navigateToHome
+//                )
+//            }
         }
     }
 }
@@ -434,6 +463,7 @@ fun HomeContentPreview() {
             navigateToProfile = {},
             navigateToCatalog = {},
             navigateToMaps = {},
+            navigateToSingleArticle = {},
             latestArticleState = UiState.Loading()
         )
     }

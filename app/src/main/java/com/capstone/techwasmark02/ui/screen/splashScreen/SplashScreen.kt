@@ -16,6 +16,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -28,13 +29,21 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import com.capstone.techwasmark02.R
+import com.capstone.techwasmark02.ui.navigation.Screen
 import com.capstone.techwasmark02.ui.theme.Green77
 import com.capstone.techwasmark02.ui.theme.TechwasMark02Theme
 import kotlinx.coroutines.delay
 
 @Composable
-fun SplashScreen() {
+fun SplashScreen(
+    viewModel: SplashScreenViewModel = hiltViewModel(),
+    navController: NavHostController
+) {
+
+    val userSession by viewModel.userSessionState.collectAsState()
 
     var animationState by remember {
         mutableStateOf(false)
@@ -51,6 +60,18 @@ fun SplashScreen() {
         animationState = true
         delay(4000)
         // navController.navigate(Screen.Home.route)
+    }
+
+    LaunchedEffect(key1 = userSession) {
+        delay(4000)
+
+        if (userSession != null) {
+            if (userSession!!.userLoginToken.accessToken == "") {
+                navController.navigate(Screen.OnBoarding.route)
+            } else {
+                navController.navigate(Screen.Main.route)
+            }
+        }
     }
 
     SplashContent(alpha = alphaAnim.value)
@@ -73,7 +94,7 @@ fun SplashContent(alpha: Float) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Image(
-                painter = painterResource(id = R.drawable.logo_techwaste),
+                painter = painterResource(id = R.drawable.img_logo_onboarding_nooutline),
                 contentDescription = null,
                 modifier = Modifier
                     .width(57.27.dp)

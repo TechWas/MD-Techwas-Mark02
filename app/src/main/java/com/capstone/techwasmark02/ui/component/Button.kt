@@ -1,16 +1,14 @@
 package com.capstone.techwasmark02.ui.component
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -27,7 +25,8 @@ import com.capstone.techwasmark02.ui.theme.TechwasMark02Theme
 fun DefaultButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {},
-    contentText: String
+    contentText: String,
+    buttonColors: ButtonColors = ButtonDefaults.buttonColors()
 ) {
     Button(
         onClick = onClick,
@@ -36,6 +35,7 @@ fun DefaultButton(
         elevation = ButtonDefaults.buttonElevation(
             defaultElevation = 4.dp
         ),
+        colors = buttonColors
     ) {
         Text(
             text = contentText,
@@ -74,14 +74,14 @@ fun InverseButton(
 }
 
 @Composable
-fun SmallButton(modifier: Modifier = Modifier, contentText: String, onClick: () -> Unit = {}, colorText: Color) {
+fun SmallButton(modifier: Modifier = Modifier, contentText: String, onClick: () -> Unit = {}, colorText: Color, containerColor: Color = MaterialTheme.colorScheme.tertiary) {
     Button(
         onClick = onClick,
         modifier = modifier
             .height(28.dp),
         colors = ButtonDefaults.buttonColors(
             contentColor = MaterialTheme.colorScheme.onTertiary,
-            containerColor = MaterialTheme.colorScheme.tertiary
+            containerColor = containerColor
         ),
         shape = MaterialTheme.shapes.large,
         contentPadding = PaddingValues(horizontal = 12.dp),

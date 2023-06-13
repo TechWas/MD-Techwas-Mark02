@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,9 +20,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -45,11 +42,9 @@ import androidx.navigation.NavHostController
 import com.capstone.techwasmark02.data.remote.response.ArticleResultResponse
 import com.capstone.techwasmark02.ui.common.UiState
 import com.capstone.techwasmark02.ui.component.ArticleCardSmall
-import com.capstone.techwasmark02.ui.component.DefaultBottomBar
 import com.capstone.techwasmark02.ui.component.SearchBox
 import com.capstone.techwasmark02.ui.component.SelectableText
 import com.capstone.techwasmark02.ui.componentType.ArticleFilterType
-import com.capstone.techwasmark02.ui.componentType.BottomBarItemType
 import com.capstone.techwasmark02.ui.navigation.Screen
 import com.capstone.techwasmark02.ui.theme.TechwasMark02Theme
 
@@ -64,10 +59,6 @@ fun ArticleScreen(
         viewModel = viewModel,
         articleList = articleList,
         navigateToSingleArticle = { navController.navigate("${Screen.SingleArticle.route}/$it") },
-        navigateToHome = { navController.navigate(Screen.Home.route) },
-        navigateToArticle = { navController.navigate(Screen.Article.route) },
-        navigateToForum = { navController.navigate(Screen.Forum.route) },
-        navigateToProfile = { navController.navigate(Screen.Profile.route) }
     )
 }
 
@@ -76,10 +67,6 @@ fun ArticleContent(
     viewModel: ArticleScreenViewModel,
     articleList: UiState<ArticleResultResponse>?,
     navigateToSingleArticle: (idArticle: Int) -> Unit,
-    navigateToHome: () -> Unit,
-    navigateToForum: () -> Unit,
-    navigateToArticle: () -> Unit,
-    navigateToProfile: () -> Unit
 ) {
 
     var inputValue by remember {
@@ -256,13 +243,6 @@ fun ArticleContent(
             .fillMaxSize()
     ) {
         Spacer(modifier = Modifier.weight(1f))
-        DefaultBottomBar(
-            selectedType = BottomBarItemType.Article,
-            navigateToProfile = navigateToProfile,
-            navigateToForum = navigateToForum,
-            navigateToArticle = navigateToArticle,
-            navigateToHome = navigateToHome
-        )
     }
 }
 

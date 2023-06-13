@@ -1,5 +1,6 @@
 package com.capstone.techwasmark02.ui.screen.signIn
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -22,10 +23,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import com.capstone.techwasmark02.data.model.UserLoginInfo
 import com.capstone.techwasmark02.data.model.UserSession
 import com.capstone.techwasmark02.data.remote.response.UserLoginResponse
@@ -34,22 +37,26 @@ import com.capstone.techwasmark02.ui.component.DefaultButton
 import com.capstone.techwasmark02.ui.component.DefaultTextField
 import com.capstone.techwasmark02.ui.component.PasswordTextField
 import com.capstone.techwasmark02.ui.component.SignInBanner
+import com.capstone.techwasmark02.ui.navigation.Screen
 import com.capstone.techwasmark02.ui.theme.TechwasMark02Theme
 
 @Composable
 fun SignInScreen(
     viewModel: SignInScreenViewModel = hiltViewModel(),
+    navController: NavHostController
 ) {
     val userToSignInState by viewModel.userToSignInState.collectAsState()
     val userToSignInInfo by viewModel.userToSignInInfo.collectAsState()
-    val userSessionState by viewModel.userSessionState.collectAsState()
+//    val userSessionState by viewModel.userSessionState.collectAsState()
 
     SignInContent(
         userToSignInInfo = userToSignInInfo,
         updateUserLoginInfo = { viewModel.updateUserSignInInfo(it) },
         userToSignInState = userToSignInState,
         signInUser = { viewModel.signInUser() },
-        userSessionState = userSessionState
+        saveUserSession = { viewModel.saveUserSession() },
+        navigateToMain = { navController.navigate(Screen.Main.route) }
+//        userSessionState = userSessionState
     )
 }
 
@@ -59,12 +66,16 @@ fun SignInContent(
     updateUserLoginInfo: (UserLoginInfo) -> Unit,
     userToSignInState: UiState<UserLoginResponse>?,
     signInUser: () -> Unit,
-    userSessionState: UserSession?
+    saveUserSession: () -> Unit,
+    navigateToMain: () -> Unit
+//    userSessionState: UserSession?
 ) {
 
     var showPassword by remember {
         mutableStateOf(false)
     }
+
+    val context = LocalContext.current
 
     Column(
         modifier = Modifier
@@ -74,7 +85,6 @@ fun SignInContent(
     ) {
         SignInBanner(
             modifier = Modifier
-
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -93,15 +103,19 @@ fun SignInContent(
         ) {
             Text(
                 text = "Sign In",
-                style = MaterialTheme.typography.headlineSmall
+                style = MaterialTheme.typography.headlineSmall,
+                color = MaterialTheme.colorScheme.onTertiary.copy(alpha = 0.8f)
             )
 
             Text(
-                text = "Please sign in to continue",
-                style = MaterialTheme.typography.bodySmall
+                text = "Please sign in! We're excited to have you on board!",
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    fontWeight = FontWeight.Medium
+                ),
+                color = MaterialTheme.colorScheme.onTertiary.copy(alpha = 0.8f)
             )
 
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(28.dp))
 
             DefaultTextField(
                 value = userToSignInInfo.email,
@@ -137,7 +151,10 @@ fun SignInContent(
             ) {
                 Text(
                     text = "Forgot your password?",
-                    style = MaterialTheme.typography.bodySmall
+                    style = MaterialTheme.typography.bodySmall.copy(
+                        fontWeight = FontWeight.Medium
+                    ),
+                    color = MaterialTheme.colorScheme.onTertiary.copy(alpha = 0.8f)
                 )
             }
 
@@ -158,21 +175,19 @@ fun SignInContent(
                             }
                         }
                         is UiState.Success -> {
-                            userToSignInState.data?.loginResult?.token?.accessToken?.let {
-                                Text(text = it)
+                            saveUserSession()
+
+                            val username = userToSignInState.data?.loginResult?.userId?.username
+                            Toast.makeText(context, "Welcome $username", Toast.LENGTH_SHORT).show()
+
+                            LaunchedEffect(Unit) {
+                                navigateToMain()
                             }
                         }
                     }
                 }
             } else {
                 Spacer(modifier = Modifier.weight(1f))
-            }
-
-            if (userSessionState != null) {
-                Text(
-                    text = userSessionState.userLoginToken.accessToken,
-                    modifier = Modifier.padding(vertical = 10.dp)
-                )
             }
 
             DefaultButton(
@@ -192,7 +207,8 @@ fun SignInContent(
             ) {
                 Text(
                     text = "Don't have an account?",
-                    style = MaterialTheme.typography.bodySmall
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onTertiary.copy(alpha = 0.8f)
                 )
 
                 Spacer(modifier = Modifier.width(2.dp))
@@ -220,7 +236,9 @@ fun SingInContentPreview() {
             userToSignInInfo = UserLoginInfo("", ""),
             updateUserLoginInfo = {},
             signInUser = {},
-            userSessionState = null
+            saveUserSession = {},
+            navigateToMain = {}
+//            userSessionState = null
         )
     }
 }

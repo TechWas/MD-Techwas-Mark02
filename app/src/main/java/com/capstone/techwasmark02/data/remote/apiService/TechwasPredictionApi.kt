@@ -16,7 +16,7 @@ interface TechwasPredictionApi {
     ) : DetectionsResultResponse
 
     companion object {
-        const val BASE_URL = "http://34.135.12.100/"
+        const val BASE_URL = "http://35.202.94.119/"
 //        const val BASE_URL = "https://e-waste-model-deployment-1gb-fwd5gpydiq-uc.a.run.app/"
     }
 }

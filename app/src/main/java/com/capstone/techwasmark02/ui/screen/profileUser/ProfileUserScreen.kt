@@ -55,10 +55,6 @@ fun ProfileUserScreen(
     navController: NavHostController
 ) {
     ProfileUserContent(
-        navigateToHome = { navController.navigate(Screen.Home.route) },
-        navigateToArticle = { navController.navigate(Screen.Article.route) },
-        navigateToForum = { navController.navigate(Screen.Forum.route) },
-        navigateToProfile = { navController.navigate(Screen.Profile.route) },
         navigateToSetting = { navController.navigate(Screen.Setting.route) },
     )
 }
@@ -66,10 +62,6 @@ fun ProfileUserScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileUserContent(
-    navigateToHome: () -> Unit,
-    navigateToForum: () -> Unit,
-    navigateToArticle: () -> Unit,
-    navigateToProfile: () -> Unit,
     navigateToSetting: () -> Unit,
 ) {
 
@@ -91,15 +83,6 @@ fun ProfileUserContent(
                 }
             )
         },
-        bottomBar = {
-            DefaultBottomBar(
-                selectedType = BottomBarItemType.Profile,
-                navigateToProfile = navigateToProfile,
-                navigateToForum = navigateToForum,
-                navigateToArticle = navigateToArticle,
-                navigateToHome = navigateToHome
-            )
-        }
     ) { innerPadding ->
         val scrollState = rememberScrollState()
 
@@ -233,10 +216,6 @@ fun ProfileUserContent(
 fun ProfileUserScreenPreview() {
     TechwasMark02Theme {
         ProfileUserContent(
-            navigateToHome = {},
-            navigateToArticle = {},
-            navigateToForum = {},
-            navigateToProfile = {},
             navigateToSetting = {},
         )
     }

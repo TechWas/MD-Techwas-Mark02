@@ -30,6 +30,6 @@ interface TechwasArticleApi {
     ): ArticleResultResponse
 
     companion object {
-        const val BASE_URL = "https://the-prophecy-fwd5gpydiq-uc.a.run.app/"
+        const val BASE_URL = "https://backend-api-56g32wdmqa-uc.a.run.app/"
     }
 }

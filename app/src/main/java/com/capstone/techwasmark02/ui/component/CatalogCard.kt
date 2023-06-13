@@ -1,9 +1,7 @@
 package com.capstone.techwasmark02.ui.component
 
-import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -33,8 +32,6 @@ import coil.compose.AsyncImage
 import com.capstone.techwasmark02.R
 import com.capstone.techwasmark02.data.remote.response.Component
 import com.capstone.techwasmark02.ui.theme.TechwasMark02Theme
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import kotlin.random.Random
 
 @Composable
@@ -63,13 +60,13 @@ fun CatalogCard(
         Row(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(vertical = 8.dp)
-                .padding(start = 16.dp, end = 8.dp)
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxHeight()
-                    .weight(1f),
+                    .weight(1f)
+                    .padding(vertical = 8.dp)
+                    .padding(start = 16.dp),
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(
@@ -89,19 +86,35 @@ fun CatalogCard(
 
             Spacer(modifier = Modifier.width(8.dp))
 
+
             Box(
                 modifier = Modifier
-                    .width(140.dp)
+                    .width(150.dp)
                     .fillMaxHeight()
-                    .clip(RoundedCornerShape(20.dp))
+                    .clip(RoundedCornerShape(topEnd = 20.dp, bottomEnd = 20.dp))
                     .background(Color.LightGray)
             ) {
+                val greenColor = Color(0xff8bcd54)
+
                 AsyncImage(
                     model = component.imageExample,
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .fillMaxSize()
+                )
+
+                Box(
+
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(
+                            Brush.horizontalGradient(
+                                .0f to greenColor,
+                                .4F to greenColor.copy(alpha = 0.4f),
+                                .6F to Color.Transparent,
+                            )
+                        )
                 )
             }
         }

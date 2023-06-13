@@ -24,9 +24,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
@@ -56,24 +58,66 @@ fun SignInBanner(
             .background(
                 MaterialTheme.colorScheme.primary,
             ),
-        contentAlignment = Alignment.Center
     ) {
-        Text(
-            text = "Welcome to TechWaste",
-            style = MaterialTheme.typography.headlineSmall.copy(
-                shadow = Shadow(
-                    color = MaterialTheme.colorScheme.onTertiary.copy(
-                        alpha = 0.8f
-                    ),
-                    offset = Offset(
-                        x = 0f,
-                        y = 14f
-                    ),
-                    blurRadius = 16f
-                )
-            ),
-            color = MaterialTheme.colorScheme.onPrimary,
+
+        Image(
+            painter = painterResource(id = R.drawable.img_bg_singin),
+            contentDescription = null,
+            modifier = Modifier
+                .fillMaxSize(),
+            contentScale = ContentScale.Crop
         )
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 24.dp),
+            verticalArrangement = Arrangement.Center
+        ) {
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            Box(
+                modifier = Modifier
+            ) {
+
+                Text(
+                    text = "Welcome",
+                    style = MaterialTheme.typography.headlineMedium.copy(
+                        fontWeight = FontWeight.Bold
+                    ),
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    modifier = Modifier
+                        .offset(
+                            x = 0.dp,
+                            y = -(18.dp)
+                        )
+                )
+
+                Text(
+                    text = "to Techwaste!",
+                    style = MaterialTheme.typography.headlineMedium.copy(
+                        fontWeight = FontWeight.Bold
+                    ),
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    modifier = Modifier
+                        .offset(
+                            x = 0.dp,
+                            y = (10.dp)
+                        )
+                )
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                text = "Let's manage your e-waste properly.",
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    fontWeight = FontWeight.Medium
+                ),
+                color = MaterialTheme.colorScheme.onPrimary
+            )
+        }
     }
 }
 
@@ -83,7 +127,7 @@ fun SignUpBanner(
 ) {
     Box(
         modifier = modifier
-            .height(100.dp)
+            .height(150.dp)
             .fillMaxWidth()
             .shadow(
                 elevation = 12.dp,
@@ -94,24 +138,66 @@ fun SignUpBanner(
             .background(
                 MaterialTheme.colorScheme.primary,
             ),
-        contentAlignment = Alignment.Center
     ) {
-        Text(
-            text = "Nice to meet you",
-            style = MaterialTheme.typography.headlineSmall.copy(
-                shadow = Shadow(
-                    color = MaterialTheme.colorScheme.onTertiary.copy(
-                        alpha = 0.8f
-                    ),
-                    offset = Offset(
-                        x = 0f,
-                        y = 14f
-                    ),
-                    blurRadius = 16f
-                )
-            ),
-            color = MaterialTheme.colorScheme.onPrimary,
+
+        Image(
+            painter = painterResource(id = R.drawable.img_bg_singin),
+            contentDescription = null,
+            modifier = Modifier
+                .fillMaxSize(),
+            contentScale = ContentScale.Crop
         )
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 24.dp),
+            verticalArrangement = Arrangement.Center
+        ) {
+            Box(
+                modifier = Modifier
+            ) {
+
+                Text(
+                    text = "Let's start your",
+                    style = MaterialTheme.typography.headlineSmall.copy(
+                        fontWeight = FontWeight.Bold
+                    ),
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    modifier = Modifier
+                        .offset(
+                            x = 0.dp,
+                            y = -(28.dp)
+                        )
+                )
+
+                Text(
+                    text = "journey to dispose of",
+                    style = MaterialTheme.typography.headlineSmall.copy(
+                        fontWeight = FontWeight.Bold
+                    ),
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    modifier = Modifier
+                        .offset(
+                            x = 0.dp,
+                            y = (0.dp)
+                        )
+                )
+
+                Text(
+                    text = "to Techwaste!",
+                    style = MaterialTheme.typography.headlineSmall.copy(
+                        fontWeight = FontWeight.Bold
+                    ),
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    modifier = Modifier
+                        .offset(
+                            x = 0.dp,
+                            y = (28.dp)
+                        )
+                )
+            }
+        }
     }
 }
 
@@ -342,5 +428,5 @@ fun HomeBannerPreview() {
             ForumBanner()
         }
     }
-    
+
 }

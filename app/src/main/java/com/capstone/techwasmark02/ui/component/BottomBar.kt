@@ -1,9 +1,10 @@
 package com.capstone.techwasmark02.ui.component
 
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -34,10 +35,7 @@ import com.capstone.techwasmark02.ui.theme.TechwasMark02Theme
 fun DefaultBottomBar(
     modifier: Modifier = Modifier,
     selectedType: BottomBarItemType,
-    navigateToHome: () -> Unit,
-    navigateToForum: () -> Unit,
-    navigateToArticle: () -> Unit,
-    navigateToProfile: () -> Unit
+    onClickBottomNavType: (bottomBarType: BottomBarItemType) -> Unit,
 ) {
     Box(
         modifier = Modifier
@@ -66,67 +64,117 @@ fun DefaultBottomBar(
                     .padding(horizontal = 24.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-
-                BottomBarItem(bottomBarItemType = BottomBarItemType.Home, selectedType = selectedType, onClick = navigateToHome)
-
-                Spacer(modifier = Modifier.weight(1f))
-
-                BottomBarItem(bottomBarItemType = BottomBarItemType.Forum, selectedType = selectedType, onClick = navigateToForum)
-
-                Spacer(modifier = Modifier.weight(1f))
-
-                BottomBarItem(bottomBarItemType = BottomBarItemType.Article, selectedType = selectedType, onClick = navigateToArticle)
+                BottomBarItem(
+                    bottomBarItemType = BottomBarItemType.Home,
+                    selectedType = selectedType,
+                    onClick = {
+                        onClickBottomNavType(it)
+                    },
+                )
 
                 Spacer(modifier = Modifier.weight(1f))
 
-                BottomBarItem(bottomBarItemType = BottomBarItemType.Profile, selectedType = selectedType, onClick = navigateToProfile)
+                BottomBarItem(
+                    bottomBarItemType = BottomBarItemType.Forum,
+                    selectedType = selectedType,
+                    onClick = {
+                        onClickBottomNavType(it)
+                    },
+                )
 
+                Spacer(modifier = Modifier.weight(1f))
 
+                BottomBarItem(
+                    bottomBarItemType = BottomBarItemType.Article,
+                    selectedType = selectedType,
+                    onClick = {
+                        onClickBottomNavType(it)
+                    },
+                )
+
+                Spacer(modifier = Modifier.weight(1f))
+
+                BottomBarItem(
+                    bottomBarItemType = BottomBarItemType.Profile,
+                    selectedType = selectedType,
+                    onClick = {
+                        onClickBottomNavType(it)
+                    },
+                )
             }
         }
     }
 }
+
 
 @Composable
 fun BottomBarItem(
     modifier: Modifier = Modifier,
     bottomBarItemType: BottomBarItemType,
     selectedType: BottomBarItemType,
-    onClick: () -> Unit
+    onClick: (BottomBarItemType) -> Unit,
 ) {
-    IconButton(
-        onClick = onClick,
+    Box(
         modifier = modifier
-            .size(44.dp)
+            .fillMaxHeight()
+            .width(IntrinsicSize.Max),
+        contentAlignment = Alignment.Center
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceBetween
-        ) {
-            Icon(
-                painter = painterResource(id = bottomBarItemType.icon),
-                contentDescription = null,
-                tint = if (selectedType == bottomBarItemType) {
-                    MaterialTheme.colorScheme.primary
-                } else {
-                    MaterialTheme.colorScheme.inverseOnSurface
-                }
 
-            )
-            Text(
-                text = bottomBarItemType.title,
-                style = MaterialTheme.typography.labelSmall,
-                color = if (selectedType == bottomBarItemType) {
-                    MaterialTheme.colorScheme.primary
-                } else {
-                    MaterialTheme.colorScheme.inverseOnSurface
-                }
-            )
+        if (selectedType == bottomBarItemType) {
+            Column(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .fillMaxWidth(),
+                verticalArrangement = Arrangement.Bottom
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(4.dp)
+                        .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
+                        .background(MaterialTheme.colorScheme.primary)
+                )
+            }
+        }
+
+        IconButton(
+            onClick = {
+                onClick(bottomBarItemType)
+            },
+            modifier = modifier
+                .size(44.dp)
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.SpaceBetween
+            ) {
+                Icon(
+                    painter = painterResource(id = bottomBarItemType.icon),
+                    contentDescription = null,
+                    tint = if (selectedType == bottomBarItemType) {
+                        MaterialTheme.colorScheme.primary
+                    } else {
+                        MaterialTheme.colorScheme.inverseOnSurface
+                    }
+
+                )
+                Text(
+                    text = bottomBarItemType.title,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = if (selectedType == bottomBarItemType) {
+                        MaterialTheme.colorScheme.primary
+                    } else {
+                        MaterialTheme.colorScheme.inverseOnSurface
+                    }
+                )
+            }
         }
     }
 }
+
 
 @Preview(showBackground = true)
 @Composable
@@ -139,41 +187,8 @@ fun DefaultBottomBarPreview() {
         ) {
             DefaultBottomBar(
                 selectedType = BottomBarItemType.Home,
-                navigateToHome = {},
-                navigateToArticle = {},
-                navigateToForum = {},
-                navigateToProfile = {}
+                onClickBottomNavType = {},
             )
         }
     }
 }
-
-//@Composable
-//fun CheckBottomNav(
-//    modifier: Modifier = Modifier
-//) {
-//    Box(
-//        modifier = modifier
-//            .graphicsLayer {
-//                shape = BottomNavShape()
-//                clip = true
-//            }
-//            .fillMaxWidth()
-//            .height(58.dp)
-//            .background(MaterialTheme.colorScheme.inverseSurface)
-//    ) {
-//
-//    }
-//}
-
-//@Preview (showBackground = true)
-//@Composable
-//fun CheckBottomNavPreview() {
-//    Box(
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .padding(20.dp)
-//    ) {
-//        CheckBottomNav()
-//    }
-//}
