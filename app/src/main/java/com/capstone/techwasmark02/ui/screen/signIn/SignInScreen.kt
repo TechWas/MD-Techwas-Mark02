@@ -47,6 +47,7 @@ fun SignInScreen(
 ) {
     val userToSignInState by viewModel.userToSignInState.collectAsState()
     val userToSignInInfo by viewModel.userToSignInInfo.collectAsState()
+    val savedUsername by viewModel.savedUsername.collectAsState()
 //    val userSessionState by viewModel.userSessionState.collectAsState()
 
     SignInContent(
@@ -55,8 +56,9 @@ fun SignInScreen(
         userToSignInState = userToSignInState,
         signInUser = { viewModel.signInUser() },
         saveUserSession = { viewModel.saveUserSession() },
-        navigateToMain = { navController.navigate(Screen.Main.route) }
-//        userSessionState = userSessionState
+        navigateToMain = { navController.navigate(Screen.Main.route) },
+        savedUsername = savedUsername
+//        userSessionState = userSessionState,
     )
 }
 
@@ -67,7 +69,8 @@ fun SignInContent(
     userToSignInState: UiState<UserLoginResponse>?,
     signInUser: () -> Unit,
     saveUserSession: () -> Unit,
-    navigateToMain: () -> Unit
+    navigateToMain: () -> Unit,
+    savedUsername: String?
 //    userSessionState: UserSession?
 ) {
 
@@ -177,11 +180,12 @@ fun SignInContent(
                         is UiState.Success -> {
                             saveUserSession()
 
-                            val username = userToSignInState.data?.loginResult?.userId?.username
-                            Toast.makeText(context, "Welcome $username", Toast.LENGTH_SHORT).show()
+                            if (savedUsername != null && savedUsername != "") {
+                                Toast.makeText(context, "Welcome $savedUsername", Toast.LENGTH_SHORT).show()
 
-                            LaunchedEffect(Unit) {
-                                navigateToMain()
+                                LaunchedEffect(Unit) {
+                                    navigateToMain()
+                                }
                             }
                         }
                     }
@@ -237,7 +241,8 @@ fun SingInContentPreview() {
             updateUserLoginInfo = {},
             signInUser = {},
             saveUserSession = {},
-            navigateToMain = {}
+            navigateToMain = {},
+            savedUsername = null
 //            userSessionState = null
         )
     }

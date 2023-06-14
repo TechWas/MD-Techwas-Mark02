@@ -49,9 +49,10 @@ class SignInScreenViewModel @Inject constructor(
                 val result = preferencesRepository.saveSession(userSession)
                 when(result) {
                     is Resource.Error -> {
-                        result.data
+                        _savedUsername.value = ""
                     }
                     is Resource.Success -> {
+                        _savedUsername.value = result.data?.userNameId?.username
                     }
                 }
             }
