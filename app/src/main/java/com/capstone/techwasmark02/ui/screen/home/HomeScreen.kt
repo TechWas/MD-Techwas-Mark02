@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
@@ -61,6 +62,7 @@ import com.capstone.techwasmark02.ui.common.UiState
 import com.capstone.techwasmark02.ui.component.ArticleCardBig
 import com.capstone.techwasmark02.ui.component.FeatureBox
 import com.capstone.techwasmark02.ui.component.FeatureBoxLarge
+import com.capstone.techwasmark02.ui.component.ForumBox
 import com.capstone.techwasmark02.ui.componentType.FeatureBoxType
 import com.capstone.techwasmark02.ui.navigation.Screen
 import com.capstone.techwasmark02.ui.navigation.Screen.Article
@@ -370,6 +372,7 @@ fun HomeContent(
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
+                            .height(400.dp)
                             .padding(horizontal = 20.dp)
                     ) {
                         Row(
@@ -394,23 +397,14 @@ fun HomeContent(
 
                         Spacer(modifier = Modifier.height(titlePaddingBottom))
 
-                        Row(
+                        LazyColumn(
                             modifier = Modifier
-                                .fillMaxWidth(),
-                            horizontalArrangement = Arrangement.Center
+                                .fillMaxSize(),
+                            verticalArrangement = Arrangement.spacedBy(10.dp),
                         ) {
-                            ArticleCardBig(
-                                modifier = Modifier
-                                    .width(320.dp)
-                                    .height(186.dp),
-                                article = ArticleList(
-                                    componentId = 2,
-                                    articleImageURL = null,
-                                    name = "Forum title",
-                                    id = 2,
-                                    desc = "Forum description"
-                                )
-                            )
+                            items(count = 10) {
+                                ForumBox(modifier = Modifier.fillMaxWidth())
+                            }
                         }
                     }
                 }
