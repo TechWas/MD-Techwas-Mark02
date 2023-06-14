@@ -17,11 +17,14 @@ import com.capstone.techwasmark02.ui.screen.camera.CameraScreen
 import com.capstone.techwasmark02.ui.screen.catalog.CatalogScreen
 import com.capstone.techwasmark02.ui.screen.catalogSingleComponent.CatalogSingleComponentScreen
 import com.capstone.techwasmark02.ui.screen.detectionResult.DetectionResultScreen
+import com.capstone.techwasmark02.ui.screen.forum.ForumScreen
+import com.capstone.techwasmark02.ui.screen.forumSingle.ForumSingleScreen
 import com.capstone.techwasmark02.ui.screen.home.HomeScreen
 import com.capstone.techwasmark02.ui.screen.main.MainScreen
 import com.capstone.techwasmark02.ui.screen.maps.MapsScreen
 import com.capstone.techwasmark02.ui.screen.onBoarding.OnBoardingScreen
 import com.capstone.techwasmark02.ui.screen.profileUser.ProfileUserScreen
+import com.capstone.techwasmark02.ui.screen.setting.SettingScreen
 import com.capstone.techwasmark02.ui.screen.signIn.SignInScreen
 import com.capstone.techwasmark02.ui.screen.signUp.SignUpScreen
 import com.capstone.techwasmark02.ui.screen.singleArticle.SingleArticleScreen
@@ -106,16 +109,28 @@ fun TechwasApp() {
                 val idArticle = navBackStackEntry.arguments?.getInt("idArticle")
 
                 if(idArticle != null) {
-                    SingleArticleScreen(idArticle = idArticle)
+                    SingleArticleScreen(idArticle = idArticle, navController = navController)
                 }
             }
 
             composable(Forum.route) {
+                ForumScreen(navController = navController)
+            }
 
+            composable(SingleForum.route) {
+                ForumSingleScreen(navController = navController)
             }
 
             composable(Profile.route) {
                 ProfileUserScreen(navController = navController)
+            }
+            
+            composable(
+                route = Setting.route,
+                enterTransition = Setting.enterTransition,
+                exitTransition = Setting.exitTransition
+            ) {
+                SettingScreen(navController = navController)
             }
 
             composable(Catalog.route) {

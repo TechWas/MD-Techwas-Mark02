@@ -2,6 +2,7 @@ package com.capstone.techwasmark02.ui.component
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -25,6 +26,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -36,6 +38,12 @@ import kotlin.random.Random
 @Composable
 fun ForumBox(
     modifier: Modifier = Modifier,
+    photoUrl: Int? = null,
+    onClick: () -> Unit = {},
+    title: String,
+    place: String,
+    desc: String
+
 ) {
     Box(
         modifier = modifier
@@ -47,6 +55,9 @@ fun ForumBox(
             )
             .background(Color.White)
             .clip(RoundedCornerShape(20.dp))
+            .clickable {
+                onClick()
+            }
     ) {
         Row(
             modifier
@@ -63,7 +74,7 @@ fun ForumBox(
                         bottomStart= 20.dp
                     )),
                 painter = rememberAsyncImagePainter(
-                        model = "https://picsum.photos/seed/${Random.nextInt()}/320/120",
+                        model = photoUrl ?: "https://picsum.photos/seed/${Random.nextInt()}/320/120",
                         placeholder = painterResource(id = R.drawable.place_holder),
                     ),
                 contentScale = ContentScale.Crop,
@@ -72,24 +83,28 @@ fun ForumBox(
             Column(
                 modifier = Modifier
                     .weight(1f)
-                    .height(60.dp)
                     .padding(start = 8.2.dp)
             ) {
                 Text(
-                    text = "Title",
+                    text = title,
                     style = MaterialTheme.typography.labelMedium,
-                    overflow = TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 1,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
                 )
                 Text(
-                    text = "Subtitle",
+                    text = desc,
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
-                    overflow = TextOverflow.Ellipsis
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 1
                 )
                 Text(
-                    text = "Description",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                    text = place,
+                    style = MaterialTheme.typography.bodySmall.copy(
+                        fontWeight = FontWeight.SemiBold
+                    ),
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
                     overflow = TextOverflow.Ellipsis
                 )
             }
@@ -110,7 +125,11 @@ fun ForumBoxPreview() {
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.background)
             .padding(20.dp)) {
-            ForumBox()
+            ForumBox(
+                title = "Laptop Rusak",
+                desc = "Ini adalah akhir dunia",
+                place = "Bandung"
+            )
         }
     }
 }

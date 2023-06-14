@@ -52,18 +52,18 @@ fun SplashScreen(
     val alphaAnim = animateFloatAsState(
         targetValue = if (animationState) 1f else 0f,
         animationSpec = tween(
-            durationMillis = 3000 // 3 sec
+            durationMillis = 1000 // 3 sec
         )
     )
 
     LaunchedEffect(key1 = true) {
         animationState = true
-        delay(4000)
+        delay(2000)
         // navController.navigate(Screen.Home.route)
     }
 
     LaunchedEffect(key1 = userSession) {
-        delay(4000)
+        delay(2000)
 
         if (userSession != null) {
             if (userSession!!.userLoginToken.accessToken == "") {

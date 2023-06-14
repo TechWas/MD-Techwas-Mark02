@@ -141,7 +141,7 @@ fun SignUpBanner(
     ) {
 
         Image(
-            painter = painterResource(id = R.drawable.img_bg_singin),
+            painter = painterResource(id = R.drawable.img_bg_signup),
             contentDescription = null,
             modifier = Modifier
                 .fillMaxSize(),
@@ -185,7 +185,7 @@ fun SignUpBanner(
                 )
 
                 Text(
-                    text = "to Techwaste!",
+                    text = "e-waste!",
                     style = MaterialTheme.typography.headlineSmall.copy(
                         fontWeight = FontWeight.Bold
                     ),

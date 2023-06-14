@@ -1,6 +1,7 @@
 package com.capstone.techwasmark02.ui.screen.catalog
 
 import android.net.Uri
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -32,6 +33,8 @@ import com.capstone.techwasmark02.data.remote.response.Component
 import com.capstone.techwasmark02.data.remote.response.ComponentsResponse
 import com.capstone.techwasmark02.ui.common.UiState
 import com.capstone.techwasmark02.ui.component.CatalogCard
+import com.capstone.techwasmark02.ui.component.DefaultTopBar
+import com.capstone.techwasmark02.ui.component.InverseTopBar
 import com.capstone.techwasmark02.ui.component.SearchBox
 import com.capstone.techwasmark02.ui.navigation.Screen
 import com.capstone.techwasmark02.ui.theme.TechwasMark02Theme
@@ -50,7 +53,8 @@ fun CatalogScreen(
         componentsState = componentsState,
         navigateToSingleComponent = { navController.navigate("${Screen.SingleCatalog.route}/$it") },
         searchBoxValue = searchBoxValue,
-        onSearchBoxValueChange = { viewModel.updateSearchBoxValue(it) }
+        onSearchBoxValueChange = { viewModel.updateSearchBoxValue(it) },
+        navigateBackToMain = { navController.popBackStack() }
     )
 }
 
@@ -59,91 +63,103 @@ fun CatalogContent(
     componentsState: UiState<ComponentsResponse>?,
     navigateToSingleComponent: (component: String) -> Unit,
     searchBoxValue: String,
-    onSearchBoxValueChange: (String) -> Unit
+    onSearchBoxValueChange: (String) -> Unit,
+    navigateBackToMain: () -> Unit
 ) {
     val moshi = Moshi.Builder()
         .add(KotlinJsonAdapterFactory())
         .build()
     val adapter = moshi.adapter(Component::class.java)
 
-
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 16.dp)
-            .padding(top = 20.dp)
     ) {
-        Text(
-            text = "Catalog",
-            style = MaterialTheme.typography.headlineSmall
-        )
-        Text(
-            text = "Find your e-waste component here",
-            style = MaterialTheme.typography.bodyMedium
-        )
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 16.dp)
+                .padding(top = 60.dp)
+        ) {
+            Text(
+                text = "Catalog",
+                style = MaterialTheme.typography.headlineSmall
+            )
+            Text(
+                text = "Find your e-waste component here",
+                style = MaterialTheme.typography.bodyMedium
+            )
 
-        Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(10.dp))
 
-        SearchBox(onValueChange = onSearchBoxValueChange, value = searchBoxValue)
+            SearchBox(onValueChange = onSearchBoxValueChange, value = searchBoxValue)
 
-        Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
-        if (componentsState != null) {
-            when(componentsState) {
-                is UiState.Success -> {
-                    val components = componentsState.data?.components
+            if (componentsState != null) {
+                when(componentsState) {
+                    is UiState.Success -> {
+                        val components = componentsState.data?.components
 
-                    var filteredComponents by remember {
-                        mutableStateOf(components)
-                    }
-
-                    LaunchedEffect(key1 = searchBoxValue) {
-                        if (components != null) {
-                            filteredComponents = searchComponent(
-                                componentList = components,
-                                searchBoxValue = searchBoxValue
-                            )
+                        var filteredComponents by remember {
+                            mutableStateOf(components)
                         }
-                    }
 
-                    LazyColumn(
-                        modifier = Modifier
-                            .fillMaxSize(),
-                        contentPadding = PaddingValues(bottom = 20.dp),
-                        verticalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        filteredComponents?.size?.let {
-                            items(
-                                count = it,
-                            ) {index ->
-                                CatalogCard(
-                                    component = filteredComponents!![index],
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .clickable {
-                                            val componentJson =
-                                                Uri.encode(adapter.toJson(filteredComponents!![index]))
-                                            navigateToSingleComponent(componentJson)
-                                        },
+                        LaunchedEffect(key1 = searchBoxValue) {
+                            if (components != null) {
+                                filteredComponents = searchComponent(
+                                    componentList = components,
+                                    searchBoxValue = searchBoxValue
                                 )
                             }
                         }
-                    }
-                }
-                is UiState.Error -> {
 
-                }
-                is UiState.Loading -> {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        CircularProgressIndicator()
+                        LazyColumn(
+                            modifier = Modifier
+                                .fillMaxSize(),
+                            contentPadding = PaddingValues(bottom = 20.dp),
+                            verticalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            filteredComponents?.size?.let {
+                                items(
+                                    count = it,
+                                ) {index ->
+                                    CatalogCard(
+                                        component = filteredComponents!![index],
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .clickable {
+                                                val componentJson =
+                                                    Uri.encode(adapter.toJson(filteredComponents!![index]))
+                                                navigateToSingleComponent(componentJson)
+                                            },
+                                    )
+                                }
+                            }
+                        }
+                    }
+                    is UiState.Error -> {
+
+                    }
+                    is UiState.Loading -> {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator()
+                        }
                     }
                 }
             }
         }
+
+        InverseTopBar(
+            onClickNavigationIcon = navigateBackToMain,
+            pageTitle = "Catalog",
+            modifier = Modifier
+                .background(MaterialTheme.colorScheme.background)
+        )
     }
 }
 
@@ -164,7 +180,8 @@ fun CatalogScreenPreview() {
             componentsState = UiState.Loading(),
             navigateToSingleComponent = {},
             searchBoxValue = "",
-            onSearchBoxValueChange = {}
+            onSearchBoxValueChange = {},
+            navigateBackToMain = {}
         )
     }
 }

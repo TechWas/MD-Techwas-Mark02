@@ -40,7 +40,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
@@ -58,9 +57,7 @@ import com.capstone.techwasmark02.data.remote.response.SmallPart
 import com.capstone.techwasmark02.data.remote.response.UsableComponentsResponse
 import com.capstone.techwasmark02.ui.common.UiState
 import com.capstone.techwasmark02.ui.component.ArticleCardBig
-import com.capstone.techwasmark02.ui.component.DefaultButton
 import com.capstone.techwasmark02.ui.component.DefaultTopBar
-import com.capstone.techwasmark02.ui.component.InverseButton
 import com.capstone.techwasmark02.ui.component.UsableComponentBottomSheet
 import com.capstone.techwasmark02.ui.component.UsableComponentItem
 import com.capstone.techwasmark02.ui.navigation.Screen
@@ -95,7 +92,8 @@ fun CatalogSingleComponentScreen(
             updateUsableComponentsList = { viewModel.updateUsableComponentList(it) },
             relatedArticleListState = relatedArticleListState,
             updateRelatedArticleListState = { viewModel.updateRelatedArticleListState(it) },
-            navigateToSingleArticle = { navController.navigate("${Screen.SingleArticle.route}/$it") }
+            navigateToSingleArticle = { navController.navigate("${Screen.SingleArticle.route}/$it") },
+            navigateBackToCatalog = { navController.popBackStack() }
         )
     }
 }
@@ -111,7 +109,7 @@ fun CatalogSingleComponentContent(
     relatedArticleListState: UiState<ArticleResultResponse>?,
     updateRelatedArticleListState: (Int) -> Unit,
     navigateToSingleArticle: (idArticle: Int) -> Unit,
-
+    navigateBackToCatalog: () -> Unit
     ) {
 
     val modalSheetState = rememberModalBottomSheetState(
@@ -159,7 +157,7 @@ fun CatalogSingleComponentContent(
             topBar = {
                 DefaultTopBar(
                     pageTitle = "Result",
-                    onClickNavigationIcon = {}
+                    onClickNavigationIcon = { navigateBackToCatalog() }
                 )
             }
         ) { innerPadding ->
@@ -435,18 +433,6 @@ fun CatalogSingleComponentContent(
 
                 Spacer(modifier = Modifier.height(28.dp))
 
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 40.dp)
-                ) {
-                    DefaultButton(contentText = "Drop Point", modifier = Modifier.fillMaxWidth())
-
-                    Spacer(modifier = Modifier.height(20.dp))
-
-                    InverseButton(contentText = "Check Out Forum", modifier = Modifier.fillMaxWidth())
-                }
-
             }
         }
     }
@@ -469,7 +455,8 @@ fun CatalogSingleComponentScreenPreview() {
             updateUsableComponentsList = {},
             relatedArticleListState = UiState.Loading(),
             updateRelatedArticleListState = {},
-            navigateToSingleArticle = {}
+            navigateToSingleArticle = {},
+            navigateBackToCatalog = {}
         )
     }
 }

@@ -1,5 +1,13 @@
 package com.capstone.techwasmark02.ui.screen.onBoarding
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.animateSizeAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -24,16 +32,20 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
@@ -70,6 +82,8 @@ fun OnBoardingContent(
     val pagerState = rememberPagerState()
     val coroutineScope = rememberCoroutineScope()
 
+
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -100,7 +114,11 @@ fun OnBoardingContent(
             modifier = Modifier
                 .fillMaxSize()
         ) {
-            if (pagerState.currentPage != 2) {
+            AnimatedVisibility(
+                visible = pagerState.currentPage != 2,
+                enter = fadeIn(),
+                exit = fadeOut()
+            ) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -183,7 +201,11 @@ fun OnBoardingContent(
                         horizontalArrangement = Arrangement.Start
                     ) {
 
-                        if (pagerState.currentPage != 0) {
+                        AnimatedVisibility(
+                            visible = pagerState.currentPage != 0,
+                            enter = fadeIn(),
+                            exit = fadeOut()
+                        ) {
                             IconButton(
                                 onClick = {
                                     coroutineScope.launch {
@@ -210,18 +232,22 @@ fun OnBoardingContent(
                         }
                     }
 
-
                     repeat(pageCount) { iteration ->
                         val color = if (pagerState.currentPage == iteration) Color(0xffFFDE59) else bulletColor
 
-                        val size = if (pagerState.currentPage == iteration) 14.dp else 10.dp
+//                        val size = if (pagerState.currentPage == iteration) 14.dp else 10.dp
+
+                        val sidDp:  Dp by animateDpAsState(
+                        targetValue = if (pagerState.currentPage == iteration) 14.dp else 10.dp,
+                        animationSpec = tween(durationMillis = 500)
+                        )
 
                         Box(
                             modifier = Modifier
                                 .padding(4.dp)
                                 .clip(CircleShape)
                                 .background(color)
-                                .size(size)
+                                .size(sidDp)
                         )
                     }
 
@@ -230,7 +256,11 @@ fun OnBoardingContent(
                             .weight(1f),
                         horizontalArrangement = Arrangement.End
                     ) {
-                        if (pagerState.currentPage != 2) {
+                        AnimatedVisibility(
+                            visible = pagerState.currentPage != 2,
+                            enter = fadeIn(),
+                            exit = fadeOut()
+                        ) {
                             IconButton(
                                 onClick = {
                                     coroutineScope.launch {

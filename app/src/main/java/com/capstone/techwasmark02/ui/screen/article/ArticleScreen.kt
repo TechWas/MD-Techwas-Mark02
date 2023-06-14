@@ -105,133 +105,135 @@ fun ArticleContent(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 16.dp)
-                .padding(top = 20.dp)
+                .padding(top = 20.dp, bottom = 80.dp)
         ) {
-            Text(
-                text = "Articles",
-                style = MaterialTheme.typography.headlineLarge,
-                fontWeight = FontWeight.Bold
-            )
+            Column(
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+            ) {
+                Text(
+                    text = "Articles",
+                    style = MaterialTheme.typography.headlineLarge,
+                    fontWeight = FontWeight.Bold
+                )
 
-            Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(8.dp))
 
-            Text(
-                text = "Lorem ipsum dolor sit amet, consectetur",
-                style = MaterialTheme.typography.bodyLarge
-            )
+                Text(
+                    text = "Check out these articles!",
+                    style = MaterialTheme.typography.bodyLarge.copy(
+                        fontWeight = FontWeight.Medium
+                    )
+                )
 
-            Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(16.dp))
 
-            SearchBox(
-                value = inputValue,
-                onValueChange = { newValue ->
-                    inputValue = newValue
-                    if(inputValue.isEmpty()) {
-                        viewModel.getAllFilterArticle(selectedFilter?.id ?: 0)
-                    } else {
-                        viewModel.getArticleByName(inputValue, selectedFilter ?: ArticleFilterType.General)
-                    }
-                },
-            )
+                SearchBox(
+                    value = inputValue,
+                    onValueChange = { newValue ->
+                        inputValue = newValue
+                        if(inputValue.isEmpty()) {
+                            viewModel.getAllFilterArticle(selectedFilter?.id ?: 0)
+                        } else {
+                            viewModel.getArticleByName(inputValue, selectedFilter ?: ArticleFilterType.General)
+                        }
+                    },
+                )
 
-            Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(16.dp))
+            }
 
             LazyRow(
                 modifier = Modifier.height(48.dp),
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                verticalAlignment = Alignment.CenterVertically
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                contentPadding = PaddingValues(horizontal = 16.dp)
             ) {
                 items(
                     items = filterTypeList,
                 ) { item ->
-                    IconButton(
-                        modifier = Modifier.requiredWidthIn(min = 60.dp),
+                    SelectableText(
+                        filterType = item,
+                        selected = item == selectedFilter,
                         onClick = {
                             selectedFilter = item
                             viewModel.getAllFilterArticle(item.id)
-                        },
-                        enabled = item != selectedFilter,
-                        content = {
-                            SelectableText(
-                                filterType = item,
-                                selected = item == selectedFilter,
-//                                modifier = Modifier.clickable(enabled = item != selectedFilter) {
-//                                    selectedFilter = item
-//                                    viewModel.getAllFilterArticle(item.id)
-//                                }
-                            )
                         }
                     )
                 }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Column(
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+            ) {
+                Spacer(modifier = Modifier.height(16.dp))
 
-            if (articleList != null) {
-                when (articleList) {
-                    is UiState.Loading -> {
-                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                            CircularProgressIndicator()
-                        }
-                    }
-                    is UiState.Error -> {
-                        articleList.message?.let {
-                            Text(text = it)
-                        }
-                    }
-                    is UiState.Success -> {
-                        val componentListArticle = articleList.data?.articleList
-                        if(!componentListArticle.isNullOrEmpty()) {
-                            LazyVerticalGrid(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .fillMaxHeight()
-                                    .padding(bottom = 20.dp),
-                                columns = GridCells.Fixed(2),
-                                contentPadding = PaddingValues(vertical = 8.dp),
-                                verticalArrangement = Arrangement.spacedBy(16.dp),
-                                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                            ) {
-                                items(componentListArticle) { item ->
-                                    ArticleCardSmall(
-                                        modifier = Modifier
-                                            .width(150.dp)
-                                            .clickable {
-                                                item?.id?.let { navigateToSingleArticle(it) }
-                                            },
-                                        imgUrl = item?.articleImageURL,
-                                        title = item?.name,
-                                        description = item?.desc,
-                                    )
-                                }
+                if (articleList != null) {
+                    when (articleList) {
+                        is UiState.Loading -> {
+                            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                                CircularProgressIndicator()
                             }
-                        } else {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(100.dp),
-                                contentAlignment = Alignment.Center
-                            ) {
+                        }
+                        is UiState.Error -> {
+                            articleList.message?.let {
+                                Text(text = it)
+                            }
+                        }
+                        is UiState.Success -> {
+                            val componentListArticle = articleList.data?.articleList
+                            if(!componentListArticle.isNullOrEmpty()) {
+                                LazyVerticalGrid(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .fillMaxHeight()
+                                        .padding(bottom = 20.dp),
+                                    columns = GridCells.Fixed(2),
+                                    contentPadding = PaddingValues(vertical = 8.dp),
+                                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                                ) {
+                                    items(componentListArticle) { item ->
+                                        ArticleCardSmall(
+                                            modifier = Modifier
+                                                .width(150.dp)
+                                                .clickable {
+                                                    item?.id?.let { navigateToSingleArticle(it) }
+                                                },
+                                            imgUrl = item?.articleImageURL,
+                                            title = item?.name,
+                                            description = item?.desc,
+                                        )
+                                    }
+                                }
+                            } else {
                                 Box(
                                     modifier = Modifier
-                                        .border(
-                                            width = 1.dp,
-                                            color = Color.Red,
-                                            shape = RoundedCornerShape(20.dp)
-                                        )
-                                        .padding(8.dp)
-
+                                        .fillMaxWidth()
+                                        .height(100.dp),
+                                    contentAlignment = Alignment.Center
                                 ) {
-                                    Text(
-                                        text = "There's no related article",
-                                        style = MaterialTheme.typography.labelSmall,
-                                        color = Color.Red
-                                    )
+                                    Box(
+                                        modifier = Modifier
+                                            .border(
+                                                width = 1.dp,
+                                                color = Color.Red,
+                                                shape = RoundedCornerShape(20.dp)
+                                            )
+                                            .padding(8.dp)
+
+                                    ) {
+                                        Text(
+                                            text = "There's no related article",
+                                            style = MaterialTheme.typography.labelSmall,
+                                            color = Color.Red
+                                        )
+                                    }
                                 }
                             }
-                        }
 
+                        }
                     }
                 }
             }

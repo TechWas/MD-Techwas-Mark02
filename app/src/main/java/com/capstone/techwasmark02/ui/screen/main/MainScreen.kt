@@ -51,7 +51,7 @@ fun MainScreen(
                 HomeScreen(navController = navController)
             }
             is BottomBarItemType.Forum -> {
-                ForumScreen()
+                ForumScreen(navController = navController)
             }
             is BottomBarItemType.Article -> {
                 ArticleScreen(navController = navController)

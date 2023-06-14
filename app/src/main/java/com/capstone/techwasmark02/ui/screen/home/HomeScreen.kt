@@ -155,7 +155,7 @@ fun HomeContent(
                             ) {
                             Image(
                                 modifier = Modifier.size(24.dp, 27.dp),
-                                painter = painterResource(id = R.drawable.logo_techwaste),
+                                painter = painterResource(id = R.drawable.img_logo_onboarding_nooutline),
                                 contentDescription = null
                             )
                         }
@@ -219,10 +219,9 @@ fun HomeContent(
 
                         Row(
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 16.dp),
+                                .fillMaxWidth(),
                         ) {
-                            Spacer(modifier = Modifier.weight(1f))
+
                             FeatureBoxLarge(
                                 featureBoxType = FeatureBoxType.Detection,
                                 onClick = {
@@ -233,7 +232,7 @@ fun HomeContent(
                                     )
                                 }
                             )
-                            Spacer(modifier = Modifier.weight(1f))
+
 //                        DetectBox1()
 //                        DetectBox2()
                         }
@@ -242,13 +241,11 @@ fun HomeContent(
 
                         Row(
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 16.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween
+                                .fillMaxWidth(),
                         ) {
-                            FeatureBox(featureBoxType = FeatureBoxType.DropPoint, onClick = navigateToMaps)
-                            Spacer(modifier = Modifier.weight(1f))
-                            FeatureBox(featureBoxType = FeatureBoxType.Catalog, onClick = navigateToCatalog)
+                            FeatureBox(featureBoxType = FeatureBoxType.DropPoint, onClick = navigateToMaps, modifier = Modifier.weight(1f))
+                            Spacer(modifier = Modifier.width(24.dp))
+                            FeatureBox(featureBoxType = FeatureBoxType.Catalog, onClick = navigateToCatalog, modifier = Modifier.weight(1f))
                         }
 
                         Spacer(modifier = Modifier.height(titlePaddingTop))
@@ -314,7 +311,7 @@ fun HomeContent(
                                     HorizontalPager(
                                         pageCount = it,
                                         state = pagerState,
-                                        contentPadding = PaddingValues(horizontal = 56.dp),
+                                        contentPadding = PaddingValues(horizontal = 48.dp),
                                         modifier = Modifier
                                             .fillMaxWidth()
                                             .height(180.dp)
@@ -324,7 +321,7 @@ fun HomeContent(
                                         articleList[page]?.let { it1 ->
                                             ArticleCardBig(
                                                 modifier = Modifier
-                                                    .width(280.dp)
+                                                    .width(340.dp)
                                                     .height(180.dp)
                                                     .graphicsLayer {
                                                         val pageOffset = (
@@ -344,7 +341,7 @@ fun HomeContent(
                                                             scaleY = scale
                                                         }
                                                         alpha = lerp(
-                                                            start = 0.5f,
+                                                            start = 0.8f,
                                                             stop = 1f,
                                                             fraction = 1f - pageOffset.coerceIn(
                                                                 0f,

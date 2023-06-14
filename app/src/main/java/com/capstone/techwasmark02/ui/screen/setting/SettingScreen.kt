@@ -33,6 +33,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,12 +43,17 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import com.capstone.techwasmark02.R
+import com.capstone.techwasmark02.data.model.UserSession
+import com.capstone.techwasmark02.data.remote.response.Token
+import com.capstone.techwasmark02.data.remote.response.UserId
 import com.capstone.techwasmark02.ui.component.ArticleCardSmall
 import com.capstone.techwasmark02.ui.component.DefaultTopBar
 import com.capstone.techwasmark02.ui.component.ForumBox
+import com.capstone.techwasmark02.ui.component.InverseTopBar
 import com.capstone.techwasmark02.ui.component.SettingItem
 import com.capstone.techwasmark02.ui.componentType.SettingItemType
 import com.capstone.techwasmark02.ui.theme.TechwasMark02Theme
@@ -55,17 +62,23 @@ import kotlin.random.Random
 
 @Composable
 fun SettingScreen(
-    navController: NavHostController
+    navController: NavHostController,
+    viewModel: SettingScreenViewModel = hiltViewModel()
 ) {
+
+    val userSession by viewModel.userSessionState.collectAsState()
+
     SettingContent(
-        navigateToProfile = { navController.popBackStack() }
+        navigateToProfile = { navController.popBackStack() },
+        userSession = userSession
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingContent(
-    navigateToProfile: () -> Unit
+    navigateToProfile: () -> Unit,
+    userSession: UserSession?
 ) {
 
     val settingItemList = listOf(
@@ -75,23 +88,44 @@ fun SettingContent(
         SettingItemType.Language
     )
 
-    Scaffold(
-        topBar = {
-            DefaultTopBar(
-                pageTitle = "",
-                onClickNavigationIcon = {
-                    navigateToProfile()
-                }
-            )
-        }
-    ) { innerPadding ->
+    val scrollState = rememberScrollState()
 
-        val scrollState = rememberScrollState()
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize(),
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.End
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.img_profile_ripple_green_reverse),
+                    contentDescription = null
+                )
+            }
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.Start
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.img_profile_ripple_green),
+                    contentDescription = null
+                )
+            }
+        }
+
 
         Column(
             modifier = Modifier
-                .padding(innerPadding)
-                .background(MaterialTheme.colorScheme.primary)
+                .padding(top = 100.dp)
         ) {
             Box(
                 modifier = Modifier.fillMaxHeight()
@@ -113,7 +147,7 @@ fun SettingContent(
                                     .size(120.dp)
                                     .clip(CircleShape),
                                 painter = rememberAsyncImagePainter(
-                                    model = "https://picsum.photos/seed/${Random.nextInt()}/320/120",
+                                    model = R.drawable.img_user_1,
                                     placeholder = painterResource(id = R.drawable.place_holder),
                                 ),
                                 contentScale = ContentScale.FillHeight,
@@ -136,29 +170,29 @@ fun SettingContent(
                             }
                         }
 
-                       Spacer(modifier = Modifier.height(8.dp))
+                        Spacer(modifier = Modifier.height(16.dp))
 
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Text(
-                                text = "User Full Name",
+                                text =  userSession?.userNameId?.username ?: "User Full Name",
                                 style = MaterialTheme.typography.labelLarge,
-                                color = Color.White
+                                color = MaterialTheme.colorScheme.onTertiary
                             )
                             Icon(
                                 imageVector = Icons.Default.Edit,
                                 contentDescription = "Edit",
-                                tint = Color.White,
+                                tint = MaterialTheme.colorScheme.onTertiary,
                                 modifier = Modifier
                                     .padding(start = 8.dp)
                                     .size(24.dp)
                             )
                         }
 
-                       Text(
-                           text = "user@gmail.com",
-                           style = MaterialTheme.typography.bodyMedium,
-                           color = Color.White
-                       )
+//                       Text(
+//                           text = "user@gmail.com",
+//                           style = MaterialTheme.typography.bodyMedium,
+//                           color = Color.White
+//                       )
 
                         Spacer(modifier = Modifier.height(40.dp))
 
@@ -200,7 +234,11 @@ fun SettingContent(
                                         .width(122.dp)
                                         .height(41.dp)
                                         .align(Alignment.End),
-                                    colors = ButtonDefaults.buttonColors(containerColor = red),
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = red.copy(
+                                            alpha = 0.9f
+                                        )
+                                    ),
                                     shape = RoundedCornerShape(10.dp)
                                 ) {
                                     Text(text = "Log out")
@@ -211,6 +249,12 @@ fun SettingContent(
                 }
             }
         }
+
+        InverseTopBar(
+            onClickNavigationIcon = {
+                navigateToProfile()
+            }
+        )
     }
 }
 
@@ -219,7 +263,16 @@ fun SettingContent(
 fun SettingScreenPreview() {
     TechwasMark02Theme {
         SettingContent(
-            navigateToProfile = {}
+            navigateToProfile = {},
+            userSession = UserSession(
+                userNameId = UserId(
+                    username = "Ghina",
+                    id = 1
+                ),
+                userLoginToken = Token(
+                    accessToken = ""
+                )
+            )
         )
     }
 }

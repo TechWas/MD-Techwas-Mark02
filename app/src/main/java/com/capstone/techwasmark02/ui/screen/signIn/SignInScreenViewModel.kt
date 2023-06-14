@@ -32,6 +32,9 @@ class SignInScreenViewModel @Inject constructor(
         ))
     val userToSignInInfo = _userToSignInInfo.asStateFlow()
 
+    private val _savedUsername: MutableStateFlow<String?> = MutableStateFlow(null)
+    val savedUsername = _savedUsername.asStateFlow()
+
     fun signInUser() {
         _userToSignInState.value = UiState.Loading()
         viewModelScope.launch {
@@ -43,7 +46,14 @@ class SignInScreenViewModel @Inject constructor(
         viewModelScope.launch {
             val userSession = _userToSignInState.value?.data?.loginResult?.toUserSession()
             if (userSession != null) {
-                preferencesRepository.saveSession(userSession)
+                val result = preferencesRepository.saveSession(userSession)
+                when(result) {
+                    is Resource.Error -> {
+                        result.data
+                    }
+                    is Resource.Success -> {
+                    }
+                }
             }
         }
     }

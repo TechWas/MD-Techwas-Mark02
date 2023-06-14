@@ -38,16 +38,20 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import com.capstone.techwasmark02.R
 import com.capstone.techwasmark02.data.remote.response.ArticleResultResponse
 import com.capstone.techwasmark02.data.remote.response.SingleArticleResponse
 import com.capstone.techwasmark02.ui.common.UiState
 import com.capstone.techwasmark02.ui.component.DefaultButton
+import com.capstone.techwasmark02.ui.component.HtmlText
 import com.capstone.techwasmark02.ui.component.TransparentTopBar
+import com.capstone.techwasmark02.ui.navigation.Screen
 import com.capstone.techwasmark02.ui.theme.Mist97
 import com.capstone.techwasmark02.ui.theme.TechwasMark02Theme
 import kotlinx.coroutines.launch
@@ -57,6 +61,7 @@ import kotlin.random.Random
 fun SingleArticleScreen(
     idArticle: Int,
     viewModel: SingleArticleScreenViewModel = hiltViewModel(),
+    navController: NavHostController
 ) {
 
     LaunchedEffect(Unit) {
@@ -69,6 +74,7 @@ fun SingleArticleScreen(
 
     SingleArticleContent(
         articleResult = articleResult,
+        navigateToArticle = { navController.popBackStack() }
     )
 }
 
@@ -76,6 +82,7 @@ fun SingleArticleScreen(
 @Composable
 fun SingleArticleContent(
     articleResult: UiState<SingleArticleResponse>?,
+    navigateToArticle: () -> Unit
 ) {
 
     val result = articleResult?.data?.article
@@ -185,8 +192,13 @@ fun SingleArticleContent(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     result?.get(0)?.description?.let {
-                        Text(
-                            text = it,
+                        HtmlText(
+                            html = it,
+                            textStyle = MaterialTheme.typography.bodyMedium.copy(
+                                color = Color.Black,
+                                fontWeight = FontWeight.Normal,
+                                fontSize = 14.sp
+                            )
                         )
                     }
 
@@ -214,7 +226,7 @@ fun SingleArticleContent(
                         )
                     )
             ) {
-                TransparentTopBar(onClickNavigationIcon = { /*TODO*/ }, pageTitle = "Detail")
+                TransparentTopBar(onClickNavigationIcon = { navigateToArticle() }, pageTitle = "Detail")
             }
         }
     }
@@ -226,6 +238,7 @@ fun SingleArticleScreenPreview() {
     TechwasMark02Theme {
         SingleArticleContent(
             articleResult = UiState.Loading(),
+            navigateToArticle = {}
         )
     }
 }

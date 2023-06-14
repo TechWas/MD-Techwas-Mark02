@@ -11,7 +11,6 @@ import androidx.navigation.NavBackStackEntry
 
 @OptIn(ExperimentalAnimationApi::class)
 sealed class Screen  constructor(val route: String, val enterTransition: (AnimatedContentScope<NavBackStackEntry>.() -> EnterTransition?), val exitTransition:  (AnimatedContentScope<NavBackStackEntry>.() -> ExitTransition?)) {
-
     object OnBoarding: Screen(
         route = "OnBoarding",
         enterTransition = {
@@ -28,26 +27,34 @@ sealed class Screen  constructor(val route: String, val enterTransition: (Animat
     object SignIn: Screen(
         route = "SignIn",
         enterTransition = {
-            slideIntoContainer(
-                AnimatedContentScope.SlideDirection.Left,
-                animationSpec = tween(700)
-            )
+//            slideIntoContainer(
+//                AnimatedContentScope.SlideDirection.Left,
+//                animationSpec = tween(700)
+//            )
+            fadeIn(animationSpec = tween(700))
         },
         exitTransition = {
-            slideOutOfContainer(AnimatedContentScope.SlideDirection.Left, animationSpec = tween(700))
+//            slideOutOfContainer(AnimatedContentScope.SlideDirection.Left, animationSpec = tween(700))
+            fadeOut(
+                animationSpec = tween(700)
+            )
         }
     )
 
     object SignUp: Screen(
         route = "SignUp",
         enterTransition = {
-            slideIntoContainer(
-                AnimatedContentScope.SlideDirection.Left,
-                animationSpec = tween(700)
-            )
+//            slideIntoContainer(
+//                AnimatedContentScope.SlideDirection.Left,
+//                animationSpec = tween(700)
+//            )
+            fadeIn(animationSpec = tween(700))
         },
         exitTransition = {
-            slideOutOfContainer(AnimatedContentScope.SlideDirection.Left, animationSpec = tween(700))
+//            slideOutOfContainer(AnimatedContentScope.SlideDirection.Left, animationSpec = tween(700))
+            fadeOut(
+                animationSpec = tween(700)
+            )
         }
     )
 
@@ -105,6 +112,23 @@ sealed class Screen  constructor(val route: String, val enterTransition: (Animat
         }
     )
 
+    object SingleForum: Screen(
+        route = "SingleForum",
+        enterTransition = {
+            slideIntoContainer(
+                AnimatedContentScope.SlideDirection.Left,
+                animationSpec = tween(700)
+            )
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                AnimatedContentScope.SlideDirection.Left, animationSpec = tween(
+                    durationMillis = 700,
+                )
+            )
+        }
+    )
+
     object Profile: Screen(
         route = "profile",
         enterTransition = {
@@ -150,6 +174,7 @@ sealed class Screen  constructor(val route: String, val enterTransition: (Animat
         },
         exitTransition = {
             slideOutOfContainer(AnimatedContentScope.SlideDirection.Down, animationSpec = tween(700))
+            fadeOut(animationSpec = tween(1000))
         }
     )
 
@@ -223,13 +248,15 @@ sealed class Screen  constructor(val route: String, val enterTransition: (Animat
     object Splash: Screen(
         route = "splash",
         enterTransition = {
-            slideIntoContainer(
-                AnimatedContentScope.SlideDirection.Left,
-                animationSpec = tween(700)
-            )
+//            slideIntoContainer(
+//                AnimatedContentScope.SlideDirection.Left,
+//                animationSpec = tween(700)
+//            )
+            fadeIn(animationSpec = tween(300))
         },
         exitTransition = {
-            slideOutOfContainer(AnimatedContentScope.SlideDirection.Left, animationSpec = tween(700))
+//            slideOutOfContainer(AnimatedContentScope.SlideDirection.Left, animationSpec = tween(700))
+            fadeOut(animationSpec = tween(300))
         }
     )
 
@@ -242,7 +269,10 @@ sealed class Screen  constructor(val route: String, val enterTransition: (Animat
             )
         },
         exitTransition = {
-            slideOutOfContainer(AnimatedContentScope.SlideDirection.Left, animationSpec = tween(700))
+            slideOutOfContainer(AnimatedContentScope.SlideDirection.Left, animationSpec = tween(
+                transitionDuration))
         }
     )
 }
+
+private const val transitionDuration = 300

@@ -25,7 +25,7 @@ import com.capstone.techwasmark02.ui.theme.TechwasMark02Theme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun InverseTopBar(onClickNavigationIcon: () -> Unit, modifier: Modifier = Modifier) {
+fun InverseTopBar(onClickNavigationIcon: () -> Unit, modifier: Modifier = Modifier, pageTitle: String = "") {
     BackHandler(true) {
         onClickNavigationIcon()
     }
@@ -44,7 +44,17 @@ fun InverseTopBar(onClickNavigationIcon: () -> Unit, modifier: Modifier = Modifi
             }
         },
         title = {},
-        actions = {},
+        actions = {
+            Text(
+                text = pageTitle,
+                color = MaterialTheme.colorScheme.primary,
+                style = MaterialTheme.typography.labelLarge.copy(
+                    fontWeight = FontWeight.Normal
+                ),
+                modifier = Modifier
+                    .padding(end = 20.dp),
+            )
+        },
         colors = TopAppBarDefaults.smallTopAppBarColors(
             containerColor = Color.Transparent,
         ),
