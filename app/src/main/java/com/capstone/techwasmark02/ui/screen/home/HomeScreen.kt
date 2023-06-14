@@ -197,7 +197,7 @@ fun HomeContent(
                             )
                         )
                         .background(Color.White)
-                        .padding(bottom = 90.dp)
+                        .padding(bottom = 80.dp)
                 ) {
 
                     Spacer(modifier = Modifier.height(18.dp))
@@ -399,11 +399,64 @@ fun HomeContent(
 
                         LazyColumn(
                             modifier = Modifier
-                                .fillMaxSize(),
+                                .fillMaxSize()
+                                .padding(horizontal = 16.dp),
                             verticalArrangement = Arrangement.spacedBy(10.dp),
+                            contentPadding = PaddingValues( bottom = 16.dp)
                         ) {
-                            items(count = 10) {
-                                ForumBox(modifier = Modifier.fillMaxWidth())
+                            item {
+                            ForumBox(
+                                modifier = Modifier.fillMaxWidth(),
+                                title = "Jual Laptop Mati Total",
+                                desc = "\"Saya mempunyai laptop yang baru saja mati, pada saat tombol power tekan tidak ada respon apapun, kemungkinan masalah berada di battery. Selain itu kondisi masih bagus dan tidak ada kerusakan luar\\nBagi yang berminat dapat mencoba menghubungi saya +6281396774583\"",
+                                place = "Yogyakarta",
+                                photoUrl = R.drawable.img_forum_laptop_bekas
+                            )
+                        }
+
+                            item {
+                                ForumBox(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    title = "Cara Hidupkan Hape Xiomi Lama",
+                                    desc = "Tiga belas hari yang lalu jatuh dari motor dan hp saya ikut jatuh dan terbentur",
+                                    place = "Merauke"
+                                )
+                            }
+
+                            item {
+                                ForumBox(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    title = "Bagaiamana Cara Menyambung Kabel",
+                                    desc = "Saya akan memberikan langkah-langkah mudah untuk menyambung kabel elektronik",
+                                    place = "Solo"
+                                )
+                            }
+
+                            item {
+                                ForumBox(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    title = "Dijual Kulkas Potable",
+                                    desc = "Dijual kulkas Samsung berumur dua tahun tetapi masih layak pakai, fungsi masih lengkap",
+                                    place = "Jakarta"
+                                )
+                            }
+
+                            item {
+                                ForumBox(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    title = "Membuka Service Laptop di Daerah Pogung",
+                                    desc = "Membuka jasa service laptop dengan jaminan uang kembali apabila tidak berhasil",
+                                    place = "Yogyakarta"
+                                )
+                            }
+
+                            item {
+                                ForumBox(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    title = "Membuat Kursus Membenarkan Laptop",
+                                    desc = "Membuka kursus untuk mengajarkan cara membenarkan laptop lama",
+                                    place = "Bali"
+                                )
                             }
                         }
                     }
