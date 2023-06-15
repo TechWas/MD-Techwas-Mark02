@@ -99,7 +99,9 @@ fun DetectionResultScreen(
         updateCurrentlySelectedUsableComponentList = { viewModel.updateCurrentlySelectedUsableComponentList(it) },
         relatedArticleListState = relatedArticleListState,
         navigateToSingleArticle = { navController.navigate("${Screen.SingleArticle.route}/$it") },
-        navigateToMain = { navController.navigate(Screen.Main.route) }
+        navigateToMain = { navController.navigate("${Screen.Main.route}/0") },
+        navigateToForum = { navController.navigate("${Screen.Main.route}/1")},
+        navigateToMaps =  { navController.navigate(Screen.Maps.route) }
     )
 }
 
@@ -116,7 +118,9 @@ fun DetectionResultContent(
     updateCurrentlySelectedUsableComponentList: (List<SmallPart>) -> Unit,
     relatedArticleListState: List<UiState<ArticleResultResponse>>?,
     navigateToSingleArticle: (idArticle: Int) -> Unit,
-    navigateToMain: () -> Unit
+    navigateToMain: () -> Unit,
+    navigateToForum: () -> Unit,
+    navigateToMaps: () -> Unit,
 ) {
     val coroutineScope = rememberCoroutineScope()
     val modalSheetState = rememberModalBottomSheetState(
@@ -352,7 +356,7 @@ fun DetectionResultContent(
                             is UiState.Loading -> {
                                 Box(
                                     modifier = Modifier
-                                        .height(100.dp)
+                                        .height(175.dp)
                                         .fillMaxWidth(),
                                     contentAlignment = Alignment.Center
                                 ) {
@@ -362,7 +366,7 @@ fun DetectionResultContent(
                             is UiState.Error -> {
                                 Box(
                                     modifier = Modifier
-                                        .height(100.dp)
+                                        .height(175.dp)
                                         .fillMaxWidth(),
                                     contentAlignment = Alignment.Center
                                 ) {
@@ -407,7 +411,7 @@ fun DetectionResultContent(
                                     Box(
                                         modifier = Modifier
                                             .fillMaxWidth()
-                                            .height(100.dp),
+                                            .height(175.dp),
                                         contentAlignment = Alignment.Center
                                     ) {
                                         Box(
@@ -452,7 +456,10 @@ fun DetectionResultContent(
                 ) {
                     Spacer(modifier = Modifier.weight(1f))
 
-                    ThrowNSellButton()
+                    ThrowNSellButton(
+                        navigateToMaps = navigateToMaps,
+                        navigateToForum = navigateToForum
+                    )
                 }
             }
         }
@@ -461,7 +468,10 @@ fun DetectionResultContent(
 }
 
 @Composable
-fun ThrowNSellButton() {
+fun ThrowNSellButton(
+    navigateToMaps: () -> Unit,
+    navigateToForum: () -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth(),
@@ -469,7 +479,7 @@ fun ThrowNSellButton() {
         horizontalArrangement = Arrangement.Center
     ) {
         Button(
-            onClick = { /*TODO*/ },
+            onClick = navigateToMaps,
             modifier = Modifier
                 .weight(1f)
                 .padding(vertical = 18.dp)
@@ -514,7 +524,7 @@ fun ThrowNSellButton() {
         Spacer(modifier = Modifier.width(8.dp))
 
         Button(
-            onClick = { /*TODO*/ },
+            onClick = navigateToForum,
             modifier = Modifier
                 .weight(1f)
                 .padding(vertical = 18.dp)
@@ -587,7 +597,10 @@ fun ThrowNSellButtonPreview() {
             modifier = Modifier
                 .padding(20.dp)
         ) {
-            ThrowNSellButton()
+            ThrowNSellButton(
+                navigateToForum = {},
+                navigateToMaps = {}
+            )
         }
     }
 }

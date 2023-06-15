@@ -66,7 +66,7 @@ fun OnBoardingScreen(
         navigateToHome = { navController.navigate(Screen.Home.route) },
         navigateToSignUp = { navController.navigate(Screen.SignUp.route) },
         navigateToSignIn = { navController.navigate(Screen.SignIn.route) },
-        navigateToMain = { navController.navigate(Screen.Main.route) }
+        navigateToMain = { navController.navigate("${Screen.Main.route}/0") }
     )
 }
 

@@ -1,11 +1,11 @@
 package com.capstone.techwasmark02.ui.screen.setting
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -15,24 +15,17 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -50,15 +43,12 @@ import com.capstone.techwasmark02.R
 import com.capstone.techwasmark02.data.model.UserSession
 import com.capstone.techwasmark02.data.remote.response.Token
 import com.capstone.techwasmark02.data.remote.response.UserId
-import com.capstone.techwasmark02.ui.component.ArticleCardSmall
-import com.capstone.techwasmark02.ui.component.DefaultTopBar
-import com.capstone.techwasmark02.ui.component.ForumBox
 import com.capstone.techwasmark02.ui.component.InverseTopBar
 import com.capstone.techwasmark02.ui.component.SettingItem
 import com.capstone.techwasmark02.ui.componentType.SettingItemType
+import com.capstone.techwasmark02.ui.navigation.Screen
 import com.capstone.techwasmark02.ui.theme.TechwasMark02Theme
 import com.capstone.techwasmark02.ui.theme.red
-import kotlin.random.Random
 
 @Composable
 fun SettingScreen(
@@ -70,16 +60,24 @@ fun SettingScreen(
 
     SettingContent(
         navigateToProfile = { navController.popBackStack() },
-        userSession = userSession
+        userSession = userSession,
+        navigateToOnBoarding = { navController.navigate(Screen.OnBoarding.route)},
+        logOutUser = { viewModel.clearUserSession() },
+        navigateBackToMain = { navController.navigate("${Screen.Main.route}/3") }
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingContent(
     navigateToProfile: () -> Unit,
-    userSession: UserSession?
+    userSession: UserSession?,
+    navigateToOnBoarding: () -> Unit,
+    logOutUser: () -> Unit,
+    navigateBackToMain: () -> Unit
 ) {
+    BackHandler(true) {
+        navigateBackToMain()
+    }
 
     val settingItemList = listOf(
         SettingItemType.Password,
@@ -88,7 +86,11 @@ fun SettingContent(
         SettingItemType.Language
     )
 
-    val scrollState = rememberScrollState()
+    LaunchedEffect(userSession) {
+        if (userSession?.userNameId?.username == "-") {
+            navigateToOnBoarding()
+        }
+    }
 
     Box(
         modifier = Modifier
@@ -229,7 +231,7 @@ fun SettingContent(
                                 Spacer(modifier = Modifier.height(10.dp))
 
                                 Button(
-                                    onClick = { },
+                                    onClick = logOutUser,
                                     modifier = Modifier
                                         .width(122.dp)
                                         .height(41.dp)
@@ -252,7 +254,7 @@ fun SettingContent(
 
         InverseTopBar(
             onClickNavigationIcon = {
-                navigateToProfile()
+                navigateBackToMain()
             }
         )
     }
@@ -272,7 +274,10 @@ fun SettingScreenPreview() {
                 userLoginToken = Token(
                     accessToken = ""
                 )
-            )
+            ),
+            navigateToOnBoarding = {},
+            logOutUser = {},
+            navigateBackToMain = {}
         )
     }
 }

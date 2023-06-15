@@ -69,7 +69,7 @@ fun SplashScreen(
             if (userSession!!.userLoginToken.accessToken == "") {
                 navController.navigate(Screen.OnBoarding.route)
             } else {
-                navController.navigate(Screen.Main.route)
+                navController.navigate("${Screen.Main.route}/0")
             }
         }
     }

@@ -1,5 +1,6 @@
 package com.capstone.techwasmark02.ui.screen.singleArticle
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -74,7 +75,7 @@ fun SingleArticleScreen(
 
     SingleArticleContent(
         articleResult = articleResult,
-        navigateToArticle = { navController.popBackStack() }
+        navigateToArticle = { navController.navigate("${Screen.Main.route}/2") }
     )
 }
 
@@ -84,6 +85,10 @@ fun SingleArticleContent(
     articleResult: UiState<SingleArticleResponse>?,
     navigateToArticle: () -> Unit
 ) {
+
+    BackHandler(true) {
+        navigateToArticle()
+    }
 
     val result = articleResult?.data?.article
 
@@ -153,7 +158,7 @@ fun SingleArticleContent(
                                 )
                             }
                             Text(
-                                text = result?.get(0)?.id.toString(),
+                                text = "source: techwaste",
                                 style = MaterialTheme.typography.bodyMedium
                             )
                         }

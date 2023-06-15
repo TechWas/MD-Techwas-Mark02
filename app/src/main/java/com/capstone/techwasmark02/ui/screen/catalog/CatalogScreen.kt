@@ -1,6 +1,7 @@
 package com.capstone.techwasmark02.ui.screen.catalog
 
 import android.net.Uri
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -54,7 +55,7 @@ fun CatalogScreen(
         navigateToSingleComponent = { navController.navigate("${Screen.SingleCatalog.route}/$it") },
         searchBoxValue = searchBoxValue,
         onSearchBoxValueChange = { viewModel.updateSearchBoxValue(it) },
-        navigateBackToMain = { navController.popBackStack() }
+        navigateBackToMain = { navController.navigate("${Screen.Main.route}/0") }
     )
 }
 
@@ -66,6 +67,11 @@ fun CatalogContent(
     onSearchBoxValueChange: (String) -> Unit,
     navigateBackToMain: () -> Unit
 ) {
+
+    BackHandler(true) {
+        navigateBackToMain()
+    }
+
     val moshi = Moshi.Builder()
         .add(KotlinJsonAdapterFactory())
         .build()

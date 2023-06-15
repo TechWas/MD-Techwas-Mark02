@@ -3,6 +3,7 @@ package com.capstone.techwasmark02.ui.screen.maps
 import android.Manifest
 import android.content.pm.PackageManager
 import android.location.Location
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.material3.AlertDialog
@@ -18,6 +19,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavHostController
+import com.capstone.techwasmark02.ui.navigation.Screen
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
@@ -35,6 +37,11 @@ data class MapMarkerInfo(
 )
 @Composable
 fun MapsScreen(navController: NavHostController) {
+
+    BackHandler(true) {
+        navController.navigate("${Screen.Main.route}/0")
+    }
+
     val diy = LatLng(-7.782275587997325, 110.36709993087182)
 
     // posisi camera

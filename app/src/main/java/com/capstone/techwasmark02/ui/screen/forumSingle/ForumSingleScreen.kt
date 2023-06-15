@@ -58,6 +58,7 @@ import com.capstone.techwasmark02.data.remote.response.Token
 import com.capstone.techwasmark02.data.remote.response.UserId
 import com.capstone.techwasmark02.ui.component.DefaultTopBar
 import com.capstone.techwasmark02.ui.component.TransparentTopBar
+import com.capstone.techwasmark02.ui.navigation.Screen
 import com.capstone.techwasmark02.ui.screen.forum.ForumContent
 import com.capstone.techwasmark02.ui.theme.Mist97
 import com.capstone.techwasmark02.ui.theme.TechwasMark02Theme
@@ -73,7 +74,7 @@ fun ForumSingleScreen(
 
     ForumSingleContent(
         userSession = userSession,
-        navigateBackToForum = { navController.popBackStack() }
+        navigateBackToForum = { navController.navigate("${Screen.Main.route}/1") }
     )
 }
 

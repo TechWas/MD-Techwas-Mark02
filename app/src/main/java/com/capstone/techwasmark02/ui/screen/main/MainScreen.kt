@@ -5,6 +5,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -22,7 +23,8 @@ import com.capstone.techwasmark02.ui.screen.profileUser.ProfileUserScreen
 @Composable
 fun MainScreen(
     navController: NavHostController,
-    viewModel: MainScreenViewModel = viewModel()
+    viewModel: MainScreenViewModel = viewModel(),
+    page: Int
 ) {
 
     val selectedBottomBarType by viewModel.selectedBottomBarType.collectAsState()
@@ -45,6 +47,23 @@ fun MainScreen(
             .fillMaxSize(),
         contentAlignment = Alignment.BottomCenter
     ) {
+
+        LaunchedEffect(Unit) {
+            when(page) {
+                0 -> {
+                    viewModel.updateSelectedBottomBartype(BottomBarItemType.Home)
+                }
+                1 -> {
+                    viewModel.updateSelectedBottomBartype(BottomBarItemType.Forum)
+                }
+                2 -> {
+                    viewModel.updateSelectedBottomBartype(BottomBarItemType.Article)
+                }
+                3 -> {
+                    viewModel.updateSelectedBottomBartype(BottomBarItemType.Profile)
+                }
+            }
+        }
 
         when(selectedBottomBarType) {
             is BottomBarItemType.Home -> {

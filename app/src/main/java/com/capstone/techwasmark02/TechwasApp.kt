@@ -74,11 +74,20 @@ fun TechwasApp() {
             }
 
             composable(
-                route = Main.route,
+                route = Main.route + "/{page}",
                 enterTransition = Main.enterTransition,
-                exitTransition = Main.exitTransition
-            ) {
-                MainScreen(navController = navController)
+                exitTransition = Main.exitTransition,
+                arguments = listOf(
+                    navArgument("page") {
+                        type = NavType.IntType
+                        defaultValue = 0
+                    }
+                )
+            ) { navBackStackEntry ->
+                val page = navBackStackEntry.arguments?.getInt("page")
+                if (page != null) {
+                    MainScreen(navController = navController, page = page)
+                }
             }
 
             composable(

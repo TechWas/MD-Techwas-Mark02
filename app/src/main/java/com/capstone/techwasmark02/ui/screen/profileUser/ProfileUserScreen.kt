@@ -80,7 +80,7 @@ fun ProfileUserScreen(
 fun ProfileUserContent(
     navigateToSetting: () -> Unit,
     userSession: UserSession?,
-    bookmarkedArticleState: UiState<ArticleResultResponse>?
+    bookmarkedArticleState: UiState<ArticleResultResponse>?,
 ) {
 
     Scaffold(

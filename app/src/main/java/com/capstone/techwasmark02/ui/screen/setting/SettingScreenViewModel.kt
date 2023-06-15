@@ -38,4 +38,21 @@ class SettingScreenViewModel @Inject constructor(
         }
     }
 
+    fun clearUserSession() {
+        viewModelScope.launch {
+            val result = preferencesRepository.clearSession()
+            when(result) {
+                is Resource.Error -> {
+                    // do nothing
+                }
+                is Resource.Success -> {
+                    _userSessionState.value = UserSession(
+                        userLoginToken = Token(accessToken = ""),
+                        userNameId = UserId(username = "-", id = 0)
+                    )
+                }
+            }
+        }
+    }
+
 }

@@ -56,7 +56,7 @@ fun SignInScreen(
         userToSignInState = userToSignInState,
         signInUser = { viewModel.signInUser() },
         saveUserSession = { viewModel.saveUserSession() },
-        navigateToMain = { navController.navigate(Screen.Main.route) },
+        navigateToMain = { navController.navigate("${Screen.Main.route}/0") },
         savedUsername = savedUsername
 //        userSessionState = userSessionState,
     )
@@ -181,9 +181,9 @@ fun SignInContent(
                             saveUserSession()
 
                             if (savedUsername != null && savedUsername != "") {
-                                Toast.makeText(context, "Welcome $savedUsername", Toast.LENGTH_SHORT).show()
 
                                 LaunchedEffect(Unit) {
+                                    Toast.makeText(context, "Welcome $savedUsername", Toast.LENGTH_SHORT).show()
                                     navigateToMain()
                                 }
                             }
