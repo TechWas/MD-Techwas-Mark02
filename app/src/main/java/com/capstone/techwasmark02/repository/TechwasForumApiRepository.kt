@@ -9,7 +9,6 @@ import com.capstone.techwasmark02.data.remote.response.ForumResponse
 import com.capstone.techwasmark02.data.remote.response.PostForumCommentResponse
 import com.capstone.techwasmark02.ui.common.UiState
 import javax.inject.Inject
-import kotlin.Exception
 
 class TechwasForumApiRepository @Inject constructor(
     private val forumApi: TechwasForumApi

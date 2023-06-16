@@ -2,7 +2,6 @@ package com.capstone.techwasmark02.ui.screen.article
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.capstone.techwasmark02.data.mappers.toUserSession
 import com.capstone.techwasmark02.data.remote.response.ArticleResultResponse
 import com.capstone.techwasmark02.repository.TechwasArticleRepository
 import com.capstone.techwasmark02.ui.common.UiState

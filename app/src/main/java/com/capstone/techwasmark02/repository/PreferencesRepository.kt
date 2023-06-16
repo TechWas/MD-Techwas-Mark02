@@ -8,7 +8,6 @@ import com.capstone.techwasmark02.common.Resource
 import com.capstone.techwasmark02.data.model.UserSession
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject

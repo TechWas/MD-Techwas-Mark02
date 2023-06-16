@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -55,16 +54,10 @@ import com.capstone.techwasmark02.data.remote.response.ForumResponse
 import com.capstone.techwasmark02.data.remote.response.Token
 import com.capstone.techwasmark02.data.remote.response.UserId
 import com.capstone.techwasmark02.ui.common.UiState
-import com.capstone.techwasmark02.ui.component.ArticleCardBig
 import com.capstone.techwasmark02.ui.component.ArticleCardSmall
-import com.capstone.techwasmark02.ui.component.DefaultBottomBar
-import com.capstone.techwasmark02.ui.component.DefaultTopBar
 import com.capstone.techwasmark02.ui.component.ForumBox
-import com.capstone.techwasmark02.ui.component.ProfileBox
-import com.capstone.techwasmark02.ui.componentType.BottomBarItemType
 import com.capstone.techwasmark02.ui.navigation.Screen
 import com.capstone.techwasmark02.ui.theme.TechwasMark02Theme
-import kotlin.random.Random
 
 @Composable
 fun ProfileUserScreen(

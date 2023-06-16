@@ -58,7 +58,6 @@ import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.capstone.techwasmark02.R
-import com.capstone.techwasmark02.data.remote.response.ArticleList
 import com.capstone.techwasmark02.data.remote.response.ArticleResultResponse
 import com.capstone.techwasmark02.data.remote.response.ForumResponse
 import com.capstone.techwasmark02.ui.common.UiState
@@ -68,13 +67,10 @@ import com.capstone.techwasmark02.ui.component.FeatureBoxLarge
 import com.capstone.techwasmark02.ui.component.ForumBox
 import com.capstone.techwasmark02.ui.componentType.FeatureBoxType
 import com.capstone.techwasmark02.ui.navigation.Screen
-import com.capstone.techwasmark02.ui.navigation.Screen.Article
 import com.capstone.techwasmark02.ui.navigation.Screen.Camera
 import com.capstone.techwasmark02.ui.navigation.Screen.Catalog
 import com.capstone.techwasmark02.ui.navigation.Screen.Forum
-import com.capstone.techwasmark02.ui.navigation.Screen.Home
 import com.capstone.techwasmark02.ui.navigation.Screen.Maps
-import com.capstone.techwasmark02.ui.navigation.Screen.Profile
 import com.capstone.techwasmark02.ui.theme.TechwasMark02Theme
 import com.capstone.techwasmark02.ui.theme.yellow
 import kotlin.math.absoluteValue
@@ -90,17 +86,14 @@ fun HomeScreen(
 
     HomeContent(
         navigateToCamera = { navController.navigate(Camera.route) },
-        navigateToHome = { navController.navigate(Home.route) },
         navigateToArticle = { navController.navigate("${Screen.Main.route}/2") },
         navigateToForum = { navController.navigate(Forum.route) },
-        navigateToProfile = { navController.navigate(Profile.route) },
         navigateToCatalog = { navController.navigate(Catalog.route) },
         navigateToMaps = { navController.navigate(Maps.route) },
         navigateToSingleArticle = { navController.navigate("${Screen.SingleArticle.route}/$it") },
         latestArticleState = latestArticleState,
         forumList = forumList,
         navigateToSingleForum = { navController.navigate("${Screen.SingleForum.route}/$it")},
-        navigateToMain = { navController.navigate("${Screen.Main.route}/1") }
     )
 }
 
@@ -108,17 +101,14 @@ fun HomeScreen(
 @Composable
 fun HomeContent(
     navigateToCamera: () -> Unit,
-    navigateToHome: () -> Unit,
     navigateToForum: () -> Unit,
     navigateToArticle: () -> Unit,
-    navigateToProfile: () -> Unit,
     navigateToCatalog: () -> Unit,
     navigateToMaps: () -> Unit,
     navigateToSingleArticle: (idArticle: Int) -> Unit,
     latestArticleState: UiState<ArticleResultResponse>?,
     forumList: UiState<ForumResponse>?,
     navigateToSingleForum: (Int) -> Unit,
-    navigateToMain: () -> Unit
 ) {
 
     val context = LocalContext.current
@@ -172,7 +162,7 @@ fun HomeContent(
                             )
                         }
                         Text(
-                            text = "Techwas",
+                            text = "Techwaste",
                             modifier = Modifier
                                 .padding(start = 4.dp)
                                 .offset(y = 5.dp),
@@ -504,17 +494,14 @@ fun HomeContentPreview() {
     TechwasMark02Theme {
         HomeContent(
             navigateToCamera = {},
-            navigateToHome = {},
             navigateToArticle = {},
             navigateToForum = {},
-            navigateToProfile = {},
             navigateToCatalog = {},
             navigateToMaps = {},
             navigateToSingleArticle = {},
             latestArticleState = UiState.Loading(),
             forumList = null,
             navigateToSingleForum = {},
-            navigateToMain = {}
         )
     }
 }

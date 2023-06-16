@@ -34,7 +34,6 @@ import com.capstone.techwasmark02.data.remote.response.Component
 import com.capstone.techwasmark02.data.remote.response.ComponentsResponse
 import com.capstone.techwasmark02.ui.common.UiState
 import com.capstone.techwasmark02.ui.component.CatalogCard
-import com.capstone.techwasmark02.ui.component.DefaultTopBar
 import com.capstone.techwasmark02.ui.component.InverseTopBar
 import com.capstone.techwasmark02.ui.component.SearchBox
 import com.capstone.techwasmark02.ui.navigation.Screen

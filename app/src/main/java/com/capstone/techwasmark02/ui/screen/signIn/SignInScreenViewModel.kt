@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.capstone.techwasmark02.common.Resource
 import com.capstone.techwasmark02.data.mappers.toUserSession
 import com.capstone.techwasmark02.data.model.UserLoginInfo
-import com.capstone.techwasmark02.data.model.UserSession
 import com.capstone.techwasmark02.data.remote.response.UserLoginResponse
 import com.capstone.techwasmark02.repository.PreferencesRepository
 import com.capstone.techwasmark02.repository.TechwasUserApiRepository

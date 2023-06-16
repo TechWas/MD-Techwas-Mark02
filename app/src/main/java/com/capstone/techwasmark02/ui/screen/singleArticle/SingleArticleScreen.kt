@@ -43,13 +43,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import com.capstone.techwasmark02.R
 import com.capstone.techwasmark02.data.local.database.entity.FavoriteArticleEntity
 import com.capstone.techwasmark02.data.model.FavoriteArticle
-import com.capstone.techwasmark02.data.remote.response.ArticleResultResponse
 import com.capstone.techwasmark02.data.remote.response.SingleArticleResponse
 import com.capstone.techwasmark02.ui.common.UiState
 import com.capstone.techwasmark02.ui.component.DefaultButton
@@ -58,9 +56,7 @@ import com.capstone.techwasmark02.ui.component.TransparentTopBar
 import com.capstone.techwasmark02.ui.navigation.Screen
 import com.capstone.techwasmark02.ui.theme.Mist97
 import com.capstone.techwasmark02.ui.theme.TechwasMark02Theme
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
-import kotlin.random.Random
 
 @Composable
 fun SingleArticleScreen(

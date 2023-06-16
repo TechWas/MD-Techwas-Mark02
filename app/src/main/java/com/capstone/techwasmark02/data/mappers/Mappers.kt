@@ -3,7 +3,6 @@ package com.capstone.techwasmark02.data.mappers
 import com.capstone.techwasmark02.data.local.database.entity.FavoriteArticleEntity
 import com.capstone.techwasmark02.data.model.FavoriteArticle
 import com.capstone.techwasmark02.data.model.UserSession
-import com.capstone.techwasmark02.data.remote.response.ArticleItem
 import com.capstone.techwasmark02.data.remote.response.LoginResult
 
 fun LoginResult.toUserSession(): UserSession {

@@ -2,10 +2,7 @@ package com.capstone.techwasmark02.ui.screen.catalogSingleComponent
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.capstone.techwasmark02.data.remote.apiService.TechwasComponentApi
 import com.capstone.techwasmark02.data.remote.response.ArticleResultResponse
-import com.capstone.techwasmark02.data.remote.response.Component
-import com.capstone.techwasmark02.data.remote.response.ComponentResponse
 import com.capstone.techwasmark02.data.remote.response.SmallPart
 import com.capstone.techwasmark02.data.remote.response.UsableComponentsResponse
 import com.capstone.techwasmark02.repository.TechwasArticleRepository
