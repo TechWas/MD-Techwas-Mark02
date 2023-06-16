@@ -4,8 +4,17 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
+import androidx.room.Room
+import com.capstone.techwasmark02.data.local.database.FavoriteArticleDatabase
+import com.capstone.techwasmark02.data.remote.apiService.TechwasArticleApi
+import com.capstone.techwasmark02.data.remote.apiService.TechwasComponentApi
+import com.capstone.techwasmark02.data.remote.apiService.TechwasForumApi
 import com.capstone.techwasmark02.data.remote.apiService.TechwasPredictionApi
 import com.capstone.techwasmark02.data.remote.apiService.TechwasUserApi
+import com.capstone.techwasmark02.repository.FavoriteArticleRepository
+import com.capstone.techwasmark02.repository.TechwasArticleRepository
+import com.capstone.techwasmark02.repository.TechwasComponentApiRepository
+import com.capstone.techwasmark02.repository.TechwasForumApiRepository
 import com.capstone.techwasmark02.repository.TechwasUserApiRepository
 import dagger.Module
 import dagger.Provides
@@ -63,6 +72,57 @@ object AppModule {
 
     @Provides
     @Singleton
+    fun provideTechwasArticleApi(): TechwasArticleApi {
+        val loggingInterceptor =
+            HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
+        val client = OkHttpClient.Builder()
+            .addInterceptor(loggingInterceptor)
+            .build()
+        val retrofit = Retrofit.Builder()
+            .baseUrl(TechwasArticleApi.BASE_URL)
+            .addConverterFactory(ScalarsConverterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create())
+            .client(client)
+            .build()
+        return retrofit.create(TechwasArticleApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideTechwasComponentApi(): TechwasComponentApi {
+        val loggingInterceptor =
+            HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
+        val client = OkHttpClient.Builder()
+            .addInterceptor(loggingInterceptor)
+            .build()
+        val retrofit = Retrofit.Builder()
+            .baseUrl(TechwasComponentApi.BASE_URL)
+            .addConverterFactory(ScalarsConverterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create())
+            .client(client)
+            .build()
+        return retrofit.create(TechwasComponentApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideTechwasForumApi(): TechwasForumApi {
+        val loggingInterceptor =
+            HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
+        val client = OkHttpClient.Builder()
+            .addInterceptor(loggingInterceptor)
+            .build()
+        val retrofit = Retrofit.Builder()
+            .baseUrl(TechwasForumApi.BASE_URL)
+            .addConverterFactory(ScalarsConverterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create())
+            .client(client)
+            .build()
+        return retrofit.create(TechwasForumApi::class.java)
+    }
+
+    @Provides
+    @Singleton
     fun provideDataStorePreferences(
         @ApplicationContext applicationContext: Context
     ) : DataStore<Preferences> {
@@ -73,5 +133,35 @@ object AppModule {
     fun provideTechwasUserApiRepository(
         api: TechwasUserApi
     ) = TechwasUserApiRepository(api)
+
+    @Provides
+    fun provideTechwasArticleRepository(
+        apiArticle: TechwasArticleApi
+    ) = TechwasArticleRepository(apiArticle)
+
+    @Provides
+    fun provideTechwasComponentApiRepository(
+        api: TechwasComponentApi
+    ) = TechwasComponentApiRepository(api)
+
+    @Provides
+    fun provideTechwasForumApiRepository(
+        api: TechwasForumApi
+    ) = TechwasForumApiRepository(api)
+
+    @Provides
+    @Singleton
+    fun provideFavoriteArticleDatabase(@ApplicationContext context: Context): FavoriteArticleDatabase {
+        return Room.databaseBuilder(
+            context,
+            FavoriteArticleDatabase::class.java,
+            "fav_article_database"
+        ).build()
+    }
+
+    @Provides
+    fun provideFavoriteArticleRepository(
+        favoriteArticleDatabase: FavoriteArticleDatabase
+    ) = FavoriteArticleRepository(favArticleDatabase = favoriteArticleDatabase)
 
 }

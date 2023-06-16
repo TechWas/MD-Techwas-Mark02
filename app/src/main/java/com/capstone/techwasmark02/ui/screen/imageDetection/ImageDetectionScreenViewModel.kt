@@ -65,16 +65,16 @@ class ImageDetectionScreenViewModel @Inject constructor(
         _imageUri.value = newUri
     }
 
-    fun predictImage(context: Context) {
-        _predictImageState.value = UiState.Loading()
-
-        val imageFileToUpload = _imageUri.value?.let { convertUriToFile(context = context, uri = it) }
-        viewModelScope.launch {
-         _predictImageState.value = imageFileToUpload?.let {
-             predictionApiRepository.predictWaste(it)
-         }
-        }
-    }
+//    fun predictImage(context: Context) {
+//        _predictImageState.value = UiState.Loading()
+//
+//        val imageFileToUpload = _imageUri.value?.let { convertUriToFile(context = context, uri = it) }
+//        viewModelScope.launch {
+//         _predictImageState.value = imageFileToUpload?.let {
+//             predictionApiRepository.predictWaste(it)
+//         }
+//        }
+//    }
 
 //    private fun convertUriToFile(context: Context, uri: Uri): File? {
 //        val inputStream = context.contentResolver.openInputStream(uri)

@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.capstone.techwasmark02.common.Resource
 import com.capstone.techwasmark02.data.mappers.toUserSession
 import com.capstone.techwasmark02.data.model.UserLoginInfo
-import com.capstone.techwasmark02.data.model.UserSession
 import com.capstone.techwasmark02.data.remote.response.UserLoginResponse
 import com.capstone.techwasmark02.repository.PreferencesRepository
 import com.capstone.techwasmark02.repository.TechwasUserApiRepository
@@ -32,38 +31,28 @@ class SignInScreenViewModel @Inject constructor(
         ))
     val userToSignInInfo = _userToSignInInfo.asStateFlow()
 
-    private val _userSessionState: MutableStateFlow<UserSession?> = MutableStateFlow(null)
-    val userSessionState = _userSessionState.asStateFlow()
-
-    init {
-        viewModelScope.launch {
-            val result = preferencesRepository.getActiveSession()
-            when(result) {
-                is Resource.Error -> {
-                    _userSessionState.value = null
-                }
-                is Resource.Success -> {
-                    _userSessionState.value = result.data
-                }
-            }
-        }
-    }
+    private val _savedUsername: MutableStateFlow<String?> = MutableStateFlow(null)
+    val savedUsername = _savedUsername.asStateFlow()
 
     fun signInUser() {
         _userToSignInState.value = UiState.Loading()
         viewModelScope.launch {
-            val result = userApiRepository.userLogin(_userToSignInInfo.value)
-            when(result) {
-                is UiState.Success -> {
-                    _userToSignInState.value = result
-                    result.data?.loginResult?.toUserSession()
-                        ?.let { preferencesRepository.saveSession(it) }
-                }
-                is UiState.Error -> {
-                    _userToSignInState.value = result
-                }
-                else -> {
-                // do nothing
+            _userToSignInState.value = userApiRepository.userLogin(_userToSignInInfo.value)
+        }
+    }
+
+    fun saveUserSession() {
+        viewModelScope.launch {
+            val userSession = _userToSignInState.value?.data?.loginResult?.toUserSession()
+            if (userSession != null) {
+                val result = preferencesRepository.saveSession(userSession)
+                when(result) {
+                    is Resource.Error -> {
+                        _savedUsername.value = ""
+                    }
+                    is Resource.Success -> {
+                        _savedUsername.value = result.data?.userNameId?.username
+                    }
                 }
             }
         }

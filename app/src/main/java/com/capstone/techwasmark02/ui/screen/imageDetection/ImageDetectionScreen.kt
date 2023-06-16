@@ -44,7 +44,6 @@ import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.capstone.techwasmark02.R
 import com.capstone.techwasmark02.ui.common.UiState
@@ -71,7 +70,7 @@ fun ImageDetectionScreen(viewModel: ImageDetectionScreenViewModel = hiltViewMode
         imageUri = imageUri,
         predictImageState = predictImageState,
         updateImageUri = { viewModel.updateImageUri(it) },
-        predictImage = { viewModel.predictImage(it) }
+        predictImage = { }
     )
 }
 
