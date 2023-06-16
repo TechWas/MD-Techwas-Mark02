@@ -8,11 +8,13 @@ import androidx.room.Room
 import com.capstone.techwasmark02.data.local.database.FavoriteArticleDatabase
 import com.capstone.techwasmark02.data.remote.apiService.TechwasArticleApi
 import com.capstone.techwasmark02.data.remote.apiService.TechwasComponentApi
+import com.capstone.techwasmark02.data.remote.apiService.TechwasForumApi
 import com.capstone.techwasmark02.data.remote.apiService.TechwasPredictionApi
 import com.capstone.techwasmark02.data.remote.apiService.TechwasUserApi
 import com.capstone.techwasmark02.repository.FavoriteArticleRepository
 import com.capstone.techwasmark02.repository.TechwasArticleRepository
 import com.capstone.techwasmark02.repository.TechwasComponentApiRepository
+import com.capstone.techwasmark02.repository.TechwasForumApiRepository
 import com.capstone.techwasmark02.repository.TechwasUserApiRepository
 import dagger.Module
 import dagger.Provides
@@ -94,12 +96,29 @@ object AppModule {
             .addInterceptor(loggingInterceptor)
             .build()
         val retrofit = Retrofit.Builder()
-            .baseUrl(TechwasArticleApi.BASE_URL)
+            .baseUrl(TechwasComponentApi.BASE_URL)
             .addConverterFactory(ScalarsConverterFactory.create())
             .addConverterFactory(GsonConverterFactory.create())
             .client(client)
             .build()
         return retrofit.create(TechwasComponentApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideTechwasForumApi(): TechwasForumApi {
+        val loggingInterceptor =
+            HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
+        val client = OkHttpClient.Builder()
+            .addInterceptor(loggingInterceptor)
+            .build()
+        val retrofit = Retrofit.Builder()
+            .baseUrl(TechwasForumApi.BASE_URL)
+            .addConverterFactory(ScalarsConverterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create())
+            .client(client)
+            .build()
+        return retrofit.create(TechwasForumApi::class.java)
     }
 
     @Provides
@@ -124,6 +143,11 @@ object AppModule {
     fun provideTechwasComponentApiRepository(
         api: TechwasComponentApi
     ) = TechwasComponentApiRepository(api)
+
+    @Provides
+    fun provideTechwasForumApiRepository(
+        api: TechwasForumApi
+    ) = TechwasForumApiRepository(api)
 
     @Provides
     @Singleton
