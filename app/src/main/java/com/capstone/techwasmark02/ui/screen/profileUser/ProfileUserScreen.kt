@@ -2,6 +2,8 @@ package com.capstone.techwasmark02.ui.screen.profileUser
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -44,6 +46,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import com.capstone.techwasmark02.R
+import com.capstone.techwasmark02.data.local.database.entity.FavoriteArticleEntity
 import com.capstone.techwasmark02.data.model.UserSession
 import com.capstone.techwasmark02.data.remote.response.ArticleResultResponse
 import com.capstone.techwasmark02.data.remote.response.Token
@@ -67,11 +70,14 @@ fun ProfileUserScreen(
 ) {
     val userSession by viewModel.userSessionState.collectAsState()
     val bookmarkedArticleState by viewModel.bookmarkedArticleState.collectAsState()
+    val favoriteArticlesList by viewModel.favoriteArticlesFlow.collectAsState(initial = null)
 
     ProfileUserContent(
         navigateToSetting = { navController.navigate(Screen.Setting.route) },
         userSession = userSession,
-        bookmarkedArticleState = bookmarkedArticleState
+        bookmarkedArticleState = bookmarkedArticleState,
+        favoriteArticleList = favoriteArticlesList,
+        navigateToSingleArticle = { navController.navigate("${Screen.SingleArticle.route}/$it") }
     )
 }
 
@@ -81,6 +87,8 @@ fun ProfileUserContent(
     navigateToSetting: () -> Unit,
     userSession: UserSession?,
     bookmarkedArticleState: UiState<ArticleResultResponse>?,
+    favoriteArticleList: List<FavoriteArticleEntity>?,
+    navigateToSingleArticle: (idArticle: Int) -> Unit
 ) {
 
     Scaffold(
@@ -197,51 +205,101 @@ fun ProfileUserContent(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                if (bookmarkedArticleState != null) {
-                    when(bookmarkedArticleState) {
-                        is UiState.Loading -> {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(100.dp),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                CircularProgressIndicator()
-                            }
-                        }
-                        is UiState.Error -> {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(100.dp),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(text = "No article to view")
-                            }
-                        }
-                        is UiState.Success -> {
-                            bookmarkedArticleState.data?.articleList?.size?.let {
-                                LazyRow(
-                                    contentPadding = PaddingValues(horizontal = 16.dp),
-                                    horizontalArrangement = Arrangement.spacedBy(16.dp)
-                                ) {
-                                    items(
-                                        count = it,
-                                    ) { page ->
-                                        val article = bookmarkedArticleState.data.articleList[page]
+                if (!favoriteArticleList.isNullOrEmpty() && favoriteArticleList.isNotEmpty()) {
+                    favoriteArticleList.let {
+                        LazyRow(
+                            contentPadding = PaddingValues(horizontal = 16.dp),
+                            horizontalArrangement = Arrangement.spacedBy(16.dp)
+                        ) {
+                            items(
+                                count = favoriteArticleList.size,
+                            ) { index ->
+                                val article = favoriteArticleList[index]
 
-                                        ArticleCardSmall(
-                                            modifier = Modifier.width(150.dp),
-                                            imgUrl = article?.articleImageURL,
-                                            title = article?.name,
-                                            description = article?.desc
-                                        )
-                                    }
-                                }
+                                ArticleCardSmall(
+                                    modifier = Modifier
+                                        .width(150.dp)
+                                        .clickable {
+                                                   navigateToSingleArticle(article.id)
+                                        },
+                                    imgUrl = article.articleImageURL,
+                                    title = article.name,
+                                    description = article.desc
+                                )
                             }
                         }
                     }
+                } else {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(175.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .border(
+                                    width = 1.dp,
+                                    color = Color.Red,
+                                    shape = RoundedCornerShape(20.dp)
+                                )
+                                .padding(8.dp)
+
+                        ) {
+                            Text(
+                                text = "There's no related article",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = Color.Red
+                            )
+                        }
+                    }
                 }
+
+//                if (bookmarkedArticleState != null) {
+//                    when(bookmarkedArticleState) {
+//                        is UiState.Loading -> {
+//                            Box(
+//                                modifier = Modifier
+//                                    .fillMaxWidth()
+//                                    .height(100.dp),
+//                                contentAlignment = Alignment.Center
+//                            ) {
+//                                CircularProgressIndicator()
+//                            }
+//                        }
+//                        is UiState.Error -> {
+//                            Box(
+//                                modifier = Modifier
+//                                    .fillMaxWidth()
+//                                    .height(100.dp),
+//                                contentAlignment = Alignment.Center
+//                            ) {
+//                                Text(text = "No article to view")
+//                            }
+//                        }
+//                        is UiState.Success -> {
+//                            bookmarkedArticleState.data?.articleList?.size?.let {
+//                                LazyRow(
+//                                    contentPadding = PaddingValues(horizontal = 16.dp),
+//                                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+//                                ) {
+//                                    items(
+//                                        count = it,
+//                                    ) { page ->
+//                                        val article = bookmarkedArticleState.data.articleList[page]
+//
+//                                        ArticleCardSmall(
+//                                            modifier = Modifier.width(150.dp),
+//                                            imgUrl = article?.articleImageURL,
+//                                            title = article?.name,
+//                                            description = article?.desc
+//                                        )
+//                                    }
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
 
                 Spacer(modifier = Modifier.height(16.dp))
 
@@ -337,7 +395,9 @@ fun ProfileUserScreenPreview() {
                     accessToken = ""
                 )
             ),
-            bookmarkedArticleState = null
+            bookmarkedArticleState = null,
+            favoriteArticleList = null,
+            navigateToSingleArticle = {}
         )
     }
 }

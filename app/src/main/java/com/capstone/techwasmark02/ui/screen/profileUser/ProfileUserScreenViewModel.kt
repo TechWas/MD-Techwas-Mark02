@@ -7,6 +7,7 @@ import com.capstone.techwasmark02.data.model.UserSession
 import com.capstone.techwasmark02.data.remote.response.ArticleResultResponse
 import com.capstone.techwasmark02.data.remote.response.Token
 import com.capstone.techwasmark02.data.remote.response.UserId
+import com.capstone.techwasmark02.repository.FavoriteArticleRepository
 import com.capstone.techwasmark02.repository.PreferencesRepository
 import com.capstone.techwasmark02.repository.TechwasArticleRepository
 import com.capstone.techwasmark02.ui.common.UiState
@@ -19,7 +20,8 @@ import javax.inject.Inject
 @HiltViewModel
 class ProfileUserScreenViewModel @Inject constructor(
     private val preferencesRepository: PreferencesRepository,
-    private val articleApiRepository: TechwasArticleRepository
+    private val articleApiRepository: TechwasArticleRepository,
+    private val favoriteArticleRepository: FavoriteArticleRepository
 ): ViewModel() {
 
     private val _userSessionState: MutableStateFlow<UserSession?> = MutableStateFlow(null)
@@ -27,6 +29,8 @@ class ProfileUserScreenViewModel @Inject constructor(
 
     private val _bookmarkedArticleState: MutableStateFlow<UiState<ArticleResultResponse>?> = MutableStateFlow(null)
     val bookmarkedArticleState = _bookmarkedArticleState.asStateFlow()
+
+    val favoriteArticlesFlow = favoriteArticleRepository.getFavArticles()
 
     init {
         _bookmarkedArticleState.value = UiState.Loading()
