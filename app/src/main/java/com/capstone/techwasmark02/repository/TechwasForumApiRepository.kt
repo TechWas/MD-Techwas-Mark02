@@ -6,8 +6,13 @@ import com.capstone.techwasmark02.data.remote.apiService.TechwasForumApi
 import com.capstone.techwasmark02.data.remote.response.CreateForumResponse
 import com.capstone.techwasmark02.data.remote.response.ForumCommentResponse
 import com.capstone.techwasmark02.data.remote.response.ForumResponse
+import com.capstone.techwasmark02.data.remote.response.ImageUrlResponse
 import com.capstone.techwasmark02.data.remote.response.PostForumCommentResponse
 import com.capstone.techwasmark02.ui.common.UiState
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import java.io.File
 import javax.inject.Inject
 
 class TechwasForumApiRepository @Inject constructor(
@@ -76,6 +81,28 @@ class TechwasForumApiRepository @Inject constructor(
             forumApi.createNewForum(forumToCreateInfo = forumToCreateInfo, token = token)
         } catch (e: Exception) {
             return UiState.Error(message = e.message ?: "Fail to create new forum")
+        }
+        return UiState.Success(data = response, message = response.message)
+    }
+
+    suspend fun uploadAndGetImageUrl(file: File, userToken: String): UiState<ImageUrlResponse> {
+        val token = "Bearer ${userToken}"
+
+        val imageFile = file.asRequestBody("image/jpeg".toMediaTypeOrNull())
+        val imageMultiPart: MultipartBody.Part = MultipartBody.Part
+            .createFormData(
+                name = "file",
+                filename = file.name,
+                body = imageFile
+            )
+
+        val response = try {
+            forumApi.uploadAndGetImage(
+                token,
+                imageMultiPart
+            )
+        } catch (e: Exception) {
+            return UiState.Error(message = "fail to get image url, ${e.message}")
         }
         return UiState.Success(data = response, message = response.message)
     }

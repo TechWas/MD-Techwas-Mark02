@@ -5,11 +5,15 @@ import com.capstone.techwasmark02.data.model.ForumToCreateInfo
 import com.capstone.techwasmark02.data.remote.response.CreateForumResponse
 import com.capstone.techwasmark02.data.remote.response.ForumCommentResponse
 import com.capstone.techwasmark02.data.remote.response.ForumResponse
+import com.capstone.techwasmark02.data.remote.response.ImageUrlResponse
 import com.capstone.techwasmark02.data.remote.response.PostForumCommentResponse
+import okhttp3.MultipartBody
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
+import retrofit2.http.Multipart
 import retrofit2.http.POST
+import retrofit2.http.Part
 import retrofit2.http.Path
 
 interface TechwasForumApi {
@@ -44,6 +48,14 @@ interface TechwasForumApi {
         @Header("Authorization") token: String,
         @Body forumCommentInfo: ForumCommentInfo
     ): PostForumCommentResponse
+
+
+    @Multipart
+    @POST("/forum/upimagepost")
+    suspend fun uploadAndGetImage(
+        @Header("Authorization") token: String,
+        @Part imageFile: MultipartBody.Part
+    ): ImageUrlResponse
 
     companion object {
         const val BASE_URL = "https://backend-api-56g32wdmqa-uc.a.run.app/"

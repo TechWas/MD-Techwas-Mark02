@@ -52,3 +52,9 @@ data class CreateForumResponse(
     val error: String,
     val message: String
 )
+
+data class ImageUrlResponse(
+    val error: String,
+    val imgURL: String,
+    val message: String
+)
