@@ -1,5 +1,7 @@
 package com.capstone.techwasmark02.ui.screen.singleArticle
 
+import android.content.Intent
+import android.text.Html
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -29,6 +31,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,6 +40,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -92,6 +97,7 @@ fun SingleArticleContent(
     isArticleFavorited: FavoriteArticleEntity?,
     updateArticleFavorited: ((articleGetFavorited: Boolean, favoriteArticle: FavoriteArticle) -> Unit)
 ) {
+    val context = LocalContext.current
 
     BackHandler(true) {
         navigateToArticle()
@@ -265,9 +271,19 @@ fun SingleArticleContent(
 
                                 Spacer(modifier = Modifier.height(36.dp))
 
+                                val plainText = Html.fromHtml(result?.get(0)?.description).toString()
+
                                 DefaultButton(
                                     contentText = "Share",
-                                    onClick = {},
+                                    onClick = {
+                                        val intent = Intent(Intent.ACTION_SEND)
+                                        intent.type = "text/plain"
+                                        intent.putExtra(Intent.EXTRA_SUBJECT, result?.get(0)?.name)
+                                        intent.putExtra(Intent.EXTRA_TEXT,
+                                            "$plainText\nSource: Techwaste"
+                                        )
+                                        context.startActivity(intent)
+                                    },
                                     modifier = Modifier.width(150.dp)
                                 )
                             }

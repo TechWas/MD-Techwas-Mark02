@@ -1,8 +1,11 @@
 package com.capstone.techwasmark02.ui.screen.setting
 
+import android.content.Intent
+import android.provider.Settings
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,14 +31,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat.startActivity
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
@@ -49,6 +55,7 @@ import com.capstone.techwasmark02.ui.componentType.SettingItemType
 import com.capstone.techwasmark02.ui.navigation.Screen
 import com.capstone.techwasmark02.ui.theme.TechwasMark02Theme
 import com.capstone.techwasmark02.ui.theme.red
+import kotlinx.coroutines.launch
 
 @Composable
 fun SettingScreen(
@@ -223,9 +230,17 @@ fun SettingContent(
                                     title = settingItemList[2].title,
                                 )
 
+                                val context = LocalContext.current
+                                val scope = rememberCoroutineScope()
                                 SettingItem(
                                     icon = settingItemList[3].icon,
                                     title = settingItemList[3].title,
+                                    modifier = Modifier.clickable {
+                                        scope.launch {
+                                            val intent = Intent(Settings.ACTION_LOCALE_SETTINGS)
+                                            context.startActivity(intent)
+                                        }
+                                    }
                                 )
 
                                 Spacer(modifier = Modifier.height(10.dp))

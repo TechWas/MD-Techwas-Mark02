@@ -1,9 +1,12 @@
 package com.capstone.techwasmark02.repository
 
+import android.content.res.Resources
+import androidx.compose.ui.res.stringResource
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.capstone.techwasmark02.R
 import com.capstone.techwasmark02.common.Resource
 import com.capstone.techwasmark02.data.model.UserSession
 import com.squareup.moshi.Moshi
