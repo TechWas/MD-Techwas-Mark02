@@ -272,7 +272,7 @@ fun HomeContent(
                                 color = yellow,
                                 modifier = Modifier
                                     .clickable {
-                                        navigateToForum()
+                                        navigateToArticle()
                                     }
                             )
                         }
@@ -395,7 +395,7 @@ fun HomeContent(
                                 color = yellow,
                                 modifier = Modifier
                                         .clickable {
-                                    navigateToArticle()
+                                            navigateToForum()
                                 }
                             )
                         }
