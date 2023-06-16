@@ -4,10 +4,13 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
+import androidx.room.Room
+import com.capstone.techwasmark02.data.local.database.FavoriteArticleDatabase
 import com.capstone.techwasmark02.data.remote.apiService.TechwasArticleApi
 import com.capstone.techwasmark02.data.remote.apiService.TechwasComponentApi
 import com.capstone.techwasmark02.data.remote.apiService.TechwasPredictionApi
 import com.capstone.techwasmark02.data.remote.apiService.TechwasUserApi
+import com.capstone.techwasmark02.repository.FavoriteArticleRepository
 import com.capstone.techwasmark02.repository.TechwasArticleRepository
 import com.capstone.techwasmark02.repository.TechwasComponentApiRepository
 import com.capstone.techwasmark02.repository.TechwasUserApiRepository
@@ -121,5 +124,20 @@ object AppModule {
     fun provideTechwasComponentApiRepository(
         api: TechwasComponentApi
     ) = TechwasComponentApiRepository(api)
+
+    @Provides
+    @Singleton
+    fun provideFavoriteArticleDatabase(@ApplicationContext context: Context): FavoriteArticleDatabase {
+        return Room.databaseBuilder(
+            context,
+            FavoriteArticleDatabase::class.java,
+            "fav_article_database"
+        ).build()
+    }
+
+    @Provides
+    fun provideFavoriteArticleRepository(
+        favoriteArticleDatabase: FavoriteArticleDatabase
+    ) = FavoriteArticleRepository(favArticleDatabase = favoriteArticleDatabase)
 
 }
