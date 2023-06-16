@@ -107,7 +107,7 @@ sealed class Screen  constructor(val route: String, val enterTransition: (Animat
             slideOutOfContainer(
                 AnimatedContentScope.SlideDirection.Left, animationSpec = tween(
                 durationMillis = 700,
-            )
+                )
             )
         }
     )
@@ -125,6 +125,20 @@ sealed class Screen  constructor(val route: String, val enterTransition: (Animat
                 AnimatedContentScope.SlideDirection.Left, animationSpec = tween(
                     durationMillis = 700,
                 )
+            )
+        }
+    )
+
+    object CreateForum: Screen(
+        route = "CreateForum",
+        enterTransition = {
+            fadeIn(
+                animationSpec = tween(700)
+            )
+        },
+        exitTransition = {
+            fadeOut(
+                animationSpec = tween(700)
             )
         }
     )

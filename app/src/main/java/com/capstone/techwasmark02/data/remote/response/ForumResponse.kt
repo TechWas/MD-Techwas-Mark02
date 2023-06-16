@@ -19,3 +19,36 @@ data class Forum(
     val location: String,
     val title: String
 )
+
+data class ForumCommentResponse(
+    val article: List<Article>,
+    val error: String,
+    val message: String
+)
+
+data class Article(
+    val comment: String,
+    val forumID: Int,
+    val id: Int,
+    val replyFrom: Int,
+    val userID: String,
+    val username: String
+)
+
+data class PostForumCommentResponse(
+    val commentInfo: CommentInfo,
+    val error: String,
+    val message: String
+)
+
+data class CommentInfo(
+    val Poster: String,
+    val PosterID: Int,
+    val comment: String,
+    val forumID: Int
+)
+
+data class CreateForumResponse(
+    val error: String,
+    val message: String
+)

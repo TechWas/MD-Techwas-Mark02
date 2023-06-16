@@ -38,7 +38,7 @@ import kotlin.random.Random
 @Composable
 fun ForumBox(
     modifier: Modifier = Modifier,
-    photoUrl: Int? = null,
+    photoUrl: String? = null,
     onClick: () -> Unit = {},
     title: String,
     place: String,

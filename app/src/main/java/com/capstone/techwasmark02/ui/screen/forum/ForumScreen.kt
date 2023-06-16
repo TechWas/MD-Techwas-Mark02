@@ -1,5 +1,6 @@
 package com.capstone.techwasmark02.ui.screen.forum
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -28,6 +29,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -44,6 +46,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.capstone.techwasmark02.R
+import com.capstone.techwasmark02.data.remote.response.Forum
 import com.capstone.techwasmark02.data.remote.response.ForumResponse
 import com.capstone.techwasmark02.ui.common.UiState
 import com.capstone.techwasmark02.ui.component.ForumBox
@@ -59,21 +62,25 @@ fun ForumScreen(
     viewModel: ForumScreenViewModel = hiltViewModel()
 ) {
     val forumListState by viewModel.forumList.collectAsState()
+    val searchBoxValue by viewModel.searchBoxValue.collectAsState()
 
     ForumContent(
-        navigateToSingleForum = { navController.navigate(Screen.SingleForum.route)},
-        forumListState = forumListState
+        navigateToSingleForum = { navController.navigate("${Screen.SingleForum.route}/$it")},
+        forumListState = forumListState,
+        navigateToCreateForum = { navController.navigate(Screen.CreateForum.route)},
+        searchBoxValue = searchBoxValue,
+        onSearchBoxValueChange = { viewModel.updateSearchBoxValue(it)}
     )
 }
 
 @Composable
 fun ForumContent(
-    navigateToSingleForum: () -> Unit,
-    forumListState: UiState<ForumResponse>?
+    navigateToSingleForum: (Int) -> Unit,
+    forumListState: UiState<ForumResponse>?,
+    navigateToCreateForum: () -> Unit,
+    searchBoxValue: String,
+    onSearchBoxValueChange: (String) -> Unit
 ) {
-    var inputValue by remember {
-        mutableStateOf("")
-    }
 
     val filterTypeList = listOf(
         ArticleFilterType.General,
@@ -145,7 +152,7 @@ fun ForumContent(
                             .padding(top = 8.dp, end = 8.dp)
                     ) {
                         IconButton(
-                            onClick = { /*TODO*/ },
+                            onClick = navigateToCreateForum,
                             modifier = Modifier
                                 .size(36.dp)
                                 .clip(CircleShape)
@@ -163,8 +170,8 @@ fun ForumContent(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 SearchBox(
-                    value = inputValue,
-                    onValueChange = {},
+                    value = searchBoxValue,
+                    onValueChange = onSearchBoxValueChange,
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -195,7 +202,8 @@ fun ForumContent(
                     is UiState.Loading -> {
                         Box(
                             modifier = Modifier
-                                .fillMaxSize(),
+                                .fillMaxWidth()
+                                .weight(1f),
                             contentAlignment = Alignment.Center
                         ) {
                             CircularProgressIndicator()
@@ -229,49 +237,40 @@ fun ForumContent(
                     is UiState.Success -> {
                         val currentForumList = forumListState.data?.forum
 
-                        if (!currentForumList.isNullOrEmpty() && currentForumList.isNotEmpty()) {
+                        var filteredForumList by remember {
+                            mutableStateOf(currentForumList)
+                        }
+
+                        LaunchedEffect(key1 = searchBoxValue, key2 = selectedFilter) {
+                            if (currentForumList != null) {
+                                filteredForumList = selectedFilter?.type?.let {
+                                    searchForum(
+                                        forumList = currentForumList,
+                                        searchBoxValue = searchBoxValue,
+                                        selectedFilter = it
+                                    )
+                                }
+                            }
+                        }
+
+                        if (!filteredForumList.isNullOrEmpty() && filteredForumList!!.isNotEmpty()) {
                             LazyColumn(
                                 modifier = Modifier,
                                 contentPadding = PaddingValues(vertical = 20.dp, horizontal = 16.dp),
                                 verticalArrangement = Arrangement.spacedBy(10.dp)
                             ) {
-                                items(currentForumList) { forum ->
+                                items(filteredForumList!!) { forum ->
                                     ForumBox(
                                         modifier = Modifier
                                             .fillMaxWidth(),
                                         title = forum.title,
                                         place = forum.location,
-                                        desc = forum.content
+                                        desc = forum.content,
+                                        onClick = { navigateToSingleForum(forum.id) },
+                                        photoUrl = forum.imageURL
                                     )
                                 }
                             }
-
-//                            LazyColumn(
-//                                modifier = Modifier,
-//                                contentPadding = PaddingValues(vertical = 20.dp, horizontal = 16.dp),
-//                                verticalArrangement = Arrangement.spacedBy(10.dp)
-//                            ) {
-//                                item {
-//                                    ForumBox(
-//                                        modifier = Modifier.fillMaxWidth(),
-//                                        title = "Cara Hidupkan HP Masuk Toilet",
-//                                        desc = "Jadi kemarin saya tidak sengaja menjatuhkan HP saya ke toilet",
-//                                        place = "Malang",
-//                                        photoUrl = R.drawable.img_forum_hp_nyala
-//                                    )
-//                                }
-//
-//                                item {
-//                                    ForumBox(
-//                                        modifier = Modifier.fillMaxWidth(),
-//                                        photoUrl = R.drawable.img_forum_laptop_bekas,
-//                                        onClick = navigateToSingleForum,
-//                                        title = "Jual Laptop Mati Total",
-//                                        desc = "Saya mempunyai laptop yang baru saja mati, pada saat tombol power tekan tidak ada respon apapun, kemungkinan masalah berada di battery. Selain itu kondisi masih bagus dan tidak ada kerusakan luar\nBagi yang berminat dapat mencoba menghubungi saya +6281396774583",
-//                                        place = "Yogyakarta"
-//                                    )
-//                                }
-//                            }
                         } else {
                             Box(
                                 modifier = Modifier
@@ -305,13 +304,32 @@ fun ForumContent(
     }
 }
 
+private fun searchForum(forumList: List<Forum>, searchBoxValue: String, selectedFilter: String): List<Forum> {
+    if (searchBoxValue == "" && selectedFilter == "General") {
+        return forumList
+    }
+
+    val searchBoxFilter = forumList.filter { forum ->
+        forum.title.contains(searchBoxValue, ignoreCase = true)
+    }
+
+    val selectedFilterList = searchBoxFilter.filter { forum ->
+        forum.category == selectedFilter
+    }
+
+    return selectedFilterList
+}
+
 @Preview
 @Composable
 fun ForumScreenPreview() {
     TechwasMark02Theme {
         ForumContent(
             navigateToSingleForum = {},
-            forumListState = null
+            forumListState = null,
+            navigateToCreateForum = {},
+            searchBoxValue = "",
+            onSearchBoxValueChange = {}
         )
     }
 }

@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -17,6 +18,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -49,6 +51,7 @@ import com.capstone.techwasmark02.R
 import com.capstone.techwasmark02.data.local.database.entity.FavoriteArticleEntity
 import com.capstone.techwasmark02.data.model.UserSession
 import com.capstone.techwasmark02.data.remote.response.ArticleResultResponse
+import com.capstone.techwasmark02.data.remote.response.ForumResponse
 import com.capstone.techwasmark02.data.remote.response.Token
 import com.capstone.techwasmark02.data.remote.response.UserId
 import com.capstone.techwasmark02.ui.common.UiState
@@ -71,13 +74,16 @@ fun ProfileUserScreen(
     val userSession by viewModel.userSessionState.collectAsState()
     val bookmarkedArticleState by viewModel.bookmarkedArticleState.collectAsState()
     val favoriteArticlesList by viewModel.favoriteArticlesFlow.collectAsState(initial = null)
+    val forumList by viewModel.forumList.collectAsState()
 
     ProfileUserContent(
         navigateToSetting = { navController.navigate(Screen.Setting.route) },
         userSession = userSession,
         bookmarkedArticleState = bookmarkedArticleState,
         favoriteArticleList = favoriteArticlesList,
-        navigateToSingleArticle = { navController.navigate("${Screen.SingleArticle.route}/$it") }
+        navigateToSingleArticle = { navController.navigate("${Screen.SingleArticle.route}/$it") },
+        forumList = forumList,
+        navigateToSingleForum = { navController.navigate("${Screen.SingleForum.route}/$it")}
     )
 }
 
@@ -88,7 +94,9 @@ fun ProfileUserContent(
     userSession: UserSession?,
     bookmarkedArticleState: UiState<ArticleResultResponse>?,
     favoriteArticleList: List<FavoriteArticleEntity>?,
-    navigateToSingleArticle: (idArticle: Int) -> Unit
+    navigateToSingleArticle: (idArticle: Int) -> Unit,
+    forumList: UiState<ForumResponse>?,
+    navigateToSingleForum: (Int) -> Unit
 ) {
 
     Scaffold(
@@ -312,67 +320,69 @@ fun ProfileUserContent(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
-                    verticalArrangement = Arrangement.spacedBy(10.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    contentPadding = PaddingValues(vertical = 10.dp)
-                ) {
-                    item {
-                        ForumBox(
-                            modifier = Modifier.fillMaxWidth(),
-                            title = "Jual Laptop Mati Total",
-                            desc = "\"Saya mempunyai laptop yang baru saja mati, pada saat tombol power tekan tidak ada respon apapun, kemungkinan masalah berada di battery. Selain itu kondisi masih bagus dan tidak ada kerusakan luar\\nBagi yang berminat dapat mencoba menghubungi saya +6281396774583\"",
-                            place = "Yogyakarta",
-                            photoUrl = R.drawable.img_forum_laptop_bekas
-                        )
-                    }
+                if (forumList != null) {
+                    when(forumList) {
+                        is UiState.Loading -> {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(200.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                CircularProgressIndicator()
+                            }
+                        }
+                        is UiState.Error -> {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(200.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .border(
+                                            width = 1.dp,
+                                            color = Color.Red,
+                                            shape = RoundedCornerShape(20.dp)
+                                        )
+                                        .padding(8.dp)
 
-                    item {
-                        ForumBox(
-                            modifier = Modifier.fillMaxWidth(),
-                            title = "Cara Hidupkan Hape Xiomi Lama",
-                            desc = "Tiga belas hari yang lalu jatuh dari motor dan hp saya ikut jatuh dan terbentur",
-                            place = "Merauke"
-                        )
-                    }
+                                ) {
+                                    Text(
+                                        text = "Fail to fetch forum",
+                                        style = MaterialTheme.typography.labelSmall,
+                                        color = Color.Red
+                                    )
+                                }
+                            }
+                        }
+                        is UiState.Success -> {
+                            val latestForumList = forumList.data?.forum
 
-                    item {
-                        ForumBox(
-                            modifier = Modifier.fillMaxWidth(),
-                            title = "Bagaiamana Cara Menyambung Kabel",
-                            desc = "Saya akan memberikan langkah-langkah mudah untuk menyambung kabel elektronik",
-                            place = "Solo"
-                        )
-                    }
+                            LazyColumn(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .height(400.dp)
+                                    .padding(horizontal = 16.dp),
+                                verticalArrangement = Arrangement.spacedBy(10.dp),
+                                contentPadding = PaddingValues( vertical = 10.dp)
+                            ) {
+                                if (latestForumList != null) {
+                                    items(latestForumList) { forum ->
+                                        ForumBox(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            title = forum.title,
+                                            desc = forum.content,
+                                            place = forum.location,
+                                            photoUrl = forum.imageURL,
+                                            onClick = { navigateToSingleForum(forum.id) }
+                                        )
 
-                    item {
-                        ForumBox(
-                            modifier = Modifier.fillMaxWidth(),
-                            title = "Dijual Kulkas Potable",
-                            desc = "Dijual kulkas Samsung berumur dua tahun tetapi masih layak pakai, fungsi masih lengkap",
-                            place = "Jakarta"
-                        )
-                    }
-
-                    item {
-                        ForumBox(
-                            modifier = Modifier.fillMaxWidth(),
-                            title = "Membuka Service Laptop di Daerah Pogung",
-                            desc = "Membuka jasa service laptop dengan jaminan uang kembali apabila tidak berhasil",
-                            place = "Yogyakarta"
-                        )
-                    }
-
-                    item {
-                        ForumBox(
-                            modifier = Modifier.fillMaxWidth(),
-                            title = "Membuat Kursus Membenarkan Laptop",
-                            desc = "Membuka kursus untuk mengajarkan cara membenarkan laptop lama",
-                            place = "Bali"
-                        )
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -397,7 +407,9 @@ fun ProfileUserScreenPreview() {
             ),
             bookmarkedArticleState = null,
             favoriteArticleList = null,
-            navigateToSingleArticle = {}
+            navigateToSingleArticle = {},
+            forumList = null,
+            navigateToSingleForum = {}
         )
     }
 }

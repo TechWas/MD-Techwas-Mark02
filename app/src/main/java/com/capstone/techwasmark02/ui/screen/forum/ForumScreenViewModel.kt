@@ -16,11 +16,18 @@ class ForumScreenViewModel @Inject constructor(
     private val forumApiRepository: TechwasForumApiRepository
 ): ViewModel() {
 
-
     private val _forumList: MutableStateFlow<UiState<ForumResponse>?> = MutableStateFlow(null)
     val forumList = _forumList.asStateFlow()
 
+    private val _searchBoxValue: MutableStateFlow<String> = MutableStateFlow("")
+    val searchBoxValue = _searchBoxValue.asStateFlow()
+
+    fun updateSearchBoxValue(newValue: String) {
+        _searchBoxValue.value = newValue
+    }
+
     init {
+        _forumList.value = UiState.Loading()
         viewModelScope.launch {
             _forumList.value = forumApiRepository.fetchAllForum()
         }

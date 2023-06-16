@@ -10,6 +10,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -26,6 +27,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
@@ -58,6 +60,7 @@ import androidx.navigation.NavHostController
 import com.capstone.techwasmark02.R
 import com.capstone.techwasmark02.data.remote.response.ArticleList
 import com.capstone.techwasmark02.data.remote.response.ArticleResultResponse
+import com.capstone.techwasmark02.data.remote.response.ForumResponse
 import com.capstone.techwasmark02.ui.common.UiState
 import com.capstone.techwasmark02.ui.component.ArticleCardBig
 import com.capstone.techwasmark02.ui.component.FeatureBox
@@ -83,17 +86,21 @@ fun HomeScreen(
 ) {
 
     val latestArticleState by viewModel.latestArticleState.collectAsState()
+    val forumList by viewModel.forumList.collectAsState()
 
     HomeContent(
         navigateToCamera = { navController.navigate(Camera.route) },
         navigateToHome = { navController.navigate(Home.route) },
-        navigateToArticle = { navController.navigate(Article.route) },
+        navigateToArticle = { navController.navigate("${Screen.Main.route}/2") },
         navigateToForum = { navController.navigate(Forum.route) },
         navigateToProfile = { navController.navigate(Profile.route) },
         navigateToCatalog = { navController.navigate(Catalog.route) },
         navigateToMaps = { navController.navigate(Maps.route) },
         navigateToSingleArticle = { navController.navigate("${Screen.SingleArticle.route}/$it") },
-        latestArticleState = latestArticleState
+        latestArticleState = latestArticleState,
+        forumList = forumList,
+        navigateToSingleForum = { navController.navigate("${Screen.SingleForum.route}/$it")},
+        navigateToMain = { navController.navigate("${Screen.Main.route}/1") }
     )
 }
 
@@ -108,7 +115,10 @@ fun HomeContent(
     navigateToCatalog: () -> Unit,
     navigateToMaps: () -> Unit,
     navigateToSingleArticle: (idArticle: Int) -> Unit,
-    latestArticleState: UiState<ArticleResultResponse>?
+    latestArticleState: UiState<ArticleResultResponse>?,
+    forumList: UiState<ForumResponse>?,
+    navigateToSingleForum: (Int) -> Unit,
+    navigateToMain: () -> Unit
 ) {
 
     val context = LocalContext.current
@@ -271,7 +281,7 @@ fun HomeContent(
                                 color = yellow,
                                 modifier = Modifier
                                     .clickable {
-                                        navigateToArticle()
+                                        navigateToForum()
                                     }
                             )
                         }
@@ -391,91 +401,84 @@ fun HomeContent(
                                 text = "See all",
                                 style = MaterialTheme.typography.labelMedium,
                                 fontWeight = FontWeight.Bold,
-                                color = yellow
+                                color = yellow,
+                                modifier = Modifier
+                                        .clickable {
+                                    navigateToArticle()
+                                }
                             )
                         }
 
                         Spacer(modifier = Modifier.height(titlePaddingBottom))
 
-                        LazyColumn(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(horizontal = 16.dp),
-                            verticalArrangement = Arrangement.spacedBy(10.dp),
-                            contentPadding = PaddingValues( bottom = 16.dp)
-                        ) {
-                            item {
-                            ForumBox(
-                                modifier = Modifier.fillMaxWidth(),
-                                title = "Jual Laptop Mati Total",
-                                desc = "\"Saya mempunyai laptop yang baru saja mati, pada saat tombol power tekan tidak ada respon apapun, kemungkinan masalah berada di battery. Selain itu kondisi masih bagus dan tidak ada kerusakan luar\\nBagi yang berminat dapat mencoba menghubungi saya +6281396774583\"",
-                                place = "Yogyakarta",
-                                photoUrl = R.drawable.img_forum_laptop_bekas
-                            )
-                        }
+                        if (forumList != null) {
+                            when(forumList) {
+                                is UiState.Loading -> {
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .height(200.dp),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        CircularProgressIndicator()
+                                    }
+                                }
+                                is UiState.Error -> {
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .height(200.dp),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Box(
+                                            modifier = Modifier
+                                                .border(
+                                                    width = 1.dp,
+                                                    color = Color.Red,
+                                                    shape = RoundedCornerShape(20.dp)
+                                                )
+                                                .padding(8.dp)
 
-                            item {
-                                ForumBox(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    title = "Cara Hidupkan Hape Xiomi Lama",
-                                    desc = "Tiga belas hari yang lalu jatuh dari motor dan hp saya ikut jatuh dan terbentur",
-                                    place = "Merauke"
-                                )
-                            }
+                                        ) {
+                                            Text(
+                                                text = "Fail to fetch forum",
+                                                style = MaterialTheme.typography.labelSmall,
+                                                color = Color.Red
+                                            )
+                                        }
+                                    }
+                                }
+                                is UiState.Success -> {
+                                    val latestForumList = forumList.data?.forum
 
-                            item {
-                                ForumBox(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    title = "Bagaiamana Cara Menyambung Kabel",
-                                    desc = "Saya akan memberikan langkah-langkah mudah untuk menyambung kabel elektronik",
-                                    place = "Solo"
-                                )
-                            }
+                                    LazyColumn(
+                                        modifier = Modifier
+                                            .fillMaxSize()
+                                            .height(400.dp)
+                                            .padding(horizontal = 16.dp),
+                                        verticalArrangement = Arrangement.spacedBy(10.dp),
+                                        contentPadding = PaddingValues( bottom = 16.dp)
+                                    ) {
+                                        if (latestForumList != null) {
+                                            items(latestForumList) { forum ->
+                                                ForumBox(
+                                                    modifier = Modifier.fillMaxWidth(),
+                                                    title = forum.title,
+                                                    desc = forum.content,
+                                                    place = forum.location,
+                                                    photoUrl = forum.imageURL,
+                                                    onClick = { navigateToSingleForum(forum.id) }
+                                            )
 
-                            item {
-                                ForumBox(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    title = "Dijual Kulkas Potable",
-                                    desc = "Dijual kulkas Samsung berumur dua tahun tetapi masih layak pakai, fungsi masih lengkap",
-                                    place = "Jakarta"
-                                )
-                            }
-
-                            item {
-                                ForumBox(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    title = "Membuka Service Laptop di Daerah Pogung",
-                                    desc = "Membuka jasa service laptop dengan jaminan uang kembali apabila tidak berhasil",
-                                    place = "Yogyakarta"
-                                )
-                            }
-
-                            item {
-                                ForumBox(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    title = "Membuat Kursus Membenarkan Laptop",
-                                    desc = "Membuka kursus untuk mengajarkan cara membenarkan laptop lama",
-                                    place = "Bali"
-                                )
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
                 }
             }
-
-//            Column(
-//                modifier = Modifier
-//                    .fillMaxSize()
-//            ) {
-//                Spacer(modifier = Modifier.weight(1f))
-//                DefaultBottomBar(
-//                    selectedType = BottomBarItemType.Home,
-//                    navigateToProfile = navigateToProfile,
-//                    navigateToForum = navigateToForum,
-//                    navigateToArticle = navigateToArticle,
-//                    navigateToHome = navigateToHome
-//                )
-//            }
         }
     }
 }
@@ -508,7 +511,10 @@ fun HomeContentPreview() {
             navigateToCatalog = {},
             navigateToMaps = {},
             navigateToSingleArticle = {},
-            latestArticleState = UiState.Loading()
+            latestArticleState = UiState.Loading(),
+            forumList = null,
+            navigateToSingleForum = {},
+            navigateToMain = {}
         )
     }
 }

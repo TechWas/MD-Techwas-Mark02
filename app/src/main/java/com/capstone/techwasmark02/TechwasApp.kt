@@ -1,6 +1,5 @@
 package com.capstone.techwasmark02
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
@@ -12,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import com.capstone.techwasmark02.ui.navigation.Screen.*
+import com.capstone.techwasmark02.ui.screen.forumCreate.ForumCreateScreen
 import com.capstone.techwasmark02.ui.screen.article.ArticleScreen
 import com.capstone.techwasmark02.ui.screen.camera.CameraScreen
 import com.capstone.techwasmark02.ui.screen.catalog.CatalogScreen
@@ -126,8 +126,25 @@ fun TechwasApp() {
                 ForumScreen(navController = navController)
             }
 
-            composable(SingleForum.route) {
-                ForumSingleScreen(navController = navController)
+            composable(
+                route = SingleForum.route + "/{forumId}",
+                arguments = listOf(
+                    navArgument("forumId") {
+                        type = NavType.IntType
+                        defaultValue = 1
+                    }
+                )
+            ) { navBackStackEntry ->
+                val forumId = navBackStackEntry.arguments?.getInt("forumId")
+                if (forumId != null) {
+                    ForumSingleScreen(navController = navController, forumId = forumId)
+                }
+            }
+
+            composable(
+                route = CreateForum.route
+            ) {
+                ForumCreateScreen(navController = navController)
             }
 
             composable(Profile.route) {
