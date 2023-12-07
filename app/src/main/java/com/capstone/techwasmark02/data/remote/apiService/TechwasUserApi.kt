@@ -20,7 +20,7 @@ interface TechwasUserApi {
     ) : UserRegisterResponse
 
     companion object {
-        const val BASE_URL = "https://backend-api-56g32wdmqa-uc.a.run.app/"
+        const val BASE_URL = "https://backend-api-t7biziab7a-et.a.run.app/"
     }
 
 }
